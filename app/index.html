@@ -245,6 +245,11 @@ input[type="file"]{display:none;}
 .timer-modal.running .timer-controls{max-width:340px;margin:0 auto;}
 .timer-phase{font-family:var(--mono);font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text2);min-height:24px;margin-bottom:6px;}
 .timer-next{display:none;font-family:var(--mono);font-size:13px;color:var(--text3);letter-spacing:1px;margin-bottom:28px;min-height:16px;}
+.timer-total{display:none;font-family:var(--mono);font-size:30px;font-weight:700;color:var(--accent);text-align:center;letter-spacing:1px;margin-bottom:8px;}
+.timer-modal.running.mode-interval .timer-total{display:block;}
+.timer-modal.running.mode-interval.phase-prep .timer-total,
+.timer-modal.running.mode-interval.phase-work .timer-total,
+.timer-modal.running.mode-interval.phase-rest .timer-total{color:rgba(10,14,12,0.65)!important;}
 #timer-skip-row{display:none;gap:10px;margin-top:14px;max-width:340px;margin-left:auto;margin-right:auto;}
 .timer-modal.running.mode-interval #timer-skip-row{display:flex;}
 .timer-skip-btn{flex:1;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;}
@@ -303,6 +308,7 @@ input[type="file"]{display:none;}
 <div id="timer-modal" class="timer-modal">
   <div class="timer-modal-inner">
     <button class="timer-close" onclick="closeTimerModal()">✕</button>
+    <div id="timer-total" class="timer-total"></div>
     <div class="timer-mode-switch">
       <button id="tm-stopwatch" class="timer-mode-btn active" onclick="setTimerMode('stopwatch')">Cronómetro</button>
       <button id="tm-simple" class="timer-mode-btn" onclick="setTimerMode('simple')">Contagem</button>
@@ -1865,13 +1871,33 @@ function getNextPhaseLabel() {
   return `A seguir: Trabalho · Ronda ${bt.currentRound+1}/${bt.rounds}`;
 }
 
+// Total seconds left in the whole interval session: current phase remaining
+// + every work/rest phase that still comes after it.
+function getIntervalTotalRemaining() {
+  let worksLeft, restsLeft;
+  if (bt.phase === 'prep') {
+    worksLeft = bt.rounds;
+    restsLeft = bt.rounds - 1;
+  } else if (bt.phase === 'work') {
+    worksLeft = bt.rounds - bt.currentRound;
+    restsLeft = bt.rounds - bt.currentRound;
+  } else { // rest
+    worksLeft = bt.rounds - bt.currentRound;
+    restsLeft = bt.rounds - bt.currentRound - 1;
+  }
+  const total = bt.remaining + worksLeft * bt.work + Math.max(0, restsLeft) * bt.rest;
+  return Math.max(0, total);
+}
+
 function renderBigTimer() {
   const disp = document.getElementById('timer-display-big');
   const phaseEl = document.getElementById('timer-phase');
   const nextEl = document.getElementById('timer-next');
+  const totalEl = document.getElementById('timer-total');
   const modal = document.getElementById('timer-modal');
   // clear phase background classes by default
   modal.classList.remove('phase-prep','phase-work','phase-rest');
+  if (totalEl) totalEl.textContent = '';
   if (bt.mode === 'stopwatch') {
     disp.textContent = fmtBig(bt.elapsed);
     disp.className = 'timer-display-big';
@@ -1879,8 +1905,9 @@ function renderBigTimer() {
     nextEl.textContent = '';
     return;
   }
-  disp.textContent = fmtBig(bt.remaining);
   if (bt.mode === 'interval') {
+    // big number = seconds of the current phase, plain (5, 10, 63, 70...)
+    disp.textContent = String(bt.remaining);
     if (bt.phase === 'prep') {
       disp.className = 'timer-display-big prep';
       phaseEl.textContent = 'Prepara-te…';
@@ -1891,7 +1918,10 @@ function renderBigTimer() {
       modal.classList.add(bt.phase === 'rest' ? 'phase-rest' : 'phase-work');
     }
     nextEl.textContent = getNextPhaseLabel();
+    if (totalEl) totalEl.textContent = fmtBig(getIntervalTotalRemaining());
   } else {
+    // simple countdown: keep MM:SS
+    disp.textContent = fmtBig(bt.remaining);
     disp.className = 'timer-display-big';
     phaseEl.textContent = '';
     nextEl.textContent = '';
