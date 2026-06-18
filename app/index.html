@@ -1101,8 +1101,7 @@ function renderSession() {
     // Rest button per exercise (opens countdown with that exercise's rest time)
     if (ex.rest) {
       const rs = parseRestSeconds(ex.rest);
-      const restShort = ex.rest.replace(/\s*seg/,'s').replace(/\s*min/,'min').replace(/\s/g,'');
-      html += `<div style="padding:0 16px 16px"><button class="rest-btn" onclick="startRest(${rs})">${SVG.timer} Descansar · ${restShort}</button></div>`;
+      html += `<div style="padding:0 16px 16px"><button class="rest-btn" onclick="startRest(${rs})">${SVG.timer} Descansar</button></div>`;
     }
     html += `</div>`;
   });
