@@ -220,7 +220,10 @@ input[type="file"]{display:none;}
 .timer-modal.running.phase-prep .timer-big-btn{background:#0a0e0c;color:#fff;}
 .timer-modal.running.phase-work .timer-reset-btn,
 .timer-modal.running.phase-rest .timer-reset-btn,
-.timer-modal.running.phase-prep .timer-reset-btn{background:rgba(10,14,12,0.2);color:#0a0e0c;border-color:transparent;}
+.timer-modal.running.phase-prep .timer-reset-btn,
+.timer-modal.running.phase-work .timer-skip-btn,
+.timer-modal.running.phase-rest .timer-skip-btn,
+.timer-modal.running.phase-prep .timer-skip-btn{background:rgba(10,14,12,0.2);color:#0a0e0c;border-color:transparent;}
 .timer-modal-inner{width:100%;max-width:380px;text-align:center;position:relative;}
 .timer-close{position:absolute;top:-8px;right:0;background:var(--surface2);border:none;color:var(--text2);width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;z-index:10;}
 .timer-mode-switch{display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin:48px auto 32px;max-width:340px;width:100%;}
@@ -234,9 +237,19 @@ input[type="file"]{display:none;}
 .timer-modal.running .timer-mode-switch,
 .timer-modal.running .timer-config{display:none!important;}
 .timer-modal.running .timer-display-big{font-size:min(24vw,180px);margin-bottom:24px;letter-spacing:0;width:100%;text-align:center;}
-.timer-modal.running .timer-phase{font-size:22px;margin-bottom:48px;letter-spacing:3px;}
+.timer-modal.running .timer-phase{font-size:22px;margin-bottom:6px;letter-spacing:3px;}
+.timer-modal.running.mode-interval .timer-next{display:block;font-size:15px;margin-bottom:40px;color:rgba(240,244,241,0.6);}
+.timer-modal.running.mode-interval.phase-prep .timer-next,
+.timer-modal.running.mode-interval.phase-work .timer-next,
+.timer-modal.running.mode-interval.phase-rest .timer-next{color:rgba(10,14,12,0.6)!important;}
 .timer-modal.running .timer-controls{max-width:340px;margin:0 auto;}
-.timer-phase{font-family:var(--mono);font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text2);min-height:24px;margin-bottom:28px;}
+.timer-phase{font-family:var(--mono);font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text2);min-height:24px;margin-bottom:6px;}
+.timer-next{display:none;font-family:var(--mono);font-size:13px;color:var(--text3);letter-spacing:1px;margin-bottom:28px;min-height:16px;}
+#timer-skip-row{display:none;gap:10px;margin-top:14px;max-width:340px;margin-left:auto;margin-right:auto;}
+.timer-modal.running.mode-interval #timer-skip-row{display:flex;}
+.timer-skip-btn{flex:1;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.timer-skip-btn svg{display:block;}
+.timer-skip-btn:active{opacity:0.8;}
 .timer-config{margin-bottom:28px;}
 .timer-presets{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
 .timer-presets button{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:12px 18px;border-radius:10px;cursor:pointer;transition:all 0.15s;}
@@ -297,6 +310,7 @@ input[type="file"]{display:none;}
     </div>
     <div id="timer-display-big" class="timer-display-big">00:00</div>
     <div id="timer-phase" class="timer-phase"></div>
+    <div id="timer-next" class="timer-next"></div>
     <div id="timer-stopwatch-config" class="timer-config"><div style="color:var(--text3);font-family:var(--mono);font-size:13px">Conta para cima · sem limite</div></div>
     <div id="timer-simple-config" class="timer-config" style="display:none">
       <div class="timer-presets">
@@ -318,6 +332,10 @@ input[type="file"]{display:none;}
     <div class="timer-controls">
       <button id="timer-start-btn" class="timer-big-btn" onclick="toggleBigTimer()" aria-label="Iniciar"><svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
       <button class="timer-reset-btn" onclick="resetBigTimer()">↺</button>
+    </div>
+    <div id="timer-skip-row">
+      <button class="timer-skip-btn" onclick="advanceBigTimerPhase(-1)" aria-label="Intervalo anterior"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+      <button class="timer-skip-btn" onclick="advanceBigTimerPhase(1)" aria-label="Próximo intervalo"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
     </div>
   </div>
 </div>
@@ -1751,6 +1769,7 @@ let bt = {
   phase: 'work',
   currentRound: 1,
   audioCtx: null,
+  masterChain: null,
   wakeLock: null,
   startedAt: 0,        // stopwatch real start (ms)
   phaseEndsAt: 0       // countdown/interval phase end (ms)
@@ -1799,6 +1818,7 @@ function setTimerMode(mode) {
   document.getElementById('timer-stopwatch-config').style.display = mode === 'stopwatch' ? 'block' : 'none';
   document.getElementById('timer-simple-config').style.display = mode === 'simple' ? 'block' : 'none';
   document.getElementById('timer-interval-config').style.display = mode === 'interval' ? 'block' : 'none';
+  document.getElementById('timer-modal').classList.toggle('mode-interval', mode === 'interval');
   resetBigTimer();
 }
 
@@ -1833,9 +1853,19 @@ function fmtBig(sec) {
   return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
+function getNextPhaseLabel() {
+  if (bt.mode !== 'interval') return '';
+  if (bt.phase === 'prep') return `A seguir: Trabalho ${bt.work}s`;
+  if (bt.phase === 'work') return `A seguir: Descanso ${bt.rest}s`;
+  // phase === 'rest'
+  if (bt.currentRound >= bt.rounds) return 'A seguir: Fim do treino';
+  return `A seguir: Trabalho · Ronda ${bt.currentRound+1}/${bt.rounds}`;
+}
+
 function renderBigTimer() {
   const disp = document.getElementById('timer-display-big');
   const phaseEl = document.getElementById('timer-phase');
+  const nextEl = document.getElementById('timer-next');
   const modal = document.getElementById('timer-modal');
   // clear phase background classes by default
   modal.classList.remove('phase-prep','phase-work','phase-rest');
@@ -1843,6 +1873,7 @@ function renderBigTimer() {
     disp.textContent = fmtBig(bt.elapsed);
     disp.className = 'timer-display-big';
     phaseEl.textContent = '';
+    nextEl.textContent = '';
     return;
   }
   disp.textContent = fmtBig(bt.remaining);
@@ -1856,29 +1887,91 @@ function renderBigTimer() {
       phaseEl.textContent = `${bt.phase === 'work' ? 'Trabalho' : 'Descanso'} · Ronda ${bt.currentRound}/${bt.rounds}`;
       modal.classList.add(bt.phase === 'rest' ? 'phase-rest' : 'phase-work');
     }
+    nextEl.textContent = getNextPhaseLabel();
   } else {
     disp.className = 'timer-display-big';
     phaseEl.textContent = '';
+    nextEl.textContent = '';
   }
+}
+
+// Shared loud output chain: a compressor + makeup gain pushes perceived
+// loudness close to the phone speaker's ceiling without harsh clipping.
+function getAudioDest() {
+  if (!bt.audioCtx) bt.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (bt.audioCtx.state === 'suspended') bt.audioCtx.resume();
+  if (!bt.masterChain) {
+    const ctx = bt.audioCtx;
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -16;
+    comp.knee.value = 10;
+    comp.ratio.value = 14;
+    comp.attack.value = 0.002;
+    comp.release.value = 0.25;
+    const makeup = ctx.createGain();
+    makeup.gain.value = 1.6;
+    comp.connect(makeup);
+    makeup.connect(ctx.destination);
+    bt.masterChain = comp;
+  }
+  return bt.masterChain;
 }
 
 function beep(freq, dur, vol) {
   try {
-    if (!bt.audioCtx) bt.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (bt.audioCtx.state === 'suspended') bt.audioCtx.resume();
+    const dest = getAudioDest();
     const ctx = bt.audioCtx;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
+    osc.connect(gain); gain.connect(dest);
     osc.frequency.value = freq;
     // 'triangle' cuts through gym noise better than pure sine, without being harsh
     osc.type = 'triangle';
-    const v = vol || 0.6;
+    const v = vol != null ? vol : 0.9;
     gain.gain.setValueAtTime(v, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + dur);
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + dur);
   } catch(e) {}
+}
+
+// Quiet feedback tick for manual skip taps (not an alert sound)
+function uiTick() { beep(650, 0.05, 0.35); }
+
+// Bell-like "ding": layered harmonics with independent decay — much richer
+// than a single sine. Used for "fim do set" / "fim de tudo".
+function bell(freqBase, vol) {
+  try {
+    const dest = getAudioDest();
+    const ctx = bt.audioCtx;
+    const t0 = ctx.currentTime;
+    const v = vol != null ? vol : 1.0;
+    const partials = [
+      {ratio:1,   amp:1.00, decay:1.0},
+      {ratio:2.0, amp:0.6,  decay:0.85},
+      {ratio:3.0, amp:0.4,  decay:0.65},
+      {ratio:4.2, amp:0.25, decay:0.5},
+      {ratio:5.4, amp:0.15, decay:0.35},
+    ];
+    partials.forEach(p => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = (freqBase || 880) * p.ratio;
+      osc.connect(gain); gain.connect(dest);
+      gain.gain.setValueAtTime(v * p.amp, t0);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + p.decay);
+      osc.start(t0);
+      osc.stop(t0 + p.decay + 0.05);
+    });
+  } catch(e) {}
+}
+
+// Play several bell hits in a row (3x no fim do treino)
+function bellSequence(count, freq, gap) {
+  for (let i = 0; i < (count || 1); i++) {
+    setTimeout(() => bell(freq || 880, 1.0), i * (gap || 650));
+  }
 }
 
 // Play a sequence of beeps: array of [freq, durationSec, gapSec]
@@ -1893,8 +1986,7 @@ function beepSequence(steps) {
 // Coach-style whistle: a bright, sustained tone with a slight upward chirp
 function whistle() {
   try {
-    if (!bt.audioCtx) bt.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (bt.audioCtx.state === 'suspended') bt.audioCtx.resume();
+    const dest = getAudioDest();
     const ctx = bt.audioCtx;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -1903,15 +1995,15 @@ function whistle() {
     const lfoGain = ctx.createGain();
     lfo.frequency.value = 18; lfoGain.gain.value = 40;
     lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
-    osc.connect(gain); gain.connect(ctx.destination);
+    osc.connect(gain); gain.connect(dest);
     osc.type = 'sine';
     const t0 = ctx.currentTime;
     // rising chirp then steady high tone (whistle-like)
     osc.frequency.setValueAtTime(1800, t0);
     osc.frequency.linearRampToValueAtTime(2600, t0 + 0.12);
     gain.gain.setValueAtTime(0.0001, t0);
-    gain.gain.exponentialRampToValueAtTime(0.7, t0 + 0.04);
-    gain.gain.setValueAtTime(0.7, t0 + 0.45);
+    gain.gain.exponentialRampToValueAtTime(0.95, t0 + 0.04);
+    gain.gain.setValueAtTime(0.95, t0 + 0.45);
     gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.6);
     lfo.start(t0); osc.start(t0);
     lfo.stop(t0 + 0.6); osc.stop(t0 + 0.6);
@@ -1932,7 +2024,7 @@ function tickBigTimer() {
   const newRemaining = Math.max(0, Math.round((bt.phaseEndsAt - now) / 1000));
   // beep on each of the last 3 seconds (only when the visible second actually changes)
   if (newRemaining < bt.remaining && newRemaining <= 3 && newRemaining > 0) {
-    beep(700, 0.15, 0.55);
+    beep(700, 0.15, 0.85);
   }
   bt.remaining = newRemaining;
 
@@ -1949,19 +2041,18 @@ function tickBigTimer() {
         bt.phase = 'work';
         bt.remaining = bt.work;
         bt.phaseEndsAt = now + bt.work * 1000;
-        whistle();
+        whistle();                   // apito = começa a trabalhar
         vibrate([250,100,250]);
       } else if (bt.phase === 'work') {
         bt.phase = 'rest';
         bt.remaining = bt.rest;
         bt.phaseEndsAt = now + bt.rest * 1000;
-        beepSequence([[500,0.18,0.06],[440,0.3,0]]);
+        bell(880, 1.0);               // sino = fim do set, entra em descanso
         vibrate([200,100,200]);
       } else {
         if (bt.currentRound >= bt.rounds) {
-          whistle();
-          setTimeout(whistle, 700);
-          vibrate([300,120,300,120,400]);
+          whistle(); setTimeout(whistle, 600); setTimeout(whistle, 1200);  // 3 apitos = fim de tudo
+          vibrate([300,120,300,120,300,120,400]);
           stopBigTimer();
           resetBigTimer();
           return;
@@ -1970,11 +2061,42 @@ function tickBigTimer() {
         bt.phase = 'work';
         bt.remaining = bt.work;
         bt.phaseEndsAt = now + bt.work * 1000;
-        beepSequence([[800,0.15,0.06],[1000,0.35,0]]);
+        whistle();                   // apito = começa a próxima ronda
         vibrate([250,100,250]);
       }
     }
   }
+  renderBigTimer();
+}
+
+function advanceBigTimerPhase(dir) {
+  if (bt.mode !== 'interval') return;
+  if (dir > 0) {
+    if (bt.phase === 'prep') {
+      bt.phase = 'work'; bt.remaining = bt.work;
+    } else if (bt.phase === 'work') {
+      bt.phase = 'rest'; bt.remaining = bt.rest;
+    } else {
+      if (bt.currentRound >= bt.rounds) { stopBigTimer(); resetBigTimer(); return; }
+      bt.currentRound++; bt.phase = 'work'; bt.remaining = bt.work;
+    }
+  } else {
+    if (bt.phase === 'work') {
+      if (bt.currentRound > 1) {
+        bt.currentRound--; bt.phase = 'rest'; bt.remaining = bt.rest;
+      } else if (bt.prep > 0) {
+        bt.phase = 'prep'; bt.remaining = bt.prep;
+      } else {
+        bt.remaining = bt.work;
+      }
+    } else if (bt.phase === 'rest') {
+      bt.phase = 'work'; bt.remaining = bt.work;
+    } else {
+      bt.remaining = bt.prep;
+    }
+  }
+  uiTick();
+  if (bt.running) bt.phaseEndsAt = Date.now() + bt.remaining * 1000;
   renderBigTimer();
 }
 
