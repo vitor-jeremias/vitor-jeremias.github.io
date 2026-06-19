@@ -418,9 +418,9 @@ const WORKOUTS = {
     {id:"slle1",name:"Single-Leg Leg Extension",     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"slc1",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
     {id:"abd1",name:"Cadeira Abdutora",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
-    {id:"mcr", name:"Smith Machine Calf Raise",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
+    {id:"mcr", name:"Standing Calf Raise (máquina)",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"cc1", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
-  ],coreRef:["Bird Dog — 3×10/lado","Side Plank — 3×20–30seg/lado","Glute Bridge — 3×15"]},
+  ],coreRef:["Bird Dog — 3×10/lado","Side Plank — 3×20–30seg/lado","Glute Bridge — 3×15","Hiperextensão lombar — 3×12–15 (leve, foco glúteo)"]},
   upper2:{name:"Upper 2",type:"upper",day:"Quinta",sub:"Costas · Peito · Ombros · Braços",exercises:[
     {id:"ilr", name:"Iso-Lateral Row",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"machine",warmup:true,rest:"2–3 min"},
     {id:"ism", name:"Press Inclinado Isolateral",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","ombros"],inc:"machine",warmup:true,rest:"2–3 min"},
@@ -437,9 +437,9 @@ const WORKOUTS = {
     {id:"lp",  name:"Leg Press",                     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
     {id:"slle2",name:"Leg Extension (bilateral)",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"slc2",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
-    {id:"cr",  name:"Smith Machine Calf Raise",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
+    {id:"cr",  name:"Standing Calf Raise (máquina)",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"cc2", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
-  ],coreRef:["Bird Dog — 3×10/lado","Side Plank — 3×20–30seg/lado","Glute Bridge — 3×15"]}
+  ],coreRef:["Bird Dog — 3×10/lado","Side Plank — 3×20–30seg/lado","Glute Bridge — 3×15","Hiperextensão lombar — 3×12–15 (leve, foco glúteo)"]}
 };
 
 const DAYS = [
@@ -547,7 +547,7 @@ const CARDIO_PLANS = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v92';
+const APP_VERSION = 'v93';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
