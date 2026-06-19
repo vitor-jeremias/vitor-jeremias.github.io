@@ -87,7 +87,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ex-warmup-title{font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;opacity:0.8;}
 .ex-warmup-sets{color:var(--text);font-weight:600;font-size:15px;}
 .sets-area{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;}
-.set-row{display:grid;grid-template-columns:32px 1fr 1fr;gap:10px;align-items:center;}
+.set-row{display:grid;grid-template-columns:32px 1fr 1fr;gap:10px;align-items:center;position:relative;transition:opacity 0.15s;}
+.set-row.done .set-num{color:var(--accent);}
+.set-row.done .set-num::after{content:'✓';display:block;font-size:11px;line-height:1;margin-top:1px;}
+.set-row.done .set-input{border-color:var(--accent);background:rgba(57,255,136,0.06);}
 .set-num{font-size:18px;color:var(--text2);font-family:var(--mono);text-align:center;font-weight:700;}
 .set-input-wrap{position:relative;}
 .set-input-label{position:absolute;top:50%;left:14px;transform:translateY(-50%);font-size:14px;color:var(--text3);font-family:var(--mono);pointer-events:none;font-weight:600;}
@@ -194,6 +197,28 @@ input[type="file"]{display:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .history-empty{text-align:center;padding:60px 20px;color:var(--text3);}
 .rest-btn{width:100%;padding:16px;background:rgba(57,255,136,0.08);border:1.5px solid var(--accent);border-radius:12px;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.timer-mini{position:fixed;left:12px;right:12px;bottom:12px;z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:var(--accent);color:#0a0e0c;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,0.4);cursor:pointer;animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1);}
+.timer-mini.show{display:flex;}
+@keyframes miniUp{from{transform:translateY(120%);}to{transform:translateY(0);}}
+.timer-mini-left{display:flex;align-items:center;gap:10px;min-width:0;}
+.timer-mini-icon{display:flex;width:18px;height:18px;}
+.timer-mini-icon svg{width:18px;height:18px;}
+.timer-mini-label{font-family:var(--font);font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.timer-mini-time{font-family:var(--mono);font-size:22px;font-weight:800;letter-spacing:0.5px;}
+/* Water lock */
+.timer-lock-btn{display:none;align-items:center;justify-content:center;gap:7px;margin:18px auto 0;padding:11px 22px;background:transparent;border:1px solid var(--border);border-radius:50px;color:var(--text2);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;}
+.timer-modal.running .timer-lock-btn{display:flex;}
+.timer-modal.running.phase-work .timer-lock-btn,
+.timer-modal.running.phase-rest .timer-lock-btn,
+.timer-modal.running.phase-prep .timer-lock-btn{border-color:rgba(10,14,12,0.25);color:rgba(10,14,12,0.55);}
+.timer-lock-overlay{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.28);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);}
+.timer-lock-overlay.active{display:flex;}
+.timer-lock-hint{display:flex;flex-direction:column;align-items:center;gap:14px;color:rgba(255,255,255,0.92);position:relative;user-select:none;}
+.timer-lock-ring{position:relative;width:80px;height:80px;}
+.timer-lock-ring svg{width:80px;height:80px;transform:rotate(-90deg);}
+.timer-lock-ring .ring-bg{fill:none;stroke:rgba(255,255,255,0.2);stroke-width:5;}
+.timer-lock-ring .ring-fill{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:214;stroke-dashoffset:214;transition:stroke-dashoffset 0.05s linear;}
+.timer-lock-text{font-family:var(--mono);font-size:13px;text-align:center;line-height:1.5;letter-spacing:1px;text-transform:uppercase;}
 .rest-btn:active{background:var(--accent);color:#0a0e0c;}
 /* Timer FAB + Modal */
 #timer-fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);z-index:500;transition:transform 0.15s;}
@@ -308,7 +333,7 @@ input[type="file"]{display:none;}
 </button>
 <div id="timer-modal" class="timer-modal">
   <div class="timer-modal-inner">
-    <button class="timer-close" onclick="closeTimerModal()">✕</button>
+    <button class="timer-close" onclick="closeTimerModal()" aria-label="Fechar cronómetro">✕</button>
     <div id="timer-total" class="timer-total"></div>
     <div class="timer-mode-switch">
       <button id="tm-stopwatch" class="timer-mode-btn active" onclick="setTimerMode('stopwatch')">Cronómetro</button>
@@ -338,15 +363,30 @@ input[type="file"]{display:none;}
     </div>
     <div class="timer-controls">
       <button id="timer-start-btn" class="timer-big-btn" onclick="toggleBigTimer()" aria-label="Iniciar"><svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-      <button class="timer-reset-btn" onclick="resetBigTimer()">↺</button>
+      <button class="timer-reset-btn" onclick="resetBigTimer()" aria-label="Reiniciar cronómetro">↺</button>
     </div>
     <div id="timer-skip-row">
       <button class="timer-skip-btn" onclick="advanceBigTimerPhase(-1)" aria-label="Intervalo anterior"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
       <button class="timer-skip-btn" onclick="advanceBigTimerPhase(1)" aria-label="Próximo intervalo"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
     </div>
+    <button id="timer-lock-btn" class="timer-lock-btn" onclick="lockTimer()" aria-label="Bloquear ecrã"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Bloquear</span></button>
+  </div>
+  <div id="timer-lock-overlay" class="timer-lock-overlay">
+    <div class="timer-lock-hint">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      <div class="timer-lock-ring"><svg viewBox="0 0 80 80"><circle class="ring-bg" cx="40" cy="40" r="34"/><circle id="lock-ring-fill" class="ring-fill" cx="40" cy="40" r="34"/></svg></div>
+      <div class="timer-lock-text">Mantém premido<br>para desbloquear</div>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div id="timer-mini" class="timer-mini" onclick="reopenTimer()">
+  <div class="timer-mini-left">
+    <span id="timer-mini-icon" class="timer-mini-icon"></span>
+    <span id="timer-mini-label" class="timer-mini-label">Descanso</span>
+  </div>
+  <span id="timer-mini-time" class="timer-mini-time">00:00</span>
+</div>
 
 <script>
 // ======================== WORKOUT DATA ========================
@@ -507,6 +547,7 @@ const CARDIO_PLANS = {
 };
 
 // ======================== SUPABASE CONFIG ========================
+const APP_VERSION = 'v92';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -949,9 +990,49 @@ function getTimerSeconds() {
   return total;
 }
 
-function startWorkout(key) { currentWorkout = key; resetTimer(); requestWakeLock(); renderSession(); restoreTimer(); }
+function startWorkout(key) { currentWorkout = key; _autoRestFired = {}; resetTimer(); requestWakeLock(); renderSession(); restoreTimer(); }
 
 function draftKey() { return 'vt_draft_' + currentWorkout; }
+
+// Tracks which exercises have already auto-triggered rest (so it fires only once per exercise per session)
+let _autoRestFired = {};
+
+// Called on every input in a set row: saves draft, marks the row done, and
+// auto-starts the rest countdown after each set EXCEPT the last (no rest needed
+// after the final set — you move to the next exercise).
+function onSetInput(exId, setNum) {
+  saveDraft();
+  const row = document.getElementById(`row_${exId}_${setNum}`);
+  if (!row) return;
+  const wEl = document.getElementById(`w_${exId}_${setNum}`);
+  const rEl = document.getElementById(`r_${exId}_${setNum}`);
+  const wv = parseFloat(wEl?.value);
+  const rv = parseInt(rEl?.value, 10);
+  // a set counts as done once it has valid REPS (weight may be pre-filled, so reps is the real signal)
+  const filled = isFinite(rv) && rv > 0;
+  row.classList.toggle('done', filled);
+
+  // Auto-rest after completing a set that is NOT the last one.
+  // Only fires if no timer is already running — so a manually-started rest (or one
+  // already counting) is never reset when you register the reps afterwards.
+  if (filled && row.dataset.last !== '1') {
+    const fireKey = exId + '_' + setNum;
+    const w = WORKOUTS[currentWorkout];
+    const ex = w && w.exercises.find(e => e.id === exId);
+    if (ex && ex.rest && !_autoRestFired[fireKey] && !bt.running) {
+      _autoRestFired[fireKey] = true;
+      const rs = parseRestSeconds(ex.rest);
+      if (rs > 0) {
+        if (wEl) wEl.blur();
+        if (rEl) rEl.blur();
+        startRest(rs);
+      }
+    } else if (filled) {
+      // mark as "handled" so it won't retro-trigger later when the timer stops
+      _autoRestFired[fireKey] = true;
+    }
+  }
+}
 
 function saveDraft() {
   if (!currentWorkout) return;
@@ -981,6 +1062,19 @@ function loadDraft() {
     Object.keys(draft).forEach(id => {
       const el = document.getElementById(id);
       if (el) { el.value = draft[id]; restored = true; }
+    });
+    // re-mark completed rows + prevent auto-rest from firing for already-filled sets
+    const w = WORKOUTS[currentWorkout];
+    if (w) w.exercises.forEach(ex => {
+      for (let i = 1; i <= ex.sets; i++) {
+        const rEl = document.getElementById(`r_${ex.id}_${i}`);
+        const row = document.getElementById(`row_${ex.id}_${i}`);
+        if (!row || !rEl) continue;
+        const rv = parseInt(rEl.value, 10);
+        const filled = isFinite(rv) && rv > 0;
+        row.classList.toggle('done', filled);
+        if (filled && row.dataset.last !== '1') _autoRestFired[ex.id + '_' + i] = true;
+      }
     });
     if (restored) showToast('Rascunho recuperado');
   } catch(e) {}
@@ -1088,13 +1182,17 @@ function renderSession() {
 
     for (let i = 1; i <= ex.sets; i++) {
       const ls = lastEx && lastEx.sets[i-1];
-      html += `<div class="set-row">
+      const isLast = (i === ex.sets) ? 1 : 0;
+      // pre-fill weight with the suggested load (editable); fallback to last session's weight
+      const preWeight = (suggestedWeight != null && suggestedWeight > 0) ? suggestedWeight
+                        : (ls && ls.weight > 0 ? ls.weight : (ex.bodyweight ? 0 : ''));
+      html += `<div class="set-row" id="row_${ex.id}_${i}" data-ex="${ex.id}" data-set="${i}" data-last="${isLast}">
         <div class="set-num">${i}</div>
         <div class="set-input-wrap"><span class="set-input-label">${ex.bodyweight ? 'lastro' : 'kg'}</span>
-          <input class="set-input" type="number" inputmode="decimal" id="w_${ex.id}_${i}" oninput="saveDraft()" placeholder="${suggestedWeight || (ls?ls.weight:(ex.bodyweight?'0':''))}" style="${ex.bodyweight?'padding-left:48px':''}">
+          <input class="set-input" type="number" inputmode="decimal" id="w_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" value="${preWeight}" style="${ex.bodyweight?'padding-left:48px':''}">
         </div>
         <div class="set-input-wrap"><span class="set-input-label">×</span>
-          <input class="set-input" type="number" inputmode="numeric" id="r_${ex.id}_${i}" oninput="saveDraft()" placeholder="${ls?ls.reps:''}">
+          <input class="set-input" type="number" inputmode="numeric" id="r_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" placeholder="${ls?ls.reps:''}">
         </div>
       </div>`;
     }
@@ -1128,10 +1226,15 @@ async function saveSession() {
   const exData = w.exercises.map(ex => {
     const sets = [];
     for (let i = 1; i <= ex.sets; i++) {
-      const weight = parseFloat(document.getElementById(`w_${ex.id}_${i}`)?.value)||0;
-      const reps = parseInt(document.getElementById(`r_${ex.id}_${i}`)?.value)||0;
-      if (weight>0||reps>0) anyFilled = true;
-      sets.push({weight, reps});
+      let weight = parseFloat(document.getElementById(`w_${ex.id}_${i}`)?.value);
+      let reps = parseInt(document.getElementById(`r_${ex.id}_${i}`)?.value, 10);
+      // sanitize: discard NaN / negatives / implausible values so lixo never enters the data
+      weight = (!isFinite(weight) || weight < 0) ? 0 : Math.min(weight, 1000);
+      reps = (!isFinite(reps) || reps < 0) ? 0 : Math.min(reps, 500);
+      // a set only counts if it has reps actually performed; otherwise store as empty
+      // (weight is pre-filled with the suggestion, so reps is the real "did it" signal)
+      if (reps > 0) { anyFilled = true; sets.push({weight, reps}); }
+      else { sets.push({weight: 0, reps: 0}); }
     }
     return {id:ex.id, name:ex.name, sets};
   });
@@ -1649,7 +1752,8 @@ function renderDados() {
       <div class="dados-title">Conta</div>
       <div class="dados-desc">Termina a sessão neste dispositivo.</div>
       <button class="dados-btn" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)" onclick="logout()">Terminar sessão</button>
-    </div>`;
+    </div>
+    <div style="text-align:center;padding:8px 0 4px;color:var(--text3);font-size:11px;font-family:var(--mono);letter-spacing:1px">UNFYN · ${APP_VERSION}</div>`;
 }
 
 function exportData() {
@@ -1756,6 +1860,16 @@ async function startApp() {
 document.addEventListener('DOMContentLoaded', async function() {
   // Allow Enter key to submit login
   document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  // Water lock: hold the overlay to unlock
+  const lockOv = document.getElementById('timer-lock-overlay');
+  if (lockOv) {
+    lockOv.addEventListener('touchstart', unlockBegin, {passive:false});
+    lockOv.addEventListener('touchend', unlockCancel);
+    lockOv.addEventListener('touchcancel', unlockCancel);
+    lockOv.addEventListener('mousedown', unlockBegin);
+    lockOv.addEventListener('mouseup', unlockCancel);
+    lockOv.addEventListener('mouseleave', unlockCancel);
+  }
   if (loadAuth()) {
     showApp();
     await startApp();
@@ -1805,6 +1919,7 @@ function parseRestSeconds(txt) {
 
 // Open timer in countdown mode pre-set to the given seconds and start immediately
 function startRest(seconds) {
+  hideMiniTimer();
   document.getElementById('timer-modal').classList.add('open');
   setTimerMode('simple');
   bt.simpleTime = seconds;
@@ -1813,10 +1928,103 @@ function startRest(seconds) {
   startBigTimer();
 }
 function closeTimerModal() {
+  // If a timer is actively running, don't kill it — minimize to a floating bar
+  // so it keeps counting while you register your sets behind it.
+  if (bt.running) { minimizeTimer(); return; }
   stopBigTimer();
   const m = document.getElementById('timer-modal');
   m.classList.remove('open');
   m.classList.remove('running');
+  hideMiniTimer();
+}
+
+function minimizeTimer() {
+  const m = document.getElementById('timer-modal');
+  m.classList.remove('open');           // hide fullscreen modal
+  const lockOv = document.getElementById('timer-lock-overlay');
+  if (lockOv) lockOv.classList.remove('active');
+  // timer keeps running (bt.running stays true, interval still ticking)
+  showMiniTimer();
+  updateMiniTimer();
+}
+
+function reopenTimer() {
+  const m = document.getElementById('timer-modal');
+  m.classList.add('open');
+  hideMiniTimer();
+  renderBigTimer();
+}
+
+// ===== Water lock (prevents accidental taps from sweat/water) =====
+let _lockHoldStart = 0;
+let _lockHoldRAF = null;
+const LOCK_HOLD_MS = 2000;
+
+function lockTimer() {
+  const ov = document.getElementById('timer-lock-overlay');
+  if (ov) ov.classList.add('active');
+}
+
+function unlockBegin(e) {
+  if (e && e.cancelable) e.preventDefault();
+  _lockHoldStart = Date.now();
+  const ringFill = document.getElementById('lock-ring-fill');
+  const step = () => {
+    const held = Date.now() - _lockHoldStart;
+    const pct = Math.min(1, held / LOCK_HOLD_MS);
+    if (ringFill) ringFill.style.strokeDashoffset = String(214 * (1 - pct));
+    if (pct >= 1) { unlockComplete(); return; }
+    _lockHoldRAF = requestAnimationFrame(step);
+  };
+  _lockHoldRAF = requestAnimationFrame(step);
+}
+
+function unlockCancel() {
+  if (_lockHoldRAF) cancelAnimationFrame(_lockHoldRAF);
+  _lockHoldRAF = null;
+  const ringFill = document.getElementById('lock-ring-fill');
+  if (ringFill) ringFill.style.strokeDashoffset = '214';
+}
+
+function unlockComplete() {
+  if (_lockHoldRAF) cancelAnimationFrame(_lockHoldRAF);
+  _lockHoldRAF = null;
+  const ov = document.getElementById('timer-lock-overlay');
+  if (ov) ov.classList.remove('active');
+  const ringFill = document.getElementById('lock-ring-fill');
+  if (ringFill) ringFill.style.strokeDashoffset = '214';
+  if (navigator.vibrate) navigator.vibrate(40);
+}
+
+function showMiniTimer() {
+  const el = document.getElementById('timer-mini');
+  if (el) el.classList.add('show');
+}
+function hideMiniTimer() {
+  const el = document.getElementById('timer-mini');
+  if (el) el.classList.remove('show');
+}
+
+function updateMiniTimer() {
+  const el = document.getElementById('timer-mini');
+  if (!el || !el.classList.contains('show')) return;
+  const iconEl = document.getElementById('timer-mini-icon');
+  const labelEl = document.getElementById('timer-mini-label');
+  const timeEl = document.getElementById('timer-mini-time');
+  if (iconEl) iconEl.innerHTML = SVG.timer;
+  let label, timeText;
+  if (bt.mode === 'stopwatch') {
+    label = 'Cronómetro';
+    timeText = fmtBig(bt.elapsed);
+  } else if (bt.mode === 'interval') {
+    label = bt.phase === 'prep' ? 'Prepara-te' : (bt.phase === 'work' ? `Trabalho ${bt.currentRound}/${bt.rounds}` : `Descanso ${bt.currentRound}/${bt.rounds}`);
+    timeText = String(bt.remaining);
+  } else {
+    label = 'Descanso';
+    timeText = fmtBig(bt.remaining);
+  }
+  if (labelEl) labelEl.textContent = label;
+  if (timeEl) timeEl.textContent = timeText;
 }
 
 function setTimerMode(mode) {
@@ -2051,6 +2259,7 @@ function tickBigTimer() {
     // elapsed computed from real start time (accurate even after throttling)
     bt.elapsed = Math.floor((now - bt.startedAt) / 1000);
     renderBigTimer();
+    updateMiniTimer();
     return;
   }
   // remaining computed from the real phase end time
@@ -2065,9 +2274,12 @@ function tickBigTimer() {
     if (bt.mode === 'simple') {
       beepSequence([[900,0.18,0.08],[900,0.18,0.08],[1100,0.45,0]]);
       vibrate([300,120,300]);
+      const wasMinimized = document.getElementById('timer-mini')?.classList.contains('show');
       stopBigTimer();
       bt.remaining = bt.simpleTime;
       renderBigTimer();
+      hideMiniTimer();
+      if (wasMinimized) showToast('Descanso terminado');
       return;
     } else {
       if (bt.phase === 'prep') {
@@ -2100,6 +2312,7 @@ function tickBigTimer() {
     }
   }
   renderBigTimer();
+  updateMiniTimer();
 }
 
 function advanceBigTimerPhase(dir) {
@@ -2192,6 +2405,9 @@ function stopBigTimer() {
   bt.running = false;
   if (bt.interval) clearInterval(bt.interval);
   bt.interval = null;
+  hideMiniTimer();
+  const lockOv = document.getElementById('timer-lock-overlay');
+  if (lockOv) lockOv.classList.remove('active');
   // only release the screen lock if we're NOT in an active workout session
   if (!currentWorkout) releaseWakeLock();
   const modal = document.getElementById('timer-modal');
