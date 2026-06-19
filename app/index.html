@@ -406,7 +406,7 @@ const CABLE_FLY_STACK = [9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 64, 68, 
 const PLATES = [20, 15, 10, 5];
 const BAR_WEIGHT = 20; // barra olímpica
 
-// Decompõe um peso POR LADO na combinação de discos. Devolve {plates:[...], leftover}
+// Decompõe um peso POR LADO na combinação de discos disponíveis. Devolve {plates:[...], leftover}
 function platesForSide(perSide) {
   const out = [];
   let rem = perSide;
@@ -433,7 +433,7 @@ function smartPlatesText(ex, totalWeight) {
   }
   const { plates, leftover } = platesForSide(perSide);
   if (!plates.length) return leftover > 0 ? `${leftover}kg/lado (sem discos exatos)` : null;
-  // agrupa repetidos: "2×20 + 10"
+  // agrupa repetidos: "2×25 + 10"
   const counts = {};
   plates.forEach(p => counts[p] = (counts[p] || 0) + 1);
   const parts = Object.keys(counts).sort((a,b)=>b-a).map(p => counts[p] > 1 ? `${counts[p]}×${p}` : `${p}`);
@@ -475,7 +475,7 @@ const WORKOUTS = {
   ]},
   lower2:{name:"Lower 2",type:"lower",day:"Sexta",sub:"Femoral · Quad · Gémeos · Abdómen",exercises:[
     {id:"rdl", name:"Romanian Deadlift",       sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",plate:"bar",warmup:true,rest:"2–3 min"},
-    {id:"lp",  name:"Leg Press",                     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",plate:"total",warmup:true,rest:"2–3 min"},
+    {id:"lp",  name:"Leg Press",                     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
     {id:"slle2",name:"Leg Extension (bilateral)",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"slc2",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
     {id:"cr",  name:"Standing Calf Raise (máquina)",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
@@ -589,7 +589,7 @@ const CARDIO_PLANS = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v95';
+const APP_VERSION = 'v97';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
