@@ -91,6 +91,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .set-row.done .set-num{color:var(--accent);}
 .set-row.done .set-num::after{content:'✓';display:block;font-size:11px;line-height:1;margin-top:1px;}
 .set-row.done .set-input{border-color:var(--accent);background:rgba(57,255,136,0.06);}
+.plate-hint{font-family:var(--mono);font-size:12px;color:var(--text3);padding:2px 0 4px 42px;letter-spacing:0.3px;}
 .set-num{font-size:18px;color:var(--text2);font-family:var(--mono);text-align:center;font-weight:700;}
 .set-input-wrap{position:relative;}
 .set-input-label{position:absolute;top:50%;left:14px;transform:translateY(-50%);font-size:14px;color:var(--text3);font-family:var(--mono);pointer-events:none;font-weight:600;}
@@ -197,14 +198,14 @@ input[type="file"]{display:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .history-empty{text-align:center;padding:60px 20px;color:var(--text3);}
 .rest-btn{width:100%;padding:16px;background:rgba(57,255,136,0.08);border:1.5px solid var(--accent);border-radius:12px;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.timer-mini{position:fixed;left:12px;right:12px;bottom:12px;z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:var(--accent);color:#0a0e0c;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,0.4);cursor:pointer;animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1);}
+.timer-mini{position:fixed;left:12px;right:12px;bottom:12px;z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:9px 16px;background:var(--accent);color:#0a0e0c;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.35);cursor:pointer;animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1);}
 .timer-mini.show{display:flex;}
 @keyframes miniUp{from{transform:translateY(120%);}to{transform:translateY(0);}}
-.timer-mini-left{display:flex;align-items:center;gap:10px;min-width:0;}
-.timer-mini-icon{display:flex;width:18px;height:18px;}
-.timer-mini-icon svg{width:18px;height:18px;}
-.timer-mini-label{font-family:var(--font);font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.timer-mini-time{font-family:var(--mono);font-size:22px;font-weight:800;letter-spacing:0.5px;}
+.timer-mini-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.timer-mini-icon{display:flex;width:15px;height:15px;}
+.timer-mini-icon svg{width:15px;height:15px;}
+.timer-mini-label{font-family:var(--font);font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.timer-mini-time{font-family:var(--mono);font-size:17px;font-weight:800;letter-spacing:0.5px;}
 /* Water lock */
 .timer-lock-btn{display:none;align-items:center;justify-content:center;gap:7px;margin:18px auto 0;padding:11px 22px;background:transparent;border:1px solid var(--border);border-radius:50px;color:var(--text2);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;}
 .timer-modal.running .timer-lock-btn{display:flex;}
@@ -262,7 +263,7 @@ input[type="file"]{display:none;}
 .timer-modal.running .timer-mode-switch,
 .timer-modal.running .timer-config{display:none!important;}
 .timer-modal.running .timer-display-big{font-size:min(24vw,180px);margin-bottom:24px;letter-spacing:0;width:100%;text-align:center;line-height:0.9;}
-.timer-modal.running.mode-interval .timer-display-big{font-size:min(52vw,360px);margin-bottom:16px;font-weight:800;}
+.timer-modal.running.mode-interval .timer-display-big{font-size:min(44vw,300px);margin-top:8px;margin-bottom:18px;font-weight:800;}
 .timer-modal.running .timer-phase{font-size:22px;margin-bottom:6px;letter-spacing:3px;}
 .timer-modal.running.mode-interval .timer-next{display:block;font-size:15px;margin-bottom:40px;color:rgba(240,244,241,0.6);}
 .timer-modal.running.mode-interval.phase-prep .timer-next,
@@ -271,7 +272,7 @@ input[type="file"]{display:none;}
 .timer-modal.running .timer-controls{max-width:340px;margin:0 auto;}
 .timer-phase{font-family:var(--mono);font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text2);min-height:24px;margin-bottom:6px;}
 .timer-next{display:none;font-family:var(--mono);font-size:13px;color:var(--text3);letter-spacing:1px;margin-bottom:28px;min-height:16px;}
-.timer-total{display:none;font-family:var(--mono);font-size:30px;font-weight:700;color:var(--accent);text-align:center;letter-spacing:1px;margin-bottom:8px;}
+.timer-total{display:none;font-family:var(--mono);font-size:40px;font-weight:700;color:var(--accent);text-align:center;letter-spacing:1px;margin-bottom:24px;}
 .timer-modal.running.mode-interval .timer-total{display:block;}
 .timer-modal.running.mode-interval.phase-prep .timer-total,
 .timer-modal.running.mode-interval.phase-work .timer-total,
@@ -401,11 +402,51 @@ const INCREMENTS = {
 };
 const CABLE_FLY_STACK = [9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 64, 68, 73, 77, 82, 86, 91, 95];
 
+// Smart Plates — discos disponíveis no ginásio (kg), do maior para o menor
+const PLATES = [20, 15, 10, 5];
+const BAR_WEIGHT = 20; // barra olímpica
+
+// Decompõe um peso POR LADO na combinação de discos. Devolve {plates:[...], leftover}
+function platesForSide(perSide) {
+  const out = [];
+  let rem = perSide;
+  for (const p of PLATES) {
+    while (rem >= p - 0.001) { out.push(p); rem -= p; }
+  }
+  return { plates: out, leftover: Math.max(0, Math.round(rem * 100) / 100) };
+}
+
+// Dado um exercício de disco e o peso registado, devolve o texto dos discos por lado.
+// plate: "bar" (total c/ barra), "total" (discos totais), "side" (já é por lado)
+function smartPlatesText(ex, totalWeight) {
+  if (!ex.plate || !(totalWeight > 0)) return null;
+  let perSide;
+  if (ex.plate === 'bar') {
+    const afterBar = totalWeight - BAR_WEIGHT;
+    if (afterBar < 0) return `só barra (${BAR_WEIGHT}kg)`;
+    if (afterBar === 0) return `barra vazia (${BAR_WEIGHT}kg)`;
+    perSide = afterBar / 2;
+  } else if (ex.plate === 'total') {
+    perSide = totalWeight / 2;
+  } else { // side
+    perSide = totalWeight;
+  }
+  const { plates, leftover } = platesForSide(perSide);
+  if (!plates.length) return leftover > 0 ? `${leftover}kg/lado (sem discos exatos)` : null;
+  // agrupa repetidos: "2×20 + 10"
+  const counts = {};
+  plates.forEach(p => counts[p] = (counts[p] || 0) + 1);
+  const parts = Object.keys(counts).sort((a,b)=>b-a).map(p => counts[p] > 1 ? `${counts[p]}×${p}` : `${p}`);
+  let txt = parts.join(' + ') + ' /lado';
+  if (leftover > 0) txt += ` (+${leftover}kg em falta)`;
+  return txt;
+}
+
 const WORKOUTS = {
   upper1:{name:"Upper 1",type:"upper",day:"Segunda",sub:"Peito · Costas · Ombros · Braços",exercises:[
     {id:"elev",name:"Elevações na Barra",            sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"bodyweight",bodyweight:true,rest:"2–3 min"},
     {id:"mbp", name:"Machine Bench Press",           sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","triceps"],inc:"machine",warmup:true,rest:"2–3 min"},
-    {id:"csr", name:"Chest-Supported Row",           sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"machine",warmup:true,rest:"2–3 min"},
+    {id:"csr", name:"Chest-Supported Row",           sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"machine",plate:"side",warmup:true,rest:"2–3 min"},
     {id:"mcf", name:"Machine Chest Fly",             sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"machine",rest:"90 seg"},
     {id:"clr", name:"Shoulder Trainer Lateral",    sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"ctp", name:"Cable Triceps Pushdown",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
@@ -413,7 +454,7 @@ const WORKOUTS = {
     {id:"rpd1",name:"Face Pull",                     sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
   ]},
   lower1:{name:"Lower 1",type:"lower",day:"Terça",sub:"Quad · Glúteo · Femoral · Gémeos",exercises:[
-    {id:"bs",  name:"Barbell Squat", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
+    {id:"bs",  name:"Barbell Squat", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",plate:"bar",warmup:true,rest:"2–3 min"},
     {id:"bss", name:"Bulgarian Split Squat",         sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"dumbbell",rest:"2–3 min"},
     {id:"slle1",name:"Single-Leg Leg Extension",     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"slc1",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
@@ -422,8 +463,8 @@ const WORKOUTS = {
     {id:"cc1", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
   ],coreRef:["Bird Dog — 3×10/lado","Side Plank — 3×20–30seg/lado","Glute Bridge — 3×15","Hiperextensão lombar — 3×12–15 (leve, foco glúteo)"]},
   upper2:{name:"Upper 2",type:"upper",day:"Quinta",sub:"Costas · Peito · Ombros · Braços",exercises:[
-    {id:"ilr", name:"Iso-Lateral Row",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"machine",warmup:true,rest:"2–3 min"},
-    {id:"ism", name:"Press Inclinado Isolateral",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","ombros"],inc:"machine",warmup:true,rest:"2–3 min"},
+    {id:"ilr", name:"Iso-Lateral Row",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"machine",plate:"side",warmup:true,rest:"2–3 min"},
+    {id:"ism", name:"Press Inclinado Isolateral",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","ombros"],inc:"machine",plate:"side",warmup:true,rest:"2–3 min"},
     {id:"tglp",name:"Triangle Grip Lat Pulldown",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"msp", name:"Machine Shoulder Press",        sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"ccf", name:"Cable Chest Fly",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"cable_fly",rest:"90 seg",pulley:"Polia média (cintura)"},
@@ -433,8 +474,8 @@ const WORKOUTS = {
     {id:"rpd2",name:"Reverse Pec Deck",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
   ]},
   lower2:{name:"Lower 2",type:"lower",day:"Sexta",sub:"Femoral · Quad · Gémeos · Abdómen",exercises:[
-    {id:"rdl", name:"Romanian Deadlift",       sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
-    {id:"lp",  name:"Leg Press",                     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
+    {id:"rdl", name:"Romanian Deadlift",       sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",plate:"bar",warmup:true,rest:"2–3 min"},
+    {id:"lp",  name:"Leg Press",                     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",plate:"total",warmup:true,rest:"2–3 min"},
     {id:"slle2",name:"Leg Extension (bilateral)",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"slc2",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
     {id:"cr",  name:"Standing Calf Raise (máquina)",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
@@ -512,6 +553,7 @@ const SVG = {
   play: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M8 5v14l11-7z"/></svg>',
   save: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H5V5h10v4z"/></svg>',
   timer: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.96 8.96 0 0 0 12 4a9 9 0 1 0 9 9c0-2.12-.74-4.07-1.97-5.61zM12 20a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></svg>',
+  plate: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>',
   swim: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M22 17c-1 0-1.5.5-2.5.5S18 17 17 17s-1.5.5-2.5.5S13 17 12 17s-1.5.5-2.5.5S8 17 7 17s-1.5.5-2.5.5S2 17 2 17v2c1 0 1.5.5 2.5.5S7 19 8 19s1.5-.5 2.5-.5S13 19 14 19s1.5-.5 2.5-.5S19 19 20 19s1.5-.5 2-.5v-2zM6.5 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm4.86 1.21l3-2.13-1.2-.85a3 3 0 0 0-2.9-.3L7 10.5c1.3.3 2.4 1 3.36 1.71z"/></svg>',
   run: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M13.5 5.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3A7.3 7.3 0 0 0 19 13v-2a5.3 5.3 0 0 1-4.5-2.5l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 6.3V11h2V7.6l1.8-.7z"/></svg>',
   bulb: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19A7 7 0 0 0 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 0 0-7-7z"/></svg>',
@@ -547,7 +589,7 @@ const CARDIO_PLANS = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v93';
+const APP_VERSION = 'v95';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1008,6 +1050,17 @@ function onSetInput(exId, setNum) {
   const rEl = document.getElementById(`r_${exId}_${setNum}`);
   const wv = parseFloat(wEl?.value);
   const rv = parseInt(rEl?.value, 10);
+
+  // Smart Plates: update the per-side plate breakdown for this set
+  const w0 = WORKOUTS[currentWorkout];
+  const exDef = w0 && w0.exercises.find(e => e.id === exId);
+  const hintEl = document.getElementById(`plate_${exId}_${setNum}`);
+  if (hintEl && exDef && exDef.plate) {
+    const txt = smartPlatesText(exDef, wv);
+    if (txt) { hintEl.innerHTML = SVG.plate + ' ' + txt; hintEl.style.display = ''; }
+    else { hintEl.innerHTML = ''; hintEl.style.display = 'none'; }
+  }
+
   // a set counts as done once it has valid REPS (weight may be pre-filled, so reps is the real signal)
   const filled = isFinite(rv) && rv > 0;
   row.classList.toggle('done', filled);
@@ -1195,6 +1248,10 @@ function renderSession() {
           <input class="set-input" type="number" inputmode="numeric" id="r_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" placeholder="${ls?ls.reps:''}">
         </div>
       </div>`;
+      if (ex.plate) {
+        const initTxt = smartPlatesText(ex, parseFloat(preWeight)) || '';
+        html += `<div class="plate-hint" id="plate_${ex.id}_${i}"${initTxt?'':' style="display:none"'}>${initTxt ? SVG.plate + ' ' + initTxt : ''}</div>`;
+      }
     }
     html += `</div>`;
     // Rest button per exercise (opens countdown with that exercise's rest time)
