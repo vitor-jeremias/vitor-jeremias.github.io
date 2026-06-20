@@ -201,9 +201,21 @@ input[type="file"]{display:none;}
 
 /* ===== Nutrição ===== */
 .nutri-sub{font-size:13px;color:var(--text3);font-family:var(--mono);}
+.nutri-next{background:linear-gradient(145deg,#1a2420,#141a17);border:1px solid var(--accent);border-radius:18px;padding:18px 20px;margin:18px 0;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(57,255,136,0.12);}
+.nutri-next::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(57,255,136,0.18),transparent 70%);}
+.nutri-next-label{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;font-family:var(--mono);}
+.nutri-next-name{font-size:26px;font-weight:800;color:var(--text);margin-top:6px;letter-spacing:-0.3px;}
+.nutri-next-time{font-size:13px;color:var(--text2);font-family:var(--mono);margin-top:2px;}
+.nutri-subtabs{display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:18px;}
+.nutri-subtab{flex:1;padding:10px 4px;border-radius:9px;border:none;background:none;color:var(--text2);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.nutri-subtab.active{background:var(--accent);color:#0a0e0c;}
+.nutri-meal-hint{font-size:12px;color:var(--text3);font-family:var(--mono);margin-bottom:12px;}
+.nutri-option.numbered{background:var(--surface2);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.nutri-opt-num{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin-bottom:8px;}
+.nutri-card-intro{font-size:13px;color:var(--text3);margin-bottom:14px;line-height:1.4;}
 .nutri-meal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
-.nutri-meal-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;}
-.nutri-meal-name{font-size:18px;font-weight:800;color:var(--text);}
+.nutri-meal-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;}
+.nutri-meal-name{font-size:19px;font-weight:800;color:var(--text);}
 .nutri-meal-time{font-size:13px;font-family:var(--mono);color:var(--accent);font-weight:700;}
 .nutri-option{display:flex;flex-direction:column;gap:7px;}
 .nutri-item{font-size:14px;line-height:1.4;color:var(--text2);padding-left:14px;position:relative;}
@@ -728,7 +740,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v124';
+const APP_VERSION = 'v126';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1790,14 +1802,17 @@ function renderStats() {
     const volDiff = cmp.thisVol - cmp.lastVol;
     const volPct = cmp.lastVol > 0 ? Math.round((volDiff/cmp.lastVol)*100) : null;
     const volUp = volDiff >= 0;
-    const fmtV = (v)=> v>=1000 ? Math.round(v/1000*10)/10+'k' : Math.round(v);
+    // número formatado (54k ou 540) — SEM unidade
+    const fmtNum = (v)=> v>=1000 ? Math.round(v/1000*10)/10+'k' : Math.round(v);
+    // número + unidade kg (ex: "54k kg" → mas junto fica "54kkg"; por isso só metemos kg quando NÃO há k)
+    const fmtKg = (v)=> v>=1000 ? Math.round(v/1000*10)/10+'k kg' : Math.round(v)+'kg';
     html += `<p class="section-title">Esta Semana vs Anterior</p>
     <div class="cmp-grid">
       <div class="cmp-card">
         <div class="cmp-label">Volume</div>
-        <div class="cmp-value">${fmtV(cmp.thisVol)}<span class="cmp-unit">kg</span></div>
-        <div class="cmp-delta ${volUp?'up':'down'}">${volUp?'▲':'▼'} ${volPct!==null?Math.abs(volPct)+'%':fmtV(Math.abs(volDiff))+'kg'}</div>
-        <div class="cmp-prev">anterior: ${fmtV(cmp.lastVol)}kg</div>
+        <div class="cmp-value">${fmtNum(cmp.thisVol)}<span class="cmp-unit">kg</span></div>
+        <div class="cmp-delta ${volUp?'up':'down'}">${volUp?'▲':'▼'} ${volPct!==null?Math.abs(volPct)+'%':fmtKg(Math.abs(volDiff))}</div>
+        <div class="cmp-prev">anterior: ${fmtKg(cmp.lastVol)}</div>
       </div>
       <div class="cmp-card">
         <div class="cmp-label">Treinos</div>
@@ -2028,54 +2043,112 @@ function calcTopProgressions(sessions, allEx) {
 }
 
 // ======================== NUTRIÇÃO ========================
+let _nutriTab = 'meals'; // sub-aba ativa dentro da Nutrição
+
 function renderNutricao() {
   const container = document.getElementById('view-nutricao');
   const p = NUTRITION_PLAN;
+
+  // ----- Próxima refeição com base na hora atual -----
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const toMin = (t) => { const [h, m] = t.replace('h', ':').split(':'); return (+h) * 60 + (+(m || 0)); };
+  let nextMeal = null, nextDiff = Infinity;
+  p.meals.forEach(meal => {
+    const mMin = toMin(meal.time);
+    let diff = mMin - nowMin;
+    if (diff < -30) diff += 1440; // já passou há mais de 30min → conta para amanhã
+    if (diff < nextDiff) { nextDiff = diff; nextMeal = meal; }
+  });
+
   let html = `<div class="nutri-header">
     <p class="section-title" style="margin-bottom:4px">Plano Alimentar</p>
-    <div class="nutri-sub">${p.nutricionista} · atualizado ${p.updated}</div>
+    <div class="nutri-sub">${p.nutricionista} · ${p.updated}</div>
   </div>`;
 
-  // Refeições
-  html += `<p class="section-title" style="margin-top:24px">Refeições</p>`;
+  // ----- Destaque: próxima refeição -----
+  if (nextMeal) {
+    const mins = nextDiff;
+    let when;
+    if (mins <= 0) when = 'Agora';
+    else if (mins < 60) when = `Daqui a ${mins} min`;
+    else when = `Às ${nextMeal.time}`;
+    html += `<div class="nutri-next" onclick="setNutriTab('meals')">
+      <div class="nutri-next-label">Próxima refeição · ${when}</div>
+      <div class="nutri-next-name">${nextMeal.name}</div>
+      <div class="nutri-next-time">${nextMeal.time}</div>
+    </div>`;
+  }
+
+  // ----- Sub-abas -----
+  const tabs = [['meals','Refeições'],['fruit','Fruta'],['rules','Regras'],['measures','Medidas']];
+  html += `<div class="nutri-subtabs">`;
+  tabs.forEach(([key, label]) => {
+    html += `<button class="nutri-subtab${_nutriTab===key?' active':''}" onclick="setNutriTab('${key}')">${label}</button>`;
+  });
+  html += `</div><div class="nutri-content">`;
+
+  if (_nutriTab === 'meals') html += nutriMealsHTML(p);
+  else if (_nutriTab === 'fruit') html += nutriFruitHTML(p);
+  else if (_nutriTab === 'rules') html += nutriRulesHTML(p);
+  else if (_nutriTab === 'measures') html += nutriMeasuresHTML(p);
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function setNutriTab(tab) {
+  _nutriTab = tab;
+  renderNutricao();
+  // scroll suave para o conteúdo
+  const c = document.querySelector('.nutri-subtabs');
+  if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function nutriMealsHTML(p) {
+  let html = '';
   p.meals.forEach(meal => {
+    const multi = meal.options.length > 1;
     html += `<div class="nutri-meal">
       <div class="nutri-meal-head">
         <span class="nutri-meal-name">${meal.name}</span>
         <span class="nutri-meal-time">${meal.time}</span>
       </div>`;
+    if (multi) html += `<div class="nutri-meal-hint">${meal.options.length} opções — escolhe uma</div>`;
     meal.options.forEach((opt, i) => {
-      if (meal.options.length > 1 && i > 0) html += `<div class="nutri-or">OU</div>`;
-      html += `<div class="nutri-option">`;
+      html += `<div class="nutri-option${multi?' numbered':''}">`;
+      if (multi) html += `<div class="nutri-opt-num">Opção ${i+1}</div>`;
       opt.forEach(item => { html += `<div class="nutri-item">${item}</div>`; });
       html += `</div>`;
     });
-    if (meal.note) html += `<div class="nutri-note">★ ${meal.note}</div>`;
+    if (meal.note) html += `<div class="nutri-note">${meal.note}</div>`;
     html += `</div>`;
   });
+  return html;
+}
 
-  // Equivalentes de fruta
-  html += `<p class="section-title" style="margin-top:28px">Equivalentes de 1 peça de fruta</p>
-    <div class="nutri-card"><div class="nutri-fruit-grid">`;
+function nutriFruitHTML(p) {
+  let html = `<div class="nutri-card"><div class="nutri-card-intro">Cada item abaixo conta como 1 peça de fruta.</div><div class="nutri-fruit-grid">`;
   p.fruitEquivalents.forEach(([fruit, g]) => {
     html += `<div class="nutri-fruit"><span>${fruit}</span><span class="nutri-fruit-g">${g}</span></div>`;
   });
   html += `</div></div>`;
+  return html;
+}
 
-  // Regras (Notas, Aconselhamentos, Culinária, Evite)
-  html += `<p class="section-title" style="margin-top:28px">Regras & Aconselhamentos</p>`;
+function nutriRulesHTML(p) {
+  let html = '';
   p.ruleGroups.forEach(group => {
     html += `<div class="nutri-rules"><div class="nutri-rules-title">${group.title}</div>`;
     group.items.forEach(item => { html += `<div class="nutri-rule">${item}</div>`; });
     html += `</div>`;
   });
+  return html;
+}
 
-  // Medidas
-  html += `<p class="section-title" style="margin-top:28px">Medidas & Evolução</p>`;
-  html += renderMeasureTable('Perímetros (cm)', p.measures.perimetros);
-  html += renderMeasureTable('Pregas (mm)', p.measures.pregas);
-
-  container.innerHTML = html;
+function nutriMeasuresHTML(p) {
+  return renderMeasureTable('Perímetros (cm)', p.measures.perimetros)
+       + renderMeasureTable('Pregas (mm)', p.measures.pregas);
 }
 
 function renderMeasureTable(title, data) {
