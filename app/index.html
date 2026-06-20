@@ -26,10 +26,10 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100dvh;overflow-x:hidden;}
-.nav{position:sticky;top:0;z-index:100;background:rgba(10,14,12,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top, 0px));display:flex;align-items:center;justify-content:space-between;}
-.nav-title{font-size:18px;font-weight:800;color:var(--text);}
-.nav-tabs{display:flex;gap:2px;background:var(--surface);border-radius:10px;padding:3px;}
-.nav-tab{padding:7px 9px;border-radius:7px;font-family:var(--font);font-size:12px;font-weight:600;border:none;background:none;color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.nav{position:sticky;top:0;z-index:100;background:rgba(10,14,12,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top, 0px));display:flex;align-items:center;gap:12px;}
+.nav-title{font-size:18px;font-weight:800;color:var(--text);flex-shrink:0;display:flex;align-items:center;}
+.nav-tabs{display:flex;gap:3px;background:var(--surface);border-radius:10px;padding:4px;flex:1;}
+.nav-tab{flex:1;padding:9px 6px;border-radius:7px;font-family:var(--font);font-size:13px;font-weight:600;border:none;background:none;color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap;text-align:center;}
 .nav-tab.active{background:var(--accent);color:#0a0e0c;}
 .view{display:none;padding:20px;padding-bottom:96px;}.view.active{display:block;}
 .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
@@ -726,7 +726,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v117';
+const APP_VERSION = 'v118';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
