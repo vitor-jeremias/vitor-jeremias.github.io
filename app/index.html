@@ -26,10 +26,10 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100dvh;overflow-x:hidden;}
-.nav{position:sticky;top:0;z-index:100;background:rgba(10,14,12,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.nav{position:sticky;top:0;z-index:100;background:rgba(10,14,12,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top, 0px));display:flex;align-items:center;justify-content:space-between;}
 .nav-title{font-size:18px;font-weight:800;color:var(--text);}
-.nav-tabs{display:flex;gap:4px;background:var(--surface);border-radius:10px;padding:4px;}
-.nav-tab{padding:7px 13px;border-radius:7px;font-family:var(--font);font-size:13px;font-weight:600;border:none;background:none;color:var(--text2);cursor:pointer;transition:all 0.2s;}
+.nav-tabs{display:flex;gap:2px;background:var(--surface);border-radius:10px;padding:3px;}
+.nav-tab{padding:7px 9px;border-radius:7px;font-family:var(--font);font-size:12px;font-weight:600;border:none;background:none;color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .nav-tab.active{background:var(--accent);color:#0a0e0c;}
 .view{display:none;padding:20px;padding-bottom:96px;}.view.active{display:block;}
 .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
@@ -82,6 +82,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ex-suggestion.up{background:rgba(57,255,136,0.12);color:var(--accent);}
 .ex-suggestion.keep{background:rgba(243,156,18,0.1);color:var(--yellow);}
 .ex-suggestion.down{background:rgba(231,76,60,0.1);color:var(--red);}
+.ex-suggestion.max{background:rgba(120,160,255,0.12);color:#8fb0ff;font-size:14px;line-height:1.35;}
 .ex-prev{font-size:15px;color:var(--text2);font-family:var(--mono);margin-top:6px;}
 .ex-warmup{font-size:11px;font-family:var(--mono);margin-top:5px;padding:6px 10px;border-radius:8px;background:rgba(230,126,34,0.08);border:1px solid rgba(230,126,34,0.2);color:var(--orange);}
 .ex-warmup-title{font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;opacity:0.8;}
@@ -113,6 +114,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .prog-item-badge.up{background:rgba(57,255,136,0.12);color:var(--accent);}
 .prog-item-badge.keep{background:rgba(243,156,18,0.1);color:var(--yellow);}
 .prog-item-badge.down{background:rgba(231,76,60,0.1);color:var(--red);}
+.prog-item-badge.max{background:rgba(120,160,255,0.12);color:#8fb0ff;}
 
 /* History */
 .session-log{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
@@ -197,6 +199,35 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .dados-tip strong{display:block;margin-bottom:4px;font-size:13px;}
 input[type="file"]{display:none;}
 
+/* ===== Nutrição ===== */
+.nutri-sub{font-size:13px;color:var(--text3);font-family:var(--mono);}
+.nutri-meal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.nutri-meal-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;}
+.nutri-meal-name{font-size:18px;font-weight:800;color:var(--text);}
+.nutri-meal-time{font-size:13px;font-family:var(--mono);color:var(--accent);font-weight:700;}
+.nutri-option{display:flex;flex-direction:column;gap:7px;}
+.nutri-item{font-size:14px;line-height:1.4;color:var(--text2);padding-left:14px;position:relative;}
+.nutri-item::before{content:'';position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:0.6;}
+.nutri-or{text-align:center;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--text3);letter-spacing:2px;margin:12px 0;position:relative;}
+.nutri-or::before,.nutri-or::after{content:'';position:absolute;top:50%;width:38%;height:1px;background:var(--border);}
+.nutri-or::before{left:0;}.nutri-or::after{right:0;}
+.nutri-note{margin-top:12px;padding:8px 12px;background:rgba(57,255,136,0.08);border-radius:8px;font-size:12px;color:var(--accent);font-weight:600;line-height:1.4;}
+.nutri-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.nutri-fruit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;}
+.nutri-fruit{display:flex;justify-content:space-between;font-size:13px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);}
+.nutri-fruit-g{font-family:var(--mono);color:var(--text);font-weight:600;}
+.nutri-rules{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.nutri-rules-title{font-size:15px;font-weight:800;color:var(--accent);margin-bottom:12px;}
+.nutri-rule{font-size:13px;line-height:1.45;color:var(--text2);padding:7px 0 7px 16px;position:relative;border-bottom:1px solid var(--border);}
+.nutri-rule:last-child{border-bottom:none;}
+.nutri-rule::before{content:'';position:absolute;left:0;top:14px;width:5px;height:5px;border-radius:50%;background:var(--text3);}
+.nutri-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px;}
+.nutri-table th{text-align:center;font-size:11px;color:var(--text3);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--border);}
+.nutri-table td{text-align:center;padding:7px 8px;color:var(--text2);border-bottom:1px solid var(--border);}
+.nutri-table .nutri-tname{text-align:left;color:var(--text);font-weight:600;font-family:var(--font);font-size:13px;white-space:nowrap;}
+.nutri-table .nutri-last{color:var(--text);font-weight:700;}
+.nutri-table td.down{color:var(--accent);}
+.nutri-table td.up{color:var(--orange);}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#0a0e0c;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;z-index:999;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;box-shadow:0 4px 12px rgba(57,255,136,0.3);}
 
 /* ===== Login screen ===== */
@@ -283,7 +314,7 @@ input[type="file"]{display:none;}
 .timer-modal.running .timer-display-big{font-size:min(24vw,180px);margin-bottom:24px;letter-spacing:0;width:100%;text-align:center;line-height:0.9;}
 .timer-modal.running.mode-interval .timer-display-big{font-size:min(80vw,46vh,560px);margin-top:0;margin-bottom:6px;font-weight:800;line-height:0.82;}
 .timer-modal.running .timer-phase{font-size:22px;margin-bottom:6px;letter-spacing:3px;}
-.timer-modal.running.mode-interval .timer-phase{order:2;margin-top:18px;margin-bottom:0;font-size:38px;font-weight:800;letter-spacing:3px;display:inline-block;padding:8px 22px;border-radius:14px;background:rgba(10,14,12,0.16);}
+.timer-modal.running.mode-interval .timer-phase{order:2;margin-top:14px;margin-bottom:0;font-size:38px;font-weight:800;letter-spacing:3px;text-transform:uppercase;display:block;width:100%;padding:10px 22px;border-radius:14px;background:rgba(10,14,12,0.16);}
 .timer-modal.running.mode-interval .timer-next{display:block;font-size:15px;margin-bottom:40px;color:rgba(240,244,241,0.6);}
 .timer-modal.running.mode-interval.phase-prep .timer-next,
 .timer-modal.running.mode-interval.phase-work .timer-next,
@@ -296,7 +327,7 @@ input[type="file"]{display:none;}
 .timer-modal.running.mode-interval.phase-prep .timer-total,
 .timer-modal.running.mode-interval.phase-work .timer-total,
 .timer-modal.running.mode-interval.phase-rest .timer-total{color:rgba(10,14,12,0.65)!important;}
-.timer-modal.running.mode-interval{justify-content:flex-start;padding-top:calc(54px + env(safe-area-inset-top, 0px));}
+.timer-modal.running.mode-interval{justify-content:flex-start;padding-top:calc(14px + env(safe-area-inset-top, 0px));}
 .timer-modal.running.mode-interval .timer-modal-inner{display:flex;flex-direction:column;align-items:center;max-width:none;width:100%;}
 .timer-modal.running.mode-interval .timer-total{order:1;}
 .timer-modal.running.mode-interval .timer-display-big{order:3;}
@@ -350,16 +381,17 @@ input[type="file"]{display:none;}
 <nav class="nav">
   <div class="nav-title" style="display:flex;align-items:center;gap:9px">
     <svg width="22" viewBox="0 0 200 177" xmlns="http://www.w3.org/2000/svg"><path d="M 66.9,157.1 L 33.6,156.8 L 41.4,146.7 L 72.9,109.1 L 20.2,49.7 L 20.0,48.8 L 57.4,48.5 L 58.4,49.0 L 87.0,82.6 L 91.6,87.1 L 130.7,40.5 L 124.5,31.1 L 124.6,29.9 L 179.9,20.0 L 180.0,20.9 L 169.3,33.9 L 66.9,157.1 Z" fill="#39FF88"/></svg>
-    <span style="letter-spacing:2px">UNFYN</span>
   </div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showView('home')">Treino</button>
+    <button class="nav-tab" onclick="showView('nutricao')">Nutrição</button>
     <button class="nav-tab" onclick="showView('historico')">Histórico</button>
     <button class="nav-tab" onclick="showView('stats')">Stats</button>
     <button class="nav-tab" onclick="showView('dados')">Dados</button>
   </div>
 </nav>
 <div id="view-home" class="view active"></div>
+<div id="view-nutricao" class="view"></div>
 <div id="view-historico" class="view"></div>
 <div id="view-stats" class="view"></div>
 <div id="view-dados" class="view"></div>
@@ -471,7 +503,7 @@ const WORKOUTS = {
   lower2:{name:"Lower 2",type:"lower",day:"Sexta",sub:"Femoral · Quad · Gémeos · Abdómen",exercises:[
     {id:"rdl", name:"Romanian Deadlift",       sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
     {id:"lp",  name:"Leg Press",                     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
-    {id:"slle2",name:"Leg Extension (bilateral)",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
+    {id:"slle2",name:"Leg Extension (bilateral)",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg",maxWeight:100},
     {id:"slc2",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
     {id:"cr",  name:"Standing Calf Raise",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"cc2", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
@@ -583,8 +615,118 @@ const CARDIO_PLANS = {
   }
 };
 
+// ======================== NUTRITION PLAN (transcrito do PDF da nutricionista) ========================
+const NUTRITION_PLAN = {
+  updated: "Junho 2026",
+  nutricionista: "Jessica Rodrigues",
+  meals: [
+    {
+      name: "Pequeno-almoço", time: "9h30",
+      options: [
+        ["150ml de leite proteico com café ou cevada","2 fatias de pão integral (60g)","1 ovo mexido","10g de queijo creme light","1 peça de fruta","6g de monohidrato de creatina"],
+        ["Café sem açúcar","Panquecas (1 ovo + 50ml de leite proteico + 70g de banana + 20g de farinha de aveia + 20g de farinha de bolacha + canela)","5g de mel","1 peça de fruta","6g de monohidrato de creatina"],
+        ["250ml de leite proteico","2 fatias de pão integral (60g)","10g de queijo creme light","1 peça de fruta","6g de monohidrato de creatina"],
+      ]
+    },
+    {
+      name: "Almoço", time: "13h00",
+      options: [
+        ["Sopa de legumes (2 conchas)","100-150g de legumes/saladas/verduras","130g de carne branca/peixe magro OU 115g de carne vermelha/peixe gordo livres de peles ou gorduras visíveis","150g de arroz OU 175g de massa OU 210g de batata cozida/em cru OU 140g de batata assada OU 220g de leguminosas","3 colheres de chá de azeite virgem extra para temperar e confecionar (15g)","1 peça de fruta"],
+      ],
+      note: "2 refeições com salmão por semana (meia posta)"
+    },
+    {
+      name: "Lanche da tarde", time: "17h00",
+      options: [
+        ["Papas de aveia overnight (180ml de leite proteico + 15g de farinha de aveia bolacha + 30g de flocos de aveia + canela)","10g de pepitas de chocolate OU 1 queijinho babybel light","1 peça de fruta"],
+        ["1 wrap (60g)","Paté de atum (meia lata de atum ao natural + 2 queijinhos triangulares light)","1 fatia de queijo magro (20g)","1 peça de fruta"],
+        ["1 iogurte sólido proteico (125g)","2 fatias de pão integral (60g) OU 2 pacotes de tostas extrafinas integrais (20g) OU 1 pacote de tortitas de milho (4)","1 fatia de queijo magro (20g) OU 1 queijinho babybel light","1 peça de fruta"],
+      ]
+    },
+    {
+      name: "Lanche", time: "19h00",
+      options: [
+        ["1 iogurte líquido proteico (160ml)"],
+      ]
+    },
+    {
+      name: "Jantar", time: "20h30",
+      options: [
+        ["Sopa de legumes (2 conchas)","100-150g de legumes/saladas/verduras","130g de carne branca/peixe magro OU 115g de carne vermelha/peixe gordo livres de peles ou gorduras visíveis","150g de arroz OU 175g de massa OU 210g de batata cozida/em cru OU 140g de batata assada OU 220g de leguminosas","3 colheres de chá de azeite virgem extra para temperar e confecionar (15g)","1 peça de fruta"],
+      ]
+    },
+  ],
+  fruitEquivalents: [
+    ["Banana","70g"],["Uvas","90g"],["Figo","100g"],["Maçã","120g"],["Cerejas","120g"],["Dióspiro","120g"],["Manga","130g"],["Clementina","140g"],["Nêspera","150g"],["Pêra","160g"],["Papaia","160g"],["Framboesas","160g"],["Ananás","160g"],["Laranja","160g"],["Damasco","175g"],["Ameixa","175g"],["Pêssego","175g"],["Tangerina","175g"],["Mirtilos","175g"],["Morangos","220g"],["Melão","250g"],["Melancia","280g"],["Meloa","320g"],
+  ],
+  ruleGroups: [
+    { title: "Notas", items: [
+      "Mercadona",
+      "Preteridos: iogurtes proteicos (enjoa)",
+      "Pode comer até 10 azeitonas por dia; até 1 colher de sopa de abacate por dia",
+      "Deve beber 3L de água por dia",
+      "1 refeição principal + 1 pequeno-almoço livre por semana",
+    ]},
+    { title: "Aconselhamentos", items: [
+      "Num dia de mais excessos (doce, jantar fora), reduzir os hidratos de carbono das refeições principais, ou retirar a fonte de HC do almoço ou jantar",
+      "Pode comer gelatina sem adição de açúcar se apetecer algo doce — não tem interferência calórica",
+      "Nunca comer mais de dois ovos inteiros por dia, mas pode adicionar claras para tornar as refeições mais proteicas e saciantes",
+      "Fazer intervalos entre refeições de 3h00 a 4h00",
+      "Iniciar sempre que possível o almoço e o jantar com sopa de legumes e hortaliças (sem batata nem leguminosas)",
+      "Não comer pão às refeições principais (almoço e jantar)",
+      "Alternar carne com peixe nas refeições principais; sendo carne, preferir brancas (frango, peru, coelho, lombo de porco), retirando pele e gordura visível antes de cozinhar",
+      "Retirar todo o açúcar de adição (se preferir, substituir por adoçante: stevia, eritritol, xilitol)",
+      "Trocar todos os lacticínios por magros",
+      "Mastigar calmamente (saborear os alimentos)",
+      "Beber 0,3-0,4L de água por kg de peso por dia, ou chá sem açúcar; beber água às refeições",
+      "Evitar petiscar — não sacia e leva a procurar alimentos mais densos",
+      "Não beber mais de 4-5 cafés por dia",
+    ]},
+    { title: "Culinária", items: [
+      "Preferir cozidos, grelhados, estufados em cru e assados simples. Evitar fritos e assados com muita gordura",
+      "Usar o mínimo de gordura possível; quando necessário, optar por azeite. Nas sopas, colocar o azeite depois da confeção e só um fio",
+      "Moderar o consumo de sal. Temperar com sumo de limão, marinadas de vinho e alho, ervas aromáticas e especiarias",
+      "Comendo fora, preferir grelhados e assados na brasa, acompanhados de legumes crus ou cozinhados. Evitar fritos e estufados com muita gordura",
+    ]},
+    { title: "Evite", items: [
+      "Refrigerantes e outras bebidas açucaradas e bebidas alcoólicas",
+      "Açúcar, mel, geleia, compota, marmelada, produtos de confeitaria e pastelaria, bolachas e biscoitos, cereais açucarados, chocolates com menos de 70% de cacau, guloseimas, gelados, fruta em calda, fruta cristalizada",
+      "Folhados, natas, lacticínios gordos, salgadinhos, enchidos, fumados, entrecosto, entremeada, conservas e enlatados (exceto atum ao natural), molhos com gordura, molhos industrializados (maionese, mostarda, ketchup), pré-confecionados (hambúrgueres, pizzas) e caldos concentrados",
+    ]},
+  ],
+  // Medidas: cada avaliação é uma coluna. Atualizar a cada ida à nutricionista.
+  measures: {
+    perimetros: {
+      labels: ["Set","Out","Dez","Jan","Abr","Maio"],
+      rows: [
+        ["Braço",[36,36,36,35,35,36]],
+        ["Coxa",[67,68,68,66,68,66]],
+        ["M. Gémeo",[40,40,40,39,41,40]],
+        ["Ombros",[120,120,120,120,122,119]],
+        ["Peito",[100,100,98,99,101,100]],
+        ["Cintura",[90,91,90,89,88,86]],
+        ["Abdominal",[96,96,95,93,90,87]],
+        ["Anca",[103,104,104,101,101,99]],
+      ]
+    },
+    pregas: {
+      labels: ["Dez","Jan","Abr","Maio"],
+      rows: [
+        ["Bicipital",[4.8,4,4,3.2]],
+        ["Tricipital",[17.4,16.4,15.8,13.4]],
+        ["Subscapular",[16.6,15.8,14.8,14.4]],
+        ["Ilieocristal",[22,22,21,19.2]],
+        ["Abdominal",[37,36.4,31.6,27.4]],
+        ["Supraespinal",[23.6,23.6,18.8,16.6]],
+        ["Crural",[27.6,26.6,26,24.4]],
+        ["Geminal",[16,14,12,9.8]],
+      ]
+    }
+  }
+};
+
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v111';
+const APP_VERSION = 'v117';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -789,6 +931,11 @@ function analyzeProgression(ex, lastExData) {
     return { status: 'down', label: `↓ Reduz → ${newWeight}kg`, weight: newWeight };
   } else if (allReachedMax) {
     const newWeight = weight + increment;
+    // Machine has a weight ceiling and we'd exceed it → can't add load.
+    // Tell the user to progress via reps / tempo / intensity instead.
+    if (ex.maxWeight && newWeight > ex.maxWeight) {
+      return { status: 'max', label: `▲ Máquina no máximo (${ex.maxWeight}kg) — sobe reps ou intensidade`, weight: ex.maxWeight };
+    }
     return { status: 'up', label: `↑ Aumenta → ${newWeight}kg`, weight: newWeight };
   } else {
     return { status: 'keep', label: `→ Mantém ${weight}kg`, weight: weight };
@@ -806,7 +953,9 @@ function calcWarmup(ex, workoutKey) {
   const workWeight = getSuggestedWeight(ex, workoutKey);
   if (!workWeight || workWeight <= 0) return null;
   const isBarbell = (ex.inc === 'barbell' || ex.inc === 'barbell_10');
-  const step = (ex.inc === 'machine' || ex.inc === 'cable' || isBarbell) ? 5 : 2.5;
+  // Barbell: smallest plate is 5kg => 10kg total per change, so warmups must be multiples of 10.
+  // Machines/cables: round to 5. Everything else: 2.5.
+  const step = isBarbell ? 10 : (ex.inc === 'machine' || ex.inc === 'cable') ? 5 : 2.5;
   const round = (v) => Math.round(v / step) * step;
   let w50 = round(workWeight * 0.5);
   let w75 = round(workWeight * 0.75);
@@ -835,9 +984,10 @@ async function showView(v) {
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
-  document.querySelectorAll('.nav-tab')[['home','historico','stats','dados'].indexOf(v)].classList.add('active');
+  document.querySelectorAll('.nav-tab')[['home','nutricao','historico','stats','dados'].indexOf(v)].classList.add('active');
   await loadSessions();
   if(v==='home')renderHome();
+  if(v==='nutricao')renderNutricao();
   if(v==='historico')renderHistorico();
   if(v==='stats')renderStats();
   if(v==='dados')renderDados();
@@ -1875,6 +2025,74 @@ function calcTopProgressions(sessions, allEx) {
   return progressions.sort((a,b)=>b.gain-a.gain);
 }
 
+// ======================== NUTRIÇÃO ========================
+function renderNutricao() {
+  const container = document.getElementById('view-nutricao');
+  const p = NUTRITION_PLAN;
+  let html = `<div class="nutri-header">
+    <p class="section-title" style="margin-bottom:4px">Plano Alimentar</p>
+    <div class="nutri-sub">${p.nutricionista} · atualizado ${p.updated}</div>
+  </div>`;
+
+  // Refeições
+  html += `<p class="section-title" style="margin-top:24px">Refeições</p>`;
+  p.meals.forEach(meal => {
+    html += `<div class="nutri-meal">
+      <div class="nutri-meal-head">
+        <span class="nutri-meal-name">${meal.name}</span>
+        <span class="nutri-meal-time">${meal.time}</span>
+      </div>`;
+    meal.options.forEach((opt, i) => {
+      if (meal.options.length > 1 && i > 0) html += `<div class="nutri-or">OU</div>`;
+      html += `<div class="nutri-option">`;
+      opt.forEach(item => { html += `<div class="nutri-item">${item}</div>`; });
+      html += `</div>`;
+    });
+    if (meal.note) html += `<div class="nutri-note">★ ${meal.note}</div>`;
+    html += `</div>`;
+  });
+
+  // Equivalentes de fruta
+  html += `<p class="section-title" style="margin-top:28px">Equivalentes de 1 peça de fruta</p>
+    <div class="nutri-card"><div class="nutri-fruit-grid">`;
+  p.fruitEquivalents.forEach(([fruit, g]) => {
+    html += `<div class="nutri-fruit"><span>${fruit}</span><span class="nutri-fruit-g">${g}</span></div>`;
+  });
+  html += `</div></div>`;
+
+  // Regras (Notas, Aconselhamentos, Culinária, Evite)
+  html += `<p class="section-title" style="margin-top:28px">Regras & Aconselhamentos</p>`;
+  p.ruleGroups.forEach(group => {
+    html += `<div class="nutri-rules"><div class="nutri-rules-title">${group.title}</div>`;
+    group.items.forEach(item => { html += `<div class="nutri-rule">${item}</div>`; });
+    html += `</div>`;
+  });
+
+  // Medidas
+  html += `<p class="section-title" style="margin-top:28px">Medidas & Evolução</p>`;
+  html += renderMeasureTable('Perímetros (cm)', p.measures.perimetros);
+  html += renderMeasureTable('Pregas (mm)', p.measures.pregas);
+
+  container.innerHTML = html;
+}
+
+function renderMeasureTable(title, data) {
+  let html = `<div class="nutri-card" style="overflow-x:auto"><div class="nutri-rules-title" style="padding:0 0 10px">${title}</div>
+    <table class="nutri-table"><thead><tr><th></th>`;
+  data.labels.forEach(l => { html += `<th>${l}</th>`; });
+  html += `</tr></thead><tbody>`;
+  data.rows.forEach(([name, vals]) => {
+    html += `<tr><td class="nutri-tname">${name}</td>`;
+    vals.forEach((v, i) => {
+      const isLast = i === vals.length - 1;
+      html += `<td class="${isLast?'nutri-last':''}">${v}</td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table></div>`;
+  return html;
+}
+
 // ======================== DADOS ========================
 function renderDados() {
   const container = document.getElementById('view-dados');
@@ -2197,7 +2415,7 @@ function updateMiniTimer() {
     label = 'Cronómetro';
     timeText = fmtBig(bt.elapsed);
   } else if (bt.mode === 'interval') {
-    label = bt.phase === 'prep' ? 'Prepara-te' : (bt.phase === 'work' ? `Trabalho ${bt.currentRound}/${bt.rounds}` : `Descanso ${bt.currentRound}/${bt.rounds}`);
+    label = bt.phase === 'prep' ? 'Get Ready' : (bt.phase === 'work' ? `Work ${bt.currentRound}/${bt.rounds}` : `Rest ${bt.currentRound}/${bt.rounds}`);
     timeText = String(bt.remaining);
   } else {
     label = 'Descanso';
@@ -2252,8 +2470,8 @@ function fmtBig(sec) {
 
 function getNextPhaseLabel() {
   if (bt.mode !== 'interval') return '';
-  if (bt.phase === 'prep') return `A seguir: Trabalho ${bt.work}s`;
-  if (bt.phase === 'work') return `A seguir: Descanso ${bt.rest}s`;
+  if (bt.phase === 'prep') return `A seguir: Work ${bt.work}s`;
+  if (bt.phase === 'work') return `A seguir: Rest ${bt.rest}s`;
   // phase === 'rest'
   if (bt.currentRound >= bt.rounds) return 'A seguir: Fim do treino';
   return `A seguir: Trabalho · Ronda ${bt.currentRound+1}/${bt.rounds}`;
@@ -2298,11 +2516,11 @@ function renderBigTimer() {
     disp.textContent = String(bt.remaining);
     if (bt.phase === 'prep') {
       disp.className = 'timer-display-big prep';
-      phaseEl.textContent = 'Prepara-te…';
+      phaseEl.textContent = 'Get Ready…';
       modal.classList.add('phase-prep');
     } else {
       disp.className = 'timer-display-big ' + (bt.phase === 'rest' ? 'rest' : 'work');
-      phaseEl.textContent = bt.phase === 'work' ? 'Trabalho' : 'Descanso';
+      phaseEl.textContent = bt.phase === 'work' ? 'Work' : 'Rest';
       modal.classList.add(bt.phase === 'rest' ? 'phase-rest' : 'phase-work');
     }
     // round + next phase go on the lower line
@@ -2460,9 +2678,12 @@ function tickBigTimer() {
       const wasMinimized = document.getElementById('timer-mini')?.classList.contains('show');
       stopBigTimer();
       bt.remaining = bt.simpleTime;
-      renderBigTimer();
+      // Rest finished → close the timer entirely and return to the workout,
+      // so the next "register reps" doesn't reopen/stack a fresh countdown.
+      const m = document.getElementById('timer-modal');
+      if (m) { m.classList.remove('open'); m.classList.remove('running'); }
       hideMiniTimer();
-      if (wasMinimized) showToast('Descanso terminado');
+      showToast('Descanso terminado');
       return;
     } else {
       if (bt.phase === 'prep') {
