@@ -426,10 +426,10 @@ input[type="file"]{display:none;}
       <div style="font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:12px;line-height:1.5">Core 30–45s · Isolamentos 90s · Compostos 2–3min</div>
     </div>
     <div id="timer-interval-config" class="timer-config" style="display:none">
-      <div class="timer-int-row"><span>Preparação</span><div class="timer-stepper"><button data-step="prep" data-delta="-5">−</button><span class="timer-step-val"><span id="int-prep">10</span>s</span><button data-step="prep" data-delta="5">+</button></div></div>
-      <div class="timer-int-row"><span>Trabalho</span><div class="timer-stepper"><button data-step="work" data-delta="-5">−</button><span class="timer-step-val"><span id="int-work">20</span>s</span><button data-step="work" data-delta="5">+</button></div></div>
-      <div class="timer-int-row"><span>Descanso</span><div class="timer-stepper"><button data-step="rest" data-delta="-5">−</button><span class="timer-step-val"><span id="int-rest">10</span>s</span><button data-step="rest" data-delta="5">+</button></div></div>
-      <div class="timer-int-row"><span>Rondas</span><div class="timer-stepper"><button data-step="rounds" data-delta="-1">−</button><span class="timer-step-val"><span id="int-rounds">8</span></span><button data-step="rounds" data-delta="1">+</button></div></div>
+      <div class="timer-int-row"><span>Prep</span><div class="timer-stepper"><button data-step="prep" data-delta="-5">−</button><span class="timer-step-val"><span id="int-prep">10</span>s</span><button data-step="prep" data-delta="5">+</button></div></div>
+      <div class="timer-int-row"><span>Work</span><div class="timer-stepper"><button data-step="work" data-delta="-5">−</button><span class="timer-step-val"><span id="int-work">20</span>s</span><button data-step="work" data-delta="5">+</button></div></div>
+      <div class="timer-int-row"><span>Rest</span><div class="timer-stepper"><button data-step="rest" data-delta="-5">−</button><span class="timer-step-val"><span id="int-rest">10</span>s</span><button data-step="rest" data-delta="5">+</button></div></div>
+      <div class="timer-int-row"><span>Rounds</span><div class="timer-stepper"><button data-step="rounds" data-delta="-1">−</button><span class="timer-step-val"><span id="int-rounds">8</span></span><button data-step="rounds" data-delta="1">+</button></div></div>
     </div>
     <div class="timer-controls">
       <button id="timer-start-btn" class="timer-big-btn" onclick="toggleBigTimer()" aria-label="Iniciar"><svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
@@ -728,7 +728,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v121';
+const APP_VERSION = 'v123';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2507,11 +2507,11 @@ function fmtBig(sec) {
 
 function getNextPhaseLabel() {
   if (bt.mode !== 'interval') return '';
-  if (bt.phase === 'prep') return `A seguir: Work ${bt.work}s`;
-  if (bt.phase === 'work') return `A seguir: Rest ${bt.rest}s`;
+  if (bt.phase === 'prep') return `Next: Work ${bt.work}s`;
+  if (bt.phase === 'work') return `Next: Rest ${bt.rest}s`;
   // phase === 'rest'
-  if (bt.currentRound >= bt.rounds) return 'A seguir: Fim do treino';
-  return `A seguir: Trabalho · Ronda ${bt.currentRound+1}/${bt.rounds}`;
+  if (bt.currentRound >= bt.rounds) return 'Next: Finish';
+  return `Next: Work · Round ${bt.currentRound+1}/${bt.rounds}`;
 }
 
 // Total seconds left in the whole interval session: current phase remaining
@@ -2561,7 +2561,7 @@ function renderBigTimer() {
       modal.classList.add(bt.phase === 'rest' ? 'phase-rest' : 'phase-work');
     }
     // round + next phase go on the lower line
-    const roundTxt = bt.phase === 'prep' ? '' : `Ronda ${bt.currentRound}/${bt.rounds}`;
+    const roundTxt = bt.phase === 'prep' ? '' : `Round ${bt.currentRound}/${bt.rounds}`;
     const nextTxt = getNextPhaseLabel();
     nextEl.textContent = roundTxt ? `${roundTxt} · ${nextTxt}` : nextTxt;
     if (totalEl) totalEl.textContent = fmtBig(getIntervalTotalRemaining());
