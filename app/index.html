@@ -206,12 +206,12 @@ input[type="file"]{display:none;}
 .login-watermark svg{width:100%;height:auto;}
 @keyframes loginFloat{0%,100%{transform:translate(-50%,-54%);}50%{transform:translate(-50%,-58%);}}
 .login-grain{position:absolute;inset:0;pointer-events:none;opacity:0.5;background:radial-gradient(circle at 20% 30%,rgba(57,255,136,0.04),transparent 25%),radial-gradient(circle at 80% 70%,rgba(57,255,136,0.03),transparent 25%);}
-.login-field{width:100%;padding:17px;margin-bottom:12px;border:1px solid var(--border);border-radius:14px;font-family:var(--font);font-size:16px;background:rgba(28,36,32,0.6);color:var(--text);-webkit-appearance:none;transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;backdrop-filter:blur(8px);}
+.login-field{width:100%;padding:20px 18px;margin-bottom:14px;border:1px solid var(--border);border-radius:14px;font-family:var(--font);font-size:16px;background:rgba(28,36,32,0.6);color:var(--text);-webkit-appearance:none;transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;backdrop-filter:blur(8px);}
 .login-field::placeholder{color:var(--text3);}
 .login-field:focus{outline:none;border-color:var(--accent);background:rgba(28,36,32,0.9);box-shadow:0 0 0 3px rgba(57,255,136,0.12);}
-.login-submit{width:100%;padding:18px;background:var(--accent);border:none;border-radius:14px;color:#0a0e0c;font-family:var(--font);font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 6px 24px rgba(57,255,136,0.35);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.5px;}
+.login-submit{width:100%;padding:22px;margin-top:6px;background:var(--accent);border:none;border-radius:14px;color:#0a0e0c;font-family:var(--font);font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 6px 28px rgba(57,255,136,0.4);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:1px;text-transform:uppercase;}
 .login-submit:active{transform:scale(0.98);box-shadow:0 3px 14px rgba(57,255,136,0.3);}
-.login-quote{text-align:center;margin-top:28px;font-family:var(--mono);font-size:13px;letter-spacing:1px;color:var(--text3);min-height:18px;opacity:0;animation:loginQuoteIn 0.8s ease 0.3s forwards;}
+.login-quote{text-align:center;margin-top:30px;font-family:var(--mono);font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);min-height:18px;opacity:0;animation:loginQuoteIn 0.8s ease 0.3s forwards;padding-left:2.5px;}
 @keyframes loginQuoteIn{to{opacity:1;}}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .history-empty{text-align:center;padding:60px 20px;color:var(--text3);}
@@ -283,7 +283,7 @@ input[type="file"]{display:none;}
 .timer-modal.running .timer-display-big{font-size:min(24vw,180px);margin-bottom:24px;letter-spacing:0;width:100%;text-align:center;line-height:0.9;}
 .timer-modal.running.mode-interval .timer-display-big{font-size:min(80vw,46vh,560px);margin-top:0;margin-bottom:6px;font-weight:800;line-height:0.82;}
 .timer-modal.running .timer-phase{font-size:22px;margin-bottom:6px;letter-spacing:3px;}
-.timer-modal.running.mode-interval .timer-phase{order:2;margin-top:18px;margin-bottom:0;font-size:42px;font-weight:800;letter-spacing:4px;}
+.timer-modal.running.mode-interval .timer-phase{order:2;margin-top:18px;margin-bottom:0;font-size:38px;font-weight:800;letter-spacing:3px;display:inline-block;padding:8px 22px;border-radius:14px;background:rgba(10,14,12,0.16);}
 .timer-modal.running.mode-interval .timer-next{display:block;font-size:15px;margin-bottom:40px;color:rgba(240,244,241,0.6);}
 .timer-modal.running.mode-interval.phase-prep .timer-next,
 .timer-modal.running.mode-interval.phase-work .timer-next,
@@ -297,7 +297,7 @@ input[type="file"]{display:none;}
 .timer-modal.running.mode-interval.phase-work .timer-total,
 .timer-modal.running.mode-interval.phase-rest .timer-total{color:rgba(10,14,12,0.65)!important;}
 .timer-modal.running.mode-interval{justify-content:flex-start;padding-top:calc(54px + env(safe-area-inset-top, 0px));}
-.timer-modal.running.mode-interval .timer-modal-inner{display:flex;flex-direction:column;align-items:center;}
+.timer-modal.running.mode-interval .timer-modal-inner{display:flex;flex-direction:column;align-items:center;max-width:none;width:100%;}
 .timer-modal.running.mode-interval .timer-total{order:1;}
 .timer-modal.running.mode-interval .timer-display-big{order:3;}
 .timer-modal.running.mode-interval .timer-next{order:4;}
@@ -439,7 +439,7 @@ const CABLE_FLY_STACK = [9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 64, 68, 
 
 const WORKOUTS = {
   upper1:{name:"Upper 1",type:"upper",day:"Segunda",sub:"Peito · Costas · Ombros · Braços",exercises:[
-    {id:"elev",name:"Elevações na Barra",            sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"bodyweight",bodyweight:true,rest:"2–3 min"},
+    {id:"elev",name:"Pull-Ups",            sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"bodyweight",bodyweight:true,rest:"2–3 min"},
     {id:"mbp", name:"Machine Bench Press",           sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","triceps"],inc:"machine",warmup:true,rest:"2–3 min"},
     {id:"csr", name:"Chest-Supported Row",           sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"machine",warmup:true,rest:"2–3 min"},
     {id:"mcf", name:"Machine Chest Fly",             sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"machine",rest:"90 seg"},
@@ -453,13 +453,13 @@ const WORKOUTS = {
     {id:"bss", name:"Bulgarian Split Squat",         sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"dumbbell",rest:"2–3 min"},
     {id:"slle1",name:"Single-Leg Leg Extension",     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"slc1",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
-    {id:"abd1",name:"Cadeira Abdutora",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
+    {id:"abd1",name:"Hip Abduction",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"mcr", name:"Standing Calf Raise",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"cc1", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
-  ],coreRef:["Bird Dog — 3×10/lado","Side Plank — 3×20–30seg/lado","Glute Bridge — 3×15","Hiperextensão lombar — 3×12–15 (leve, foco glúteo)"]},
+  ],coreRef:["Bird Dog — 3×10/lado","Side Plank — 3×20–30seg/lado","Glute Bridge — 3×15","Back Extension — 3×12–15 (leve, foco glúteo)"]},
   upper2:{name:"Upper 2",type:"upper",day:"Quinta",sub:"Costas · Peito · Ombros · Braços",exercises:[
     {id:"ilr", name:"Iso-Lateral Row",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"machine",warmup:true,rest:"2–3 min"},
-    {id:"ism", name:"Press Inclinado Isolateral",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","ombros"],inc:"machine",warmup:true,rest:"2–3 min"},
+    {id:"ism", name:"Iso-Lateral Incline Press",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","ombros"],inc:"machine",warmup:true,rest:"2–3 min"},
     {id:"tglp",name:"Triangle Grip Lat Pulldown",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"msp", name:"Machine Shoulder Press",        sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"ccf", name:"Cable Chest Fly",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"cable_fly",rest:"90 seg",pulley:"Polia média (cintura)"},
@@ -475,7 +475,7 @@ const WORKOUTS = {
     {id:"slc2",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
     {id:"cr",  name:"Standing Calf Raise",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"cc2", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
-  ],coreRef:["Bird Dog — 3×10/lado","Side Plank — 3×20–30seg/lado","Glute Bridge — 3×15","Hiperextensão lombar — 3×12–15 (leve, foco glúteo)"]}
+  ],coreRef:["Bird Dog — 3×10/lado","Side Plank — 3×20–30seg/lado","Glute Bridge — 3×15","Back Extension — 3×12–15 (leve, foco glúteo)"]}
 };
 
 const DAYS = [
@@ -584,7 +584,7 @@ const CARDIO_PLANS = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v108';
+const APP_VERSION = 'v111';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
