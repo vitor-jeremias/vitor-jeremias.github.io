@@ -284,9 +284,9 @@ input[type="file"]{display:none;}
 .timer-modal.running.phase-prep .timer-display-big,
 .timer-modal.running.phase-work .timer-display-big,
 .timer-modal.running.phase-rest .timer-display-big{color:#0a0e0c!important;}
-.timer-modal.running.phase-prep .timer-phase,
-.timer-modal.running.phase-work .timer-phase,
-.timer-modal.running.phase-rest .timer-phase{color:rgba(10,14,12,0.7)!important;}
+.timer-modal.running.mode-interval.phase-work .timer-phase{color:var(--accent)!important;}
+.timer-modal.running.mode-interval.phase-rest .timer-phase{color:var(--orange)!important;}
+.timer-modal.running.mode-interval.phase-prep .timer-phase{color:var(--yellow)!important;}
 .timer-modal.running.phase-prep .timer-close,
 .timer-modal.running.phase-work .timer-close,
 .timer-modal.running.phase-rest .timer-close{background:rgba(10,14,12,0.15);color:#0a0e0c;}
@@ -312,9 +312,9 @@ input[type="file"]{display:none;}
 .timer-modal.running .timer-mode-switch,
 .timer-modal.running .timer-config{display:none!important;}
 .timer-modal.running .timer-display-big{font-size:min(24vw,180px);margin-bottom:24px;letter-spacing:0;width:100%;text-align:center;line-height:0.9;}
-.timer-modal.running.mode-interval .timer-display-big{font-size:min(80vw,46vh,560px);margin-top:0;margin-bottom:6px;font-weight:800;line-height:0.82;}
+.timer-modal.running.mode-interval .timer-display-big{font-size:min(56vw,44vh,520px);margin-top:0;margin-bottom:6px;font-weight:800;line-height:0.82;width:100%;text-align:center;overflow:hidden;}
 .timer-modal.running .timer-phase{font-size:22px;margin-bottom:6px;letter-spacing:3px;}
-.timer-modal.running.mode-interval .timer-phase{order:2;margin-top:14px;margin-bottom:0;font-size:38px;font-weight:800;letter-spacing:3px;text-transform:uppercase;display:block;width:100%;padding:10px 22px;border-radius:14px;background:rgba(10,14,12,0.16);}
+.timer-modal.running.mode-interval .timer-phase{order:2;margin-top:14px;margin-bottom:0;font-size:40px;font-weight:800;letter-spacing:4px;text-transform:uppercase;display:block;width:100%;padding:14px 22px;border-radius:16px;background:#0a0e0c;box-shadow:0 6px 20px rgba(0,0,0,0.25);}
 .timer-modal.running.mode-interval .timer-next{display:block;font-size:15px;margin-bottom:40px;color:rgba(240,244,241,0.6);}
 .timer-modal.running.mode-interval.phase-prep .timer-next,
 .timer-modal.running.mode-interval.phase-work .timer-next,
@@ -345,10 +345,12 @@ input[type="file"]{display:none;}
 .timer-presets{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
 .timer-presets button{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:12px 18px;border-radius:10px;cursor:pointer;transition:all 0.15s;}
 .timer-presets button:active{background:var(--accent);color:#0a0e0c;}
-.timer-int-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-radius:12px;margin-bottom:10px;}
-.timer-int-row>span{font-size:15px;font-weight:600;color:var(--text);}
-.timer-stepper{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:18px;font-weight:700;color:var(--accent);}
-.timer-stepper button{width:36px;height:36px;border-radius:8px;border:none;background:var(--surface2);color:var(--text);font-size:20px;font-weight:700;cursor:pointer;}
+.timer-int-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--surface);border-radius:12px;margin-bottom:10px;}
+.timer-int-row>span{font-size:17px;font-weight:600;color:var(--text);}
+.timer-stepper{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:19px;font-weight:700;color:var(--accent);}
+.timer-stepper .timer-step-val{min-width:64px;text-align:center;display:inline-block;}
+.timer-stepper button{width:44px;height:44px;border-radius:10px;border:none;background:var(--surface2);color:var(--text);font-size:24px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+.timer-stepper button:active{background:var(--accent);color:#0a0e0c;}
 .timer-int-presets{display:flex;gap:8px;justify-content:center;margin-top:16px;}
 .timer-int-presets button{flex:1;background:rgba(57,255,136,0.1);border:1px solid var(--accent);color:var(--accent);font-family:var(--font);font-size:13px;font-weight:700;padding:10px;border-radius:10px;cursor:pointer;}
 .timer-controls{display:flex;gap:12px;align-items:center;}
@@ -424,10 +426,10 @@ input[type="file"]{display:none;}
       <div style="font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:12px;line-height:1.5">Core 30–45s · Isolamentos 90s · Compostos 2–3min</div>
     </div>
     <div id="timer-interval-config" class="timer-config" style="display:none">
-      <div class="timer-int-row"><span>Preparação</span><div class="timer-stepper"><button onclick="adjInt('prep',-5)">−</button><span id="int-prep">10</span>s<button onclick="adjInt('prep',5)">+</button></div></div>
-      <div class="timer-int-row"><span>Trabalho</span><div class="timer-stepper"><button onclick="adjInt('work',-5)">−</button><span id="int-work">20</span>s<button onclick="adjInt('work',5)">+</button></div></div>
-      <div class="timer-int-row"><span>Descanso</span><div class="timer-stepper"><button onclick="adjInt('rest',-5)">−</button><span id="int-rest">10</span>s<button onclick="adjInt('rest',5)">+</button></div></div>
-      <div class="timer-int-row"><span>Rondas</span><div class="timer-stepper"><button onclick="adjInt('rounds',-1)">−</button><span id="int-rounds">8</span><button onclick="adjInt('rounds',1)">+</button></div></div>
+      <div class="timer-int-row"><span>Preparação</span><div class="timer-stepper"><button data-step="prep" data-delta="-5">−</button><span class="timer-step-val"><span id="int-prep">10</span>s</span><button data-step="prep" data-delta="5">+</button></div></div>
+      <div class="timer-int-row"><span>Trabalho</span><div class="timer-stepper"><button data-step="work" data-delta="-5">−</button><span class="timer-step-val"><span id="int-work">20</span>s</span><button data-step="work" data-delta="5">+</button></div></div>
+      <div class="timer-int-row"><span>Descanso</span><div class="timer-stepper"><button data-step="rest" data-delta="-5">−</button><span class="timer-step-val"><span id="int-rest">10</span>s</span><button data-step="rest" data-delta="5">+</button></div></div>
+      <div class="timer-int-row"><span>Rondas</span><div class="timer-stepper"><button data-step="rounds" data-delta="-1">−</button><span class="timer-step-val"><span id="int-rounds">8</span></span><button data-step="rounds" data-delta="1">+</button></div></div>
     </div>
     <div class="timer-controls">
       <button id="timer-start-btn" class="timer-big-btn" onclick="toggleBigTimer()" aria-label="Iniciar"><svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
@@ -726,7 +728,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v119';
+const APP_VERSION = 'v121';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2254,6 +2256,8 @@ async function startApp() {
 document.addEventListener('DOMContentLoaded', async function() {
   // Allow Enter key to submit login
   document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  // Interval steppers: tap = 1 step, press-and-hold = repeat with acceleration
+  setupIntervalSteppers();
   // Water lock: hold the overlay to unlock
   const lockOv = document.getElementById('timer-lock-overlay');
   if (lockOv) {
@@ -2440,6 +2444,39 @@ function setTimerMode(mode) {
 function setSimpleTime(sec) {
   bt.simpleTime = sec;
   resetBigTimer();
+}
+
+let _holdTimeout = null, _holdInterval = null;
+
+function setupIntervalSteppers() {
+  document.querySelectorAll('.timer-stepper button[data-step]').forEach(btn => {
+    const field = btn.dataset.step;
+    const delta = parseInt(btn.dataset.delta, 10);
+    const fire = () => adjInt(field, delta);
+
+    const start = (e) => {
+      e.preventDefault();
+      fire(); // primeiro passo imediato
+      // após 450ms começa a repetir; acelera ao longo do tempo
+      let speed = 180;
+      _holdTimeout = setTimeout(function tick() {
+        fire();
+        speed = Math.max(40, speed - 15); // acelera
+        _holdInterval = setTimeout(tick, speed);
+      }, 450);
+    };
+    const stop = () => {
+      if (_holdTimeout) { clearTimeout(_holdTimeout); _holdTimeout = null; }
+      if (_holdInterval) { clearTimeout(_holdInterval); _holdInterval = null; }
+    };
+
+    btn.addEventListener('touchstart', start, {passive:false});
+    btn.addEventListener('touchend', stop);
+    btn.addEventListener('touchcancel', stop);
+    btn.addEventListener('mousedown', start);
+    btn.addEventListener('mouseup', stop);
+    btn.addEventListener('mouseleave', stop);
+  });
 }
 
 function adjInt(field, delta) {
