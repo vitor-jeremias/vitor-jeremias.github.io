@@ -728,7 +728,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v123';
+const APP_VERSION = 'v124';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2669,23 +2669,23 @@ function whistle() {
     const ctx = bt.audioCtx;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    // a touch of vibrato/flutter like a real whistle
+    // subtle flutter, gentler than before
     const lfo = ctx.createOscillator();
     const lfoGain = ctx.createGain();
-    lfo.frequency.value = 18; lfoGain.gain.value = 40;
+    lfo.frequency.value = 12; lfoGain.gain.value = 20;
     lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
     osc.connect(gain); gain.connect(dest);
     osc.type = 'sine';
     const t0 = ctx.currentTime;
-    // rising chirp then steady high tone (whistle-like)
-    osc.frequency.setValueAtTime(1800, t0);
-    osc.frequency.linearRampToValueAtTime(2600, t0 + 0.12);
+    // warmer, less piercing tone (was 1800→2600Hz, now mid-range)
+    osc.frequency.setValueAtTime(880, t0);
+    osc.frequency.linearRampToValueAtTime(1180, t0 + 0.12);
     gain.gain.setValueAtTime(0.0001, t0);
-    gain.gain.exponentialRampToValueAtTime(0.95, t0 + 0.04);
-    gain.gain.setValueAtTime(0.95, t0 + 0.45);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.6);
+    gain.gain.exponentialRampToValueAtTime(0.75, t0 + 0.05);
+    gain.gain.setValueAtTime(0.75, t0 + 0.40);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.55);
     lfo.start(t0); osc.start(t0);
-    lfo.stop(t0 + 0.6); osc.stop(t0 + 0.6);
+    lfo.stop(t0 + 0.55); osc.stop(t0 + 0.55);
   } catch(e) {}
 }
 
