@@ -328,13 +328,13 @@ input[type="file"]{display:none;}
 .timer-modal.running.mode-interval.phase-work .timer-total,
 .timer-modal.running.mode-interval.phase-rest .timer-total{color:rgba(10,14,12,0.65)!important;}
 .timer-modal.running.mode-interval{justify-content:flex-start;padding-top:calc(14px + env(safe-area-inset-top, 0px));}
-.timer-modal.running.mode-interval .timer-modal-inner{display:flex;flex-direction:column;align-items:center;max-width:none;width:100%;}
+.timer-modal.running.mode-interval .timer-modal-inner{display:flex;flex-direction:column;align-items:center;max-width:none;width:100%;min-height:100%;flex:1;}
 .timer-modal.running.mode-interval .timer-total{order:1;}
-.timer-modal.running.mode-interval .timer-display-big{order:3;}
-.timer-modal.running.mode-interval .timer-next{order:4;}
+.timer-modal.running.mode-interval .timer-display-big{order:3;margin-top:auto;}
+.timer-modal.running.mode-interval .timer-next{order:4;margin-bottom:auto;}
 .timer-modal.running.mode-interval .timer-controls{order:5;}
 .timer-modal.running.mode-interval #timer-skip-row{order:6;}
-.timer-modal.running.mode-interval .timer-lock-btn{order:7;}
+.timer-modal.running.mode-interval .timer-lock-btn{order:7;margin-bottom:calc(8px + env(safe-area-inset-bottom, 0px));}
 .timer-modal.running.mode-interval .timer-total{font-size:34px;margin-bottom:0;}
 #timer-skip-row{display:none;gap:10px;margin-top:14px;max-width:340px;margin-left:auto;margin-right:auto;}
 .timer-modal.running.mode-interval #timer-skip-row{display:flex;}
@@ -726,7 +726,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v118';
+const APP_VERSION = 'v119';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
