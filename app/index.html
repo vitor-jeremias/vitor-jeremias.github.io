@@ -157,7 +157,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .stat-card.kpi::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:var(--kpi);}
 .stat-value{font-size:30px;font-weight:800;font-family:var(--mono);color:var(--accent);letter-spacing:-1px;line-height:1;}
 .stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:6px;font-family:var(--mono);font-weight:600;}
-.ex-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;color:var(--text);font-family:var(--font);font-size:15px;font-weight:600;margin-bottom:16px;-webkit-appearance:none;box-shadow:0 1px 4px rgba(0,0,0,0.3);}
+.ex-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 44px 14px 16px;color:var(--text);font-family:var(--font);font-size:15px;font-weight:600;margin-bottom:16px;-webkit-appearance:none;appearance:none;box-shadow:0 1px 4px rgba(0,0,0,0.3);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2339FF88' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;}
+.ex-select-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
 .chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px 16px;min-height:160px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.3);}
 .chart-bars{display:flex;align-items:flex-end;gap:7px;height:130px;}
 .chart-bar-wrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;flex:1;height:100%;}
@@ -820,7 +821,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v138';
+const APP_VERSION = 'v140';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1989,7 +1990,11 @@ function statsResumoHTML(sessions) {
 
 function statsProgHTML(sessions) {
   const allEx = buildAllEx();
-  let html = `<p class="section-title">Progressão (1RM estimado)</p>
+  let html = `<p class="section-title">Progressão por exercício</p>
+  <div class="ex-select-label">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    Toca para escolher o exercício
+  </div>
   <select class="ex-select" id="ex-select" onchange="updateChart()">`;
   allEx.forEach(ex => { html += `<option value="${ex.id}">${ex.name}</option>`; });
   html += `</select><div class="chart-wrap" id="chart-wrap"></div>`;
@@ -1999,11 +2004,15 @@ function statsProgHTML(sessions) {
   const prs = calcPRs(sessions, allEx);
   if (prs.length) {
     prs.forEach(pr => {
+      const main = pr.bodyweight
+        ? (pr.weight > 0 ? `${pr.reps} reps <span style="font-size:13px;color:var(--text2)">+${pr.weight}kg</span>` : `${pr.reps} reps`)
+        : `${pr.weight}kg`;
+      const sub = pr.bodyweight ? 'peso corporal' : `${pr.reps} reps`;
       html += `<div class="trend-row">
         <div class="trend-name">${pr.name}</div>
         <div style="text-align:right">
-          <div class="trend-val up">${pr.weight}kg</div>
-          <div class="trend-change">${pr.reps} reps</div>
+          <div class="trend-val up">${main}</div>
+          <div class="trend-change">${sub}</div>
         </div>
       </div>`;
     });
@@ -2017,11 +2026,12 @@ function statsProgHTML(sessions) {
   const progressions = calcTopProgressions(sessions, allEx);
   if (progressions.length) {
     progressions.slice(0,6).forEach(p => {
+      const u = p.bodyweight ? ' reps' : 'kg';
       html += `<div class="trend-row">
         <div class="trend-name">${p.name}</div>
         <div style="text-align:right">
-          <div class="trend-val up">+${p.gain}kg</div>
-          <div class="trend-change">${p.from}kg → ${p.to}kg</div>
+          <div class="trend-val up">+${p.gain}${u}</div>
+          <div class="trend-change">${p.from}${u} → ${p.to}${u}</div>
         </div>
       </div>`;
     });
@@ -2038,8 +2048,10 @@ function statsMusculosHTML(sessions) {
     const w = WORKOUTS[s.workoutKey]; if(!w) return;
     s.exercises.forEach(se => {
       const def = w.exercises.find(e=>e.id===se.id); if(!def) return;
+      const bw = !!def.bodyweight;
       se.sets.forEach(st => {
-        if(st.weight>0&&st.reps>0) def.muscles.forEach(m=>{
+        const counts = bw ? (st.reps>0) : (st.weight>0&&st.reps>0);
+        if(counts) def.muscles.forEach(m=>{
           muscleSets[m]=(muscleSets[m]||0)+1;
         });
       });
@@ -2163,32 +2175,54 @@ function estimate1RM(weight, reps) {
   return weight * (1 + reps / 30);
 }
 
+// Devolve a definição do exercício (procura em todos os treinos) pelo id
+function exDef(exId) {
+  for (const wk of Object.keys(WORKOUTS)) {
+    const ex = WORKOUTS[wk].exercises.find(e=>e.id===exId);
+    if (ex) return ex;
+  }
+  return null;
+}
+function isBodyweight(exId) { const d = exDef(exId); return !!(d && d.bodyweight); }
+
 function updateChart() {
   const exId = document.getElementById('ex-select')?.value; if(!exId) return;
+  const bw = isBodyweight(exId);
   const points = [];
   getSessions().forEach(s => {
     const w = WORKOUTS[s.workoutKey]; if(!w) return;
     const se = s.exercises.find(e=>e.id===exId); if(!se) return;
-    const valid = se.sets.filter(st=>st.weight>0&&st.reps>0); if(!valid.length) return;
-    // 1RM estimado da sessão = melhor set (maior 1RM estimado)
-    const best1rm = Math.max(...valid.map(st=>estimate1RM(st.weight, st.reps)));
-    points.push({date:formatDateShort(s.date), e1rm:Math.round(best1rm)});
+    if (bw) {
+      // Peso corporal: progresso medido em reps (soma de reps válidas na sessão)
+      const valid = se.sets.filter(st=>st.reps>0); if(!valid.length) return;
+      const totalReps = valid.reduce((a,st)=>a+st.reps,0);
+      points.push({date:formatDateShort(s.date), val:totalReps});
+    } else {
+      const valid = se.sets.filter(st=>st.weight>0&&st.reps>0); if(!valid.length) return;
+      const best1rm = Math.max(...valid.map(st=>estimate1RM(st.weight, st.reps)));
+      points.push({date:formatDateShort(s.date), val:Math.round(best1rm)});
+    }
   });
 
   const wrap = document.getElementById('chart-wrap'); if(!wrap) return;
   if (!points.length) { wrap.innerHTML=`<div class="no-data">Ainda não há dados para este exercício.</div>`; return; }
 
   const recent = points.slice(-10);
-  const current = recent[recent.length-1].e1rm;
-  const best = Math.max(...points.map(p=>p.e1rm));
-  const data = recent.map(p => ({ value: p.e1rm, top: `${p.e1rm}`, label: p.date }));
+  const current = recent[recent.length-1].val;
+  const best = Math.max(...points.map(p=>p.val));
+  const data = recent.map(p => ({ value: p.val, top: `${p.val}`, label: p.date }));
+  const unit = bw ? '' : 'kg';
+  const lblCur = bw ? 'Reps totais (última)' : '1RM estimado';
+  const lblBest = bw ? 'Melhor de sempre' : 'Melhor de sempre';
 
   let html = `<div class="e1rm-summary">
-    <div class="e1rm-item"><div class="e1rm-val">${current}<span class="e1rm-unit">kg</span></div><div class="e1rm-lbl">1RM estimado</div></div>
-    <div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${best}<span class="e1rm-unit">kg</span></div><div class="e1rm-lbl">Melhor de sempre</div></div>
+    <div class="e1rm-item"><div class="e1rm-val">${current}<span class="e1rm-unit">${unit}</span></div><div class="e1rm-lbl">${lblCur}</div></div>
+    <div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${best}<span class="e1rm-unit">${unit}</span></div><div class="e1rm-lbl">${lblBest}</div></div>
   </div>`;
   html += svgBars(data);
-  html += `<div class="e1rm-note">Força máxima teórica (peso × reps). Sobe mesmo que mantenhas a carga e faças mais repetições.</div>`;
+  html += bw
+    ? `<div class="e1rm-note">Peso corporal: o progresso é medido pelo total de repetições por sessão. Quando fizeres 3×${exDef(exId)?.repsMax||10} folgado, adiciona lastro.</div>`
+    : `<div class="e1rm-note">Força máxima teórica (peso × reps). Sobe mesmo que mantenhas a carga e faças mais repetições.</div>`;
   wrap.innerHTML = html;
 }
 
@@ -2229,38 +2263,52 @@ function calcStreak(sessions) {
 function calcPRs(sessions, allEx) {
   const prs = [];
   allEx.forEach(ex => {
+    const bw = isBodyweight(ex.id);
     let best = null;
     sessions.forEach(s => {
       const se = s.exercises.find(e=>e.id===ex.id); if(!se) return;
       se.sets.forEach(st => {
-        if (st.weight > 0 && st.reps > 0) {
+        if (bw) {
+          // Peso corporal: recorde = mais reps (desempata por lastro, se houver)
+          if (st.reps > 0) {
+            if (!best || st.reps > best.reps || (st.reps === best.reps && st.weight > best.weight)) {
+              best = { weight: st.weight, reps: st.reps };
+            }
+          }
+        } else if (st.weight > 0 && st.reps > 0) {
           if (!best || st.weight > best.weight || (st.weight === best.weight && st.reps > best.reps)) {
             best = { weight: st.weight, reps: st.reps };
           }
         }
       });
     });
-    if (best) prs.push({ name: ex.name, weight: best.weight, reps: best.reps });
+    if (best) prs.push({ name: ex.name, weight: best.weight, reps: best.reps, bodyweight: bw });
   });
+  // ordenar: bodyweight por reps, restantes por peso; mistura ordenada por peso desc (bodyweight ao fim com peso 0)
   return prs.sort((a,b)=>b.weight-a.weight);
 }
 
 function calcTopProgressions(sessions, allEx) {
   const progressions = [];
   allEx.forEach(ex => {
+    const bw = isBodyweight(ex.id);
     const exSessions = sessions.filter(s => {
       const w = WORKOUTS[s.workoutKey]; if(!w) return false;
       return s.exercises.some(e=>e.id===ex.id);
     });
     if (exSessions.length < 2) return;
-    const weights = exSessions.map(s => {
+    const vals = exSessions.map(s => {
       const se = s.exercises.find(e=>e.id===ex.id); if(!se) return 0;
+      if (bw) {
+        const valid = se.sets.filter(st=>st.reps>0); if(!valid.length) return 0;
+        return Math.max(...valid.map(st=>st.reps)); // melhor set em reps
+      }
       const valid = se.sets.filter(st=>st.weight>0); if(!valid.length) return 0;
       return Math.max(...valid.map(st=>st.weight));
-    }).filter(w=>w>0);
-    if (weights.length < 2) return;
-    const gain = weights[weights.length-1] - weights[0];
-    if (gain > 0) progressions.push({name:ex.name, gain, from:weights[0], to:weights[weights.length-1]});
+    }).filter(v=>v>0);
+    if (vals.length < 2) return;
+    const gain = vals[vals.length-1] - vals[0];
+    if (gain > 0) progressions.push({name:ex.name, gain, from:vals[0], to:vals[vals.length-1], bodyweight:bw});
   });
   return progressions.sort((a,b)=>b.gain-a.gain);
 }
