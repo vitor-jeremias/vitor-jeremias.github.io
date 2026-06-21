@@ -72,6 +72,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .session-day{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px;}
 .session-title{font-size:28px;font-weight:800;letter-spacing:-0.3px;margin-bottom:5px;}
 .last-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;}
+.session-timer-bar{position:sticky;top:calc(58px + env(safe-area-inset-top, 0px));z-index:90;box-shadow:0 4px 16px rgba(0,0,0,0.4);backdrop-filter:blur(10px);background:rgba(28,36,32,0.96);}
 .last-bar-text{font-size:12px;color:var(--text2);}
 .last-bar-text strong{color:var(--text);}
 .ex-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
@@ -267,6 +268,21 @@ input[type="file"]{display:none;}
 .ib-seg:last-child{border-bottom:none;}
 .ib-seg-name{font-size:14px;color:var(--text2);}
 .ib-seg-val{font-size:14px;font-weight:700;color:var(--text);font-family:var(--mono);}
+.e1rm-summary{display:flex;gap:10px;margin-bottom:14px;}
+.e1rm-item{flex:1;background:var(--surface2);border-radius:12px;padding:14px;text-align:center;}
+.e1rm-val{font-size:26px;font-weight:800;font-family:var(--mono);color:var(--accent);line-height:1;}
+.e1rm-unit{font-size:13px;color:var(--text3);font-weight:600;margin-left:2px;}
+.e1rm-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-family:var(--mono);margin-top:6px;}
+.e1rm-note{font-size:11px;color:var(--text3);line-height:1.4;margin-top:12px;font-family:var(--mono);}
+.muscle-bar-fill.zone-good{background:linear-gradient(90deg,#2ecc71,#39FF88);}
+.muscle-bar-fill.zone-low{background:linear-gradient(90deg,#b89a3a,#feca57);}
+.muscle-bar-fill.zone-high{background:linear-gradient(90deg,#d97a2b,#ff9f43);}
+.sets-legend{display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:14px;padding-top:12px;border-top:1px solid var(--border);}
+.sl-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:2px;}
+.sl-dot.good{background:#39FF88;}
+.sl-dot.low{background:#feca57;}
+.sl-dot.high{background:#ff9f43;}
+.mm-legend-grad{display:inline-block;width:80px;height:10px;border-radius:5px;background:linear-gradient(90deg,#2a342e,#39FF88);}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#0a0e0c;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;z-index:999;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;box-shadow:0 4px 12px rgba(57,255,136,0.3);}
 
 /* ===== Login screen ===== */
@@ -285,6 +301,14 @@ input[type="file"]{display:none;}
 @keyframes loginQuoteIn{to{opacity:1;}}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .history-empty{text-align:center;padding:60px 20px;color:var(--text3);}
+.cgrid-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:24px;}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cgrid-cell{aspect-ratio:1;border-radius:5px;background:var(--surface2);border:1px solid var(--border);}
+.cgrid-cell.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(57,255,136,0.3);}
+.cgrid-cell.today{outline:2px solid var(--text3);outline-offset:1px;}
+.cgrid-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:11px;color:var(--text3);font-family:var(--mono);}
+.cgrid-legend{display:flex;align-items:center;gap:5px;}
+.cgrid-legend .cgrid-cell{width:11px;height:11px;aspect-ratio:auto;display:inline-block;}
 .rest-btn{width:100%;padding:16px;background:rgba(57,255,136,0.08);border:1.5px solid var(--accent);border-radius:12px;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .timer-mini{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px));z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px;background:var(--accent);color:#0a0e0c;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.35);cursor:pointer;animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1);}
 .timer-mini.show{display:flex;}
@@ -796,7 +820,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v128';
+const APP_VERSION = 'v133';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1181,7 +1205,38 @@ function renderHome() {
   });
   html += `</div>`;
 
+  html += consistencyGridHTML(sessions);
+
   container.innerHTML = html;
+}
+
+// Grelha de consistência — últimos 35 dias (estilo contribuições)
+function consistencyGridHTML(sessions) {
+  // dias com treino (chave YYYY-M-D)
+  const trained = new Set(sessions.map(s => {
+    const d = new Date(s.date);
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  }));
+  const DAYS_SHOWN = 35;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const key = d => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+
+  let cells = '';
+  let trainedCount = 0;
+  for (let i = DAYS_SHOWN - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const did = trained.has(key(d));
+    if (did) trainedCount++;
+    const isToday = i === 0;
+    cells += `<div class="cgrid-cell${did?' on':''}${isToday?' today':''}" title="${d.getDate()}/${d.getMonth()+1}"></div>`;
+  }
+
+  return `<p class="section-title">Consistência · últimos 5 semanas</p>
+  <div class="cgrid-card">
+    <div class="cgrid">${cells}</div>
+    <div class="cgrid-foot"><span>${trainedCount} dias treinados</span><span class="cgrid-legend"><span class="cgrid-cell"></span> menos <span class="cgrid-cell on"></span> treino</span></div>
+  </div>`;
 }
 
 let timerInterval = null;
@@ -1447,7 +1502,7 @@ function renderSession() {
     <div class="session-day" style="color:var(--${w.type})">${w.day} · ${w.name}</div>
     <div class="session-title">${w.sub}</div>
   </div>
-  <div id="timer-bar" class="last-bar" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+  <div id="timer-bar" class="last-bar session-timer-bar" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
     <div id="timer-display" style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--accent)">00:00</div>
     <button id="timer-btn" onclick="toggleTimer()" style="padding:12px 24px;border:none;border-radius:10px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px">${ICON_PLAY_SM}<span>Iniciar treino</span></button>
   </div>
@@ -1650,7 +1705,7 @@ function showProgressionSummary(exData, w) {
 function renderHistorico() {
   const container = document.getElementById('view-historico');
   const sessions = [...getSessions()].reverse();
-  if (!sessions.length) { container.innerHTML = `<div class="history-empty"><p>Ainda não há sessões registadas.</p></div>`; return; }
+  if (!sessions.length) { container.innerHTML = `<div class="history-empty"><p style="font-size:17px;font-weight:700;color:var(--text2);margin-bottom:6px">Ainda nada por aqui.</p><p>O primeiro treino que guardares começa a tua história. Still becoming<span style="color:var(--accent)">.</span></p></div>`; return; }
 
   let html = `<p class="section-title">${sessions.length} sessão${sessions.length!==1?'ões':''} registada${sessions.length!==1?'s':''}</p>`;
   sessions.forEach(s => {
@@ -1793,35 +1848,17 @@ function calcExerciseTrends(sessions, allEx) {
   return trends.sort((a,b)=>order[a.status]-order[b.status]);
 }
 
-function renderStats() {
-  const container = document.getElementById('view-stats');
-  const sessions = getSessions();
-  const totalVol = sessions.reduce((a,s)=>a+calcVolume(s),0);
-  const totalSets = sessions.reduce((a,s)=>a+s.exercises.reduce((b,e)=>b+e.sets.filter(st=>st.weight>0).length,0),0);
-  const totalSessions = sessions.length;
-  const avgVol = totalSessions > 0 ? Math.round(totalVol/totalSessions) : 0;
-  const durSessions = sessions.filter(s=>s.duration>0);
-  const avgDuration = durSessions.length > 0 ? Math.round(durSessions.reduce((a,s)=>a+s.duration,0)/durSessions.length) : 0;
+let _statsTab = 'resumo';
 
-  // Streak
-  const streak = calcStreak(sessions);
+function setStatsTab(tab) {
+  _statsTab = tab;
+  renderStats();
+  const c = document.querySelector('.nutri-subtabs');
+  if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
-  // Muscle volume
-  const muscleVol = {};
-  sessions.forEach(s => {
-    const w = WORKOUTS[s.workoutKey]; if(!w) return;
-    s.exercises.forEach(se => {
-      const def = w.exercises.find(e=>e.id===se.id); if(!def) return;
-      se.sets.forEach(st => {
-        if(st.weight>0&&st.reps>0) def.muscles.forEach(m=>{muscleVol[m]=(muscleVol[m]||0)+st.weight*st.reps;});
-      });
-    });
-  });
-  const maxMV = Math.max(...Object.values(muscleVol), 1);
-
-  // All exercises for chart
+function buildAllEx() {
   const allEx = [];
-  // Count name occurrences to detect duplicates
   const nameCounts = {};
   Object.values(WORKOUTS).forEach(w=>w.exercises.forEach(ex=>{ nameCounts[ex.name]=(nameCounts[ex.name]||0)+1; }));
   Object.keys(WORKOUTS).forEach(wk => {
@@ -1833,34 +1870,90 @@ function renderStats() {
       }
     });
   });
+  return allEx;
+}
 
-  let html = `<p class="section-title">Resumo Geral</p>
-  <div class="stats-grid">
+// Gráfico de barras em SVG (limpo, escalável)
+function svgBars(data, opts) {
+  opts = opts || {};
+  if (!data.length) return '';
+  const W = 320, H = 120, padB = 18, padT = 16;
+  const max = Math.max(...data.map(d=>d.value), 1);
+  const n = data.length;
+  const gap = 6;
+  const bw = (W - gap*(n-1)) / n;
+  let bars = '', labels = '', vals = '';
+  data.forEach((d, i) => {
+    const h = Math.max(3, (d.value/max) * (H - padB - padT));
+    const x = i * (bw + gap);
+    const y = H - padB - h;
+    const isLast = i === n-1;
+    const fill = isLast ? '#39FF88' : (opts.color || '#2ecc71');
+    const op = isLast ? '1' : '0.55';
+    bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="4" fill="${fill}" opacity="${op}"/>`;
+    vals += `<text x="${(x+bw/2).toFixed(1)}" y="${(y-4).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#9fb3a8">${d.top}</text>`;
+    labels += `<text x="${(x+bw/2).toFixed(1)}" y="${H-5}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#6a7d72">${d.label}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:130px;display:block">${bars}${vals}${labels}</svg>`;
+}
+
+function renderStats() {
+  const container = document.getElementById('view-stats');
+  const sessions = getSessions();
+
+  if (!sessions.length) {
+    container.innerHTML = `<div class="history-empty"><p style="font-size:17px;font-weight:700;color:var(--text2);margin-bottom:6px">Sem dados, ainda.</p><p>Regista o primeiro treino e os números aparecem aqui. O progresso constrói-se<span style="color:var(--accent)">.</span></p></div>`;
+    return;
+  }
+
+  // Sub-abas
+  const tabs = [['resumo','Resumo'],['prog','Progressão'],['musculos','Músculos']];
+  let html = `<div class="nutri-subtabs">`;
+  tabs.forEach(([key,label]) => {
+    html += `<button class="nutri-subtab${_statsTab===key?' active':''}" onclick="setStatsTab('${key}')">${label}</button>`;
+  });
+  html += `</div><div class="nutri-content">`;
+
+  if (_statsTab === 'resumo') html += statsResumoHTML(sessions);
+  else if (_statsTab === 'prog') html += statsProgHTML(sessions);
+  else if (_statsTab === 'musculos') html += statsMusculosHTML(sessions);
+
+  html += `</div>`;
+  container.innerHTML = html;
+  if (_statsTab === 'prog') updateChart();
+}
+
+function statsResumoHTML(sessions) {
+  const totalVol = sessions.reduce((a,s)=>a+calcVolume(s),0);
+  const totalSets = sessions.reduce((a,s)=>a+s.exercises.reduce((b,e)=>b+e.sets.filter(st=>st.weight>0).length,0),0);
+  const totalSessions = sessions.length;
+  const durSessions = sessions.filter(s=>s.duration>0);
+  const avgDuration = durSessions.length > 0 ? Math.round(durSessions.reduce((a,s)=>a+s.duration,0)/durSessions.length) : 0;
+  const streak = calcStreak(sessions);
+  const fmtNum = (v)=> v>=1000 ? Math.round(v/1000*10)/10+'k' : Math.round(v);
+
+  let html = `<div class="stats-grid">
     <div class="stat-card kpi" style="--kpi:#39FF88"><div class="stat-value">${totalSessions}</div><div class="stat-label">Sessões</div></div>
-    <div class="stat-card kpi" style="--kpi:#39FF88"><div class="stat-value" style="color:#39FF88">${totalVol >= 1000 ? Math.round(totalVol/1000*10)/10+'k' : Math.round(totalVol)}</div><div class="stat-label">Volume kg</div></div>
+    <div class="stat-card kpi" style="--kpi:#39FF88"><div class="stat-value" style="color:#39FF88">${fmtNum(totalVol)}</div><div class="stat-label">Volume kg</div></div>
     <div class="stat-card kpi" style="--kpi:#ff9f43"><div class="stat-value" style="color:#ff9f43">${totalSets}</div><div class="stat-label">Séries Total</div></div>
     ${avgDuration > 0
       ? `<div class="stat-card kpi" style="--kpi:#feca57"><div class="stat-value" style="color:#feca57">${formatTimer(avgDuration)}</div><div class="stat-label">Tempo médio</div></div>`
-      : `<div class="stat-card kpi" style="--kpi:#feca57"><div class="stat-value" style="color:#feca57">${avgVol}</div><div class="stat-label">kg / Sessão</div></div>`}
+      : `<div class="stat-card kpi" style="--kpi:#feca57"><div class="stat-value" style="color:#feca57">${streak}</div><div class="stat-label">Semanas seguidas</div></div>`}
   </div>`;
 
-  // Streak
-  if (streak > 0) {
-    html += `<div class="stat-card" style="margin-bottom:24px">
+  if (streak > 0 && avgDuration > 0) {
+    html += `<div class="stat-card" style="margin-bottom:20px">
       <div class="stat-value" style="color:var(--accent)">${streak}</div>
       <div class="stat-label">Semana${streak>1?'s':''} consecutiva${streak>1?'s':''} a treinar</div>
     </div>`;
   }
 
-  // Week comparison
+  // Comparação semana vs anterior — só quando faz sentido
   const cmp = calcWeekComparison(sessions);
-  if (cmp.thisCount > 0 || cmp.lastCount > 0) {
+  if (cmp.lastCount > 0) {
     const volDiff = cmp.thisVol - cmp.lastVol;
     const volPct = cmp.lastVol > 0 ? Math.round((volDiff/cmp.lastVol)*100) : null;
     const volUp = volDiff >= 0;
-    // número formatado (54k ou 540) — SEM unidade
-    const fmtNum = (v)=> v>=1000 ? Math.round(v/1000*10)/10+'k' : Math.round(v);
-    // número + unidade kg (ex: "54k kg" → mas junto fica "54kkg"; por isso só metemos kg quando NÃO há k)
     const fmtKg = (v)=> v>=1000 ? Math.round(v/1000*10)/10+'k kg' : Math.round(v)+'kg';
     html += `<p class="section-title">Esta Semana vs Anterior</p>
     <div class="cmp-grid">
@@ -1879,85 +1972,29 @@ function renderStats() {
     </div>`;
   }
 
-  // Weekly volume chart (last 8 weeks) — only with 2+ weeks
+  // Gráficos de volume e frequência (SVG)
   const weekly = calcWeeklyVolume(sessions);
   if (weekly.length >= 2) {
-    const maxWV = Math.max(...weekly.map(w=>w.vol), 1);
-    html += `<p class="section-title">Volume Semanal (kg)</p><div class="chart-wrap"><div class="chart-bars">`;
-    const weeklyShown = weekly.slice(-8);
-    weeklyShown.forEach((wk,i) => {
-      const h = Math.max(6, Math.round((wk.vol/maxWV)*110));
-      const vLabel = wk.vol >= 1000 ? `${Math.round(wk.vol/1000*10)/10}k` : `${Math.round(wk.vol)}`;
-      const isCurrent = i === weeklyShown.length-1;
-      html += `<div class="chart-bar-wrap">
-        <div class="chart-bar-val">${vLabel}</div>
-        <div class="chart-bar neutral${isCurrent?' current':''}" style="height:${h}px"></div>
-        <div class="chart-bar-label">${wk.label}</div>
-      </div>`;
-    });
-    html += `</div></div>`;
+    const volData = weekly.slice(-8).map(wk => ({ value: wk.vol, top: wk.vol>=1000?`${Math.round(wk.vol/1000*10)/10}k`:`${Math.round(wk.vol)}`, label: wk.label }));
+    html += `<p class="section-title">Volume Semanal (kg)</p><div class="chart-wrap">${svgBars(volData)}</div>`;
 
-    const maxFreq = Math.max(...weekly.map(w=>w.count), 1);
-    html += `<p class="section-title">Frequência (sessões/semana)</p><div class="chart-wrap"><div class="chart-bars">`;
-    weekly.slice(-8).forEach(wk => {
-      const h = Math.max(6, Math.round((wk.count/maxFreq)*110));
-      const cls = wk.count >= 4 ? 'up' : wk.count >= 2 ? 'keep' : 'neutral';
-      html += `<div class="chart-bar-wrap">
-        <div class="chart-bar-val">${wk.count}</div>
-        <div class="chart-bar ${cls}" style="height:${h}px"></div>
-        <div class="chart-bar-label">${wk.label}</div>
-      </div>`;
-    });
-    html += `</div></div>`;
-  } else if (weekly.length === 1) {
-    html += `<div class="stat-card" style="margin-bottom:24px;text-align:center;color:var(--text3);font-size:13px;padding:24px">Treina mais uma semana para veres os gráficos de tendência de volume e frequência.</div>`;
+    const freqData = weekly.slice(-8).map(wk => ({ value: wk.count, top: `${wk.count}`, label: wk.label }));
+    html += `<p class="section-title">Frequência (sessões/semana)</p><div class="chart-wrap">${svgBars(freqData, {color:'#feca57'})}</div>`;
+  } else {
+    html += `<div class="stat-card" style="margin-bottom:24px;text-align:center;color:var(--text3);font-size:13px;padding:24px">Treina mais uma semana para veres os gráficos de tendência.</div>`;
   }
 
-  // Progression chart
-  html += `<p class="section-title">Progressão de Carga</p>
+  return html;
+}
+
+function statsProgHTML(sessions) {
+  const allEx = buildAllEx();
+  let html = `<p class="section-title">Progressão (1RM estimado)</p>
   <select class="ex-select" id="ex-select" onchange="updateChart()">`;
   allEx.forEach(ex => { html += `<option value="${ex.id}">${ex.name}</option>`; });
   html += `</select><div class="chart-wrap" id="chart-wrap"></div>`;
 
-  // Exercise trends
-  const trends = calcExerciseTrends(sessions, allEx);
-  if (trends.length) {
-    html += `<p class="section-title">Tendência por Exercício</p><div class="stat-card" style="margin-bottom:24px;padding:8px 0">`;
-    trends.forEach((t,i) => {
-      const icon = t.status==='up' ? '▲' : t.status==='down' ? '▼' : '—';
-      html += `<div class="trend-row" style="padding:12px 16px">
-        <div style="display:flex;align-items:center;gap:10px;flex:1">
-          <span class="trend-icon ${t.status}">${icon}</span>
-          <span class="trend-name">${t.name}</span>
-        </div>
-        <div style="text-align:right">
-          <div class="trend-val ${t.status}">${t.label}</div>
-          <div class="trend-change">${t.current}kg atual</div>
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  // Top progressions
-  html += `<p class="section-title">Maiores Progressões</p><div class="stat-card" style="margin-bottom:24px">`;
-  const progressions = calcTopProgressions(sessions, allEx);
-  if (progressions.length) {
-    progressions.slice(0,5).forEach(p => {
-      html += `<div class="trend-row">
-        <div class="trend-name">${p.name}</div>
-        <div style="text-align:right">
-          <div class="trend-val up">+${p.gain}kg</div>
-          <div class="trend-change">${p.from}kg → ${p.to}kg</div>
-        </div>
-      </div>`;
-    });
-  } else {
-    html += `<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">Ainda sem dados suficientes</div>`;
-  }
-  html += `</div>`;
-
-  // Personal Records (PRs)
+  // PRs
   html += `<p class="section-title">Recordes Pessoais</p><div class="stat-card" style="margin-bottom:24px">`;
   const prs = calcPRs(sessions, allEx);
   if (prs.length) {
@@ -1975,22 +2012,155 @@ function renderStats() {
   }
   html += `</div>`;
 
-  // Muscle volume
-  html += `<p class="section-title">Volume por Músculo</p><div class="stat-card" style="margin-bottom:24px">`;
-  Object.entries(MUSCLES).forEach(([key,label]) => {
-    const vol = muscleVol[key]||0;
-    const pct = Math.round((vol/maxMV)*100);
-    const volLabel = vol >= 1000 ? `${Math.round(vol/1000*10)/10}k` : `${Math.round(vol)}`;
-    html += `<div class="muscle-row">
-      <div class="muscle-name">${label}</div>
-      <div class="muscle-bar-bg"><div class="muscle-bar-fill" style="width:${pct}%"></div></div>
-      <div class="muscle-vol">${volLabel}</div>
-    </div>`;
-  });
+  // Maiores progressões
+  html += `<p class="section-title">Maiores Progressões</p><div class="stat-card" style="margin-bottom:24px">`;
+  const progressions = calcTopProgressions(sessions, allEx);
+  if (progressions.length) {
+    progressions.slice(0,6).forEach(p => {
+      html += `<div class="trend-row">
+        <div class="trend-name">${p.name}</div>
+        <div style="text-align:right">
+          <div class="trend-val up">+${p.gain}kg</div>
+          <div class="trend-change">${p.from}kg → ${p.to}kg</div>
+        </div>
+      </div>`;
+    });
+  } else {
+    html += `<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">Ainda sem dados suficientes</div>`;
+  }
   html += `</div>`;
+  return html;
+}
 
-  container.innerHTML = html;
-  updateChart();
+function statsMusculosHTML(sessions) {
+  const muscleSets = {};
+  sessions.forEach(s => {
+    const w = WORKOUTS[s.workoutKey]; if(!w) return;
+    s.exercises.forEach(se => {
+      const def = w.exercises.find(e=>e.id===se.id); if(!def) return;
+      se.sets.forEach(st => {
+        if(st.weight>0&&st.reps>0) def.muscles.forEach(m=>{
+          muscleSets[m]=(muscleSets[m]||0)+1;
+        });
+      });
+    });
+  });
+
+  // nº de semanas distintas com treino
+  const weekSet = new Set(sessions.map(s => {
+    const d = new Date(s.date);
+    const soy = new Date(d.getFullYear(), 0, 1);
+    return d.getFullYear()+'-'+Math.floor((d - soy)/(7*24*60*60*1000));
+  }));
+  const numWeeks = Math.max(weekSet.size, 1);
+
+  // séries/semana por músculo
+  const setsWk = {};
+  Object.keys(MUSCLES).forEach(m => { setsWk[m] = (muscleSets[m]||0)/numWeeks; });
+  const maxSW = Math.max(...Object.values(setsWk), 1);
+
+  // ----- Mapa muscular (boneco) -----
+  let html = `<p class="section-title">Mapa Muscular</p>
+    <div class="stat-card" style="margin-bottom:16px">
+      <div class="nutri-card-intro" style="margin-bottom:14px">Intensidade de treino por grupo (séries/semana). Quanto mais verde, mais volume. Ajuda a ver o que andas a negligenciar.</div>
+      ${muscleMapSVG(setsWk, maxSW)}
+      <div class="cgrid-foot" style="justify-content:center;gap:8px;margin-top:14px"><span class="cgrid-legend"><span style="font-size:10px">menos</span><span class="mm-legend-grad"></span><span style="font-size:10px">mais</span></span></div>
+    </div>`;
+
+  // ----- Séries por músculo por semana (lista, rigorosa) -----
+  html += `<p class="section-title">Séries por Músculo / Semana</p>
+    <div class="stat-card" style="margin-bottom:24px"><div class="nutri-card-intro" style="margin-bottom:14px">Para hipertrofia, a zona habitual é 10–20 séries por semana por grupo.</div>`;
+  Object.entries(MUSCLES)
+    .map(([key,label])=>({key,label,sw:setsWk[key]||0}))
+    .sort((a,b)=>b.sw-a.sw)
+    .forEach(({label,sw}) => {
+      const v = Math.round(sw*10)/10;
+      let zone = 'low';
+      if (v >= 10 && v <= 20) zone = 'good';
+      else if (v > 20) zone = 'high';
+      const pct = Math.min(100, Math.round((v/20)*100));
+      html += `<div class="muscle-row">
+        <div class="muscle-name">${label}</div>
+        <div class="muscle-bar-bg"><div class="muscle-bar-fill zone-${zone}" style="width:${pct}%"></div></div>
+        <div class="muscle-vol">${v}</div>
+      </div>`;
+    });
+  html += `<div class="sets-legend"><span class="sl-dot good"></span>10–20 ideal &nbsp; <span class="sl-dot low"></span>abaixo &nbsp; <span class="sl-dot high"></span>acima</div>`;
+  html += `</div>`;
+  return html;
+}
+
+// Cor verde graduada por intensidade (0 a 1)
+function muscleHeat(val, max) {
+  const t = Math.max(0, Math.min(1, val / max));
+  if (t < 0.02) return '#1c2420'; // praticamente nada
+  // interpola de cinza-esverdeado escuro até verde neon
+  // base: #2a342e → accent: #39FF88
+  const lerp = (a,b)=>Math.round(a+(b-a)*t);
+  const r = lerp(42, 57);
+  const g = lerp(52, 255);
+  const b = lerp(46, 136);
+  return `rgb(${r},${g},${b})`;
+}
+
+// Boneco SVG: frente + costas, regiões coloridas por intensidade
+function muscleMapSVG(setsWk, maxSW) {
+  const c = (m) => muscleHeat(setsWk[m]||0, maxSW);
+  const st = 'stroke="#0a0e0c" stroke-width="1.5"';
+  // Dois bonecos lado a lado: frente (esq) e costas (dir)
+  return `<svg viewBox="0 0 260 220" style="width:100%;max-width:320px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">
+    <!-- ===== FRENTE ===== -->
+    <g transform="translate(0,8)">
+      <text x="62" y="208" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6a7d72">FRENTE</text>
+      <!-- cabeça -->
+      <circle cx="62" cy="14" r="9" fill="#1c2420" ${st}/>
+      <!-- ombros -->
+      <ellipse cx="42" cy="34" rx="9" ry="8" fill="${c('ombros')}" ${st}/>
+      <ellipse cx="82" cy="34" rx="9" ry="8" fill="${c('ombros')}" ${st}/>
+      <!-- peito -->
+      <path d="M48,30 H76 a6,6 0 0 1 6,6 v12 a6,6 0 0 1 -6,6 H48 a6,6 0 0 1 -6,-6 v-12 a6,6 0 0 1 6,-6 Z" fill="${c('peito')}" ${st}/>
+      <!-- biceps -->
+      <ellipse cx="36" cy="56" rx="6" ry="13" fill="${c('biceps')}" ${st}/>
+      <ellipse cx="88" cy="56" rx="6" ry="13" fill="${c('biceps')}" ${st}/>
+      <!-- abdomen -->
+      <rect x="50" y="56" width="24" height="30" rx="5" fill="${c('abdomen')}" ${st}/>
+      <!-- quad -->
+      <path d="M48,90 h11 v40 a5,5 0 0 1 -11,0 Z" fill="${c('quad')}" ${st}/>
+      <path d="M65,90 h11 v40 a5,5 0 0 1 -11,0 Z" fill="${c('quad')}" ${st}/>
+      <!-- gémeos (frente, parcial) -->
+      <ellipse cx="53" cy="150" rx="5" ry="14" fill="${c('gemeos')}" ${st}/>
+      <ellipse cx="71" cy="150" rx="5" ry="14" fill="${c('gemeos')}" ${st}/>
+    </g>
+    <!-- ===== COSTAS ===== -->
+    <g transform="translate(135,8)">
+      <text x="62" y="208" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6a7d72">COSTAS</text>
+      <!-- cabeça -->
+      <circle cx="62" cy="14" r="9" fill="#1c2420" ${st}/>
+      <!-- ombros tras -->
+      <ellipse cx="42" cy="34" rx="9" ry="8" fill="${c('ombros')}" ${st}/>
+      <ellipse cx="82" cy="34" rx="9" ry="8" fill="${c('ombros')}" ${st}/>
+      <!-- costas -->
+      <path d="M48,30 H76 a6,6 0 0 1 6,6 v18 a6,6 0 0 1 -6,6 H48 a6,6 0 0 1 -6,-6 v-18 a6,6 0 0 1 6,-6 Z" fill="${c('costas')}" ${st}/>
+      <!-- triceps -->
+      <ellipse cx="36" cy="56" rx="6" ry="13" fill="${c('triceps')}" ${st}/>
+      <ellipse cx="88" cy="56" rx="6" ry="13" fill="${c('triceps')}" ${st}/>
+      <!-- glúteo -->
+      <path d="M49,68 h26 a4,4 0 0 1 4,4 v10 a8,8 0 0 1 -16,0 a8,8 0 0 1 -16,0 v-10 a4,4 0 0 1 2,-4 Z" fill="${c('gluteo')}" ${st}/>
+      <!-- femoral -->
+      <path d="M48,92 h11 v34 a5,5 0 0 1 -11,0 Z" fill="${c('femoral')}" ${st}/>
+      <path d="M65,92 h11 v34 a5,5 0 0 1 -11,0 Z" fill="${c('femoral')}" ${st}/>
+      <!-- gémeos (costas) -->
+      <ellipse cx="53" cy="150" rx="5" ry="15" fill="${c('gemeos')}" ${st}/>
+      <ellipse cx="71" cy="150" rx="5" ry="15" fill="${c('gemeos')}" ${st}/>
+    </g>
+  </svg>`;
+}
+
+// 1RM estimado pela fórmula de Epley: peso × (1 + reps/30)
+function estimate1RM(weight, reps) {
+  if (weight <= 0 || reps <= 0) return 0;
+  if (reps === 1) return weight;
+  return weight * (1 + reps / 30);
 }
 
 function updateChart() {
@@ -1999,29 +2169,26 @@ function updateChart() {
   getSessions().forEach(s => {
     const w = WORKOUTS[s.workoutKey]; if(!w) return;
     const se = s.exercises.find(e=>e.id===exId); if(!se) return;
-    const valid = se.sets.filter(st=>st.weight>0); if(!valid.length) return;
-    const maxW = Math.max(...valid.map(st=>st.weight));
-    points.push({date:formatDateShort(s.date), weight:maxW});
+    const valid = se.sets.filter(st=>st.weight>0&&st.reps>0); if(!valid.length) return;
+    // 1RM estimado da sessão = melhor set (maior 1RM estimado)
+    const best1rm = Math.max(...valid.map(st=>estimate1RM(st.weight, st.reps)));
+    points.push({date:formatDateShort(s.date), e1rm:Math.round(best1rm)});
   });
 
   const wrap = document.getElementById('chart-wrap'); if(!wrap) return;
   if (!points.length) { wrap.innerHTML=`<div class="no-data">Ainda não há dados para este exercício.</div>`; return; }
 
-  const maxW = Math.max(...points.map(p=>p.weight));
   const recent = points.slice(-10);
+  const current = recent[recent.length-1].e1rm;
+  const best = Math.max(...points.map(p=>p.e1rm));
+  const data = recent.map(p => ({ value: p.e1rm, top: `${p.e1rm}`, label: p.date }));
 
-  let html = `<div class="chart-bars">`;
-  recent.forEach((p,i) => {
-    const h = Math.max(4, Math.round((p.weight/maxW)*90));
-    const prev = i>0?recent[i-1].weight:p.weight;
-    const cls = p.weight>prev?'up':p.weight<prev?'keep':'neutral';
-    html += `<div class="chart-bar-wrap">
-      <div class="chart-bar-val">${p.weight}</div>
-      <div class="chart-bar ${cls}" style="height:${h}px"></div>
-      <div class="chart-bar-label">${p.date}</div>
-    </div>`;
-  });
-  html += `</div>`;
+  let html = `<div class="e1rm-summary">
+    <div class="e1rm-item"><div class="e1rm-val">${current}<span class="e1rm-unit">kg</span></div><div class="e1rm-lbl">1RM estimado</div></div>
+    <div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${best}<span class="e1rm-unit">kg</span></div><div class="e1rm-lbl">Melhor de sempre</div></div>
+  </div>`;
+  html += svgBars(data);
+  html += `<div class="e1rm-note">Força máxima teórica (peso × reps). Sobe mesmo que mantenhas a carga e faças mais repetições.</div>`;
   wrap.innerHTML = html;
 }
 
