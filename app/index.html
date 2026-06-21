@@ -820,7 +820,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v133';
+const APP_VERSION = 'v135';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2106,52 +2106,38 @@ function muscleHeat(val, max) {
 // Boneco SVG: frente + costas, regiões coloridas por intensidade
 function muscleMapSVG(setsWk, maxSW) {
   const c = (m) => muscleHeat(setsWk[m]||0, maxSW);
-  const st = 'stroke="#0a0e0c" stroke-width="1.5"';
-  // Dois bonecos lado a lado: frente (esq) e costas (dir)
-  return `<svg viewBox="0 0 260 220" style="width:100%;max-width:320px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">
-    <!-- ===== FRENTE ===== -->
-    <g transform="translate(0,8)">
-      <text x="62" y="208" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6a7d72">FRENTE</text>
-      <!-- cabeça -->
-      <circle cx="62" cy="14" r="9" fill="#1c2420" ${st}/>
-      <!-- ombros -->
-      <ellipse cx="42" cy="34" rx="9" ry="8" fill="${c('ombros')}" ${st}/>
-      <ellipse cx="82" cy="34" rx="9" ry="8" fill="${c('ombros')}" ${st}/>
-      <!-- peito -->
-      <path d="M48,30 H76 a6,6 0 0 1 6,6 v12 a6,6 0 0 1 -6,6 H48 a6,6 0 0 1 -6,-6 v-12 a6,6 0 0 1 6,-6 Z" fill="${c('peito')}" ${st}/>
-      <!-- biceps -->
-      <ellipse cx="36" cy="56" rx="6" ry="13" fill="${c('biceps')}" ${st}/>
-      <ellipse cx="88" cy="56" rx="6" ry="13" fill="${c('biceps')}" ${st}/>
-      <!-- abdomen -->
-      <rect x="50" y="56" width="24" height="30" rx="5" fill="${c('abdomen')}" ${st}/>
-      <!-- quad -->
-      <path d="M48,90 h11 v40 a5,5 0 0 1 -11,0 Z" fill="${c('quad')}" ${st}/>
-      <path d="M65,90 h11 v40 a5,5 0 0 1 -11,0 Z" fill="${c('quad')}" ${st}/>
-      <!-- gémeos (frente, parcial) -->
-      <ellipse cx="53" cy="150" rx="5" ry="14" fill="${c('gemeos')}" ${st}/>
-      <ellipse cx="71" cy="150" rx="5" ry="14" fill="${c('gemeos')}" ${st}/>
+  const fill = {
+    chest: c('peito'), shoulders: c('ombros'), 'shoulders-back': c('ombros'),
+    biceps: c('biceps'), triceps: c('triceps'), abs: c('abdomen'),
+    quads: c('quad'), calves: c('gemeos'), 'calves-back': c('gemeos'),
+    traps: c('costas'), lats: c('costas'), 'lower-back': c('costas'),
+    glutes: c('gluteo'), hamstrings: c('femoral'),
+  };
+  const F = (id) => `fill="${fill[id]}"`;
+  const OUT = 'fill="none" stroke="#2a342e" stroke-width="3"';
+  const ST = 'stroke="#0a0e0c" stroke-width="2"';
+  return `<svg viewBox="0 0 900 900" style="width:100%;max-width:360px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">
+    <g id="front" transform="translate(90,30)">
+      <path ${OUT} d="M200 35 C160 35 130 60 120 95 C110 135 120 180 135 220 L115 300 L120 420 L135 610 L155 820 L210 820 L225 640 L235 470 L245 470 L255 640 L270 820 L325 820 L345 610 L360 420 L365 300 L345 220 C360 180 370 135 360 95 C350 60 320 35 280 35 Z"/>
+      <path ${F('shoulders')} ${ST} d="M125 125 C135 95 165 80 195 90 C215 100 225 120 220 145 C215 175 195 200 170 205 C145 205 125 185 120 155 C118 145 120 135 125 125 M280 145 C275 120 285 100 305 90 C335 80 365 95 375 125 C380 135 382 145 380 155 C375 185 355 205 330 205 C305 200 285 175 280 145 Z"/>
+      <path ${F('chest')} ${ST} d="M165 120 C185 100 220 95 245 100 C270 105 290 120 295 145 C300 175 285 200 255 210 C230 220 195 220 170 210 C140 200 125 175 130 145 C135 135 145 125 165 120 Z"/>
+      <path ${F('biceps')} ${ST} d="M108 215 C128 205 148 220 155 250 C162 285 155 325 140 350 C128 370 110 375 95 360 C80 345 72 315 75 280 C78 245 88 225 108 215 M292 250 C299 220 319 205 339 215 C359 225 369 245 372 280 C375 315 367 345 352 360 C337 375 319 370 307 350 C292 325 285 285 292 250 Z"/>
+      <path ${F('abs')} ${ST} d="M190 220 L255 220 C275 220 288 245 288 285 L288 370 C288 430 262 465 223 470 C183 465 157 430 157 370 L157 285 C157 245 170 220 190 220 Z"/>
+      <path ${F('quads')} ${ST} d="M160 490 C190 475 220 485 232 520 C245 560 242 640 225 715 C215 760 195 785 170 785 C145 785 125 760 115 715 C98 640 95 560 108 520 C120 485 130 480 160 490 M238 520 C250 485 280 475 310 490 C340 480 350 485 362 520 C375 560 372 640 355 715 C345 760 325 785 300 785 C275 785 255 760 245 715 C228 640 225 560 238 520 Z"/>
+      <path ${F('calves')} ${ST} d="M165 790 C190 785 210 800 215 835 C220 870 205 895 180 900 C155 895 140 870 145 835 C150 800 160 790 165 790 M255 835 C260 800 280 785 305 790 C310 790 320 800 325 835 C330 870 315 895 290 900 C265 895 250 870 255 835 Z"/>
+      <text x="240" y="888" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" fill="#6a7d72">FRENTE</text>
     </g>
-    <!-- ===== COSTAS ===== -->
-    <g transform="translate(135,8)">
-      <text x="62" y="208" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6a7d72">COSTAS</text>
-      <!-- cabeça -->
-      <circle cx="62" cy="14" r="9" fill="#1c2420" ${st}/>
-      <!-- ombros tras -->
-      <ellipse cx="42" cy="34" rx="9" ry="8" fill="${c('ombros')}" ${st}/>
-      <ellipse cx="82" cy="34" rx="9" ry="8" fill="${c('ombros')}" ${st}/>
-      <!-- costas -->
-      <path d="M48,30 H76 a6,6 0 0 1 6,6 v18 a6,6 0 0 1 -6,6 H48 a6,6 0 0 1 -6,-6 v-18 a6,6 0 0 1 6,-6 Z" fill="${c('costas')}" ${st}/>
-      <!-- triceps -->
-      <ellipse cx="36" cy="56" rx="6" ry="13" fill="${c('triceps')}" ${st}/>
-      <ellipse cx="88" cy="56" rx="6" ry="13" fill="${c('triceps')}" ${st}/>
-      <!-- glúteo -->
-      <path d="M49,68 h26 a4,4 0 0 1 4,4 v10 a8,8 0 0 1 -16,0 a8,8 0 0 1 -16,0 v-10 a4,4 0 0 1 2,-4 Z" fill="${c('gluteo')}" ${st}/>
-      <!-- femoral -->
-      <path d="M48,92 h11 v34 a5,5 0 0 1 -11,0 Z" fill="${c('femoral')}" ${st}/>
-      <path d="M65,92 h11 v34 a5,5 0 0 1 -11,0 Z" fill="${c('femoral')}" ${st}/>
-      <!-- gémeos (costas) -->
-      <ellipse cx="53" cy="150" rx="5" ry="15" fill="${c('gemeos')}" ${st}/>
-      <ellipse cx="71" cy="150" rx="5" ry="15" fill="${c('gemeos')}" ${st}/>
+    <g id="back" transform="translate(500,30)">
+      <path ${OUT} d="M200 35 C160 35 130 60 120 95 C110 135 120 180 135 220 L115 300 L120 420 L135 610 L155 820 L210 820 L225 640 L235 470 L245 470 L255 640 L270 820 L325 820 L345 610 L360 420 L365 300 L345 220 C360 180 370 135 360 95 C350 60 320 35 280 35 Z"/>
+      <path ${F('traps')} ${ST} d="M190 90 L290 90 C305 115 315 145 305 170 L175 170 C165 145 175 115 190 90 Z"/>
+      <path ${F('shoulders-back')} ${ST} d="M130 120 C145 90 175 80 200 95 C220 110 225 140 215 170 C205 195 180 210 155 205 C135 195 125 170 125 145 C125 135 127 128 130 120 M285 170 C275 140 280 110 300 95 C325 80 355 90 370 120 C373 128 375 135 375 145 C375 170 365 195 345 205 C320 210 295 195 285 170 Z"/>
+      <path ${F('lats')} ${ST} d="M165 175 C190 160 280 160 305 175 C335 200 350 270 340 345 C330 410 295 445 240 455 C185 445 150 410 140 345 C130 270 145 200 165 175 Z"/>
+      <path ${F('triceps')} ${ST} d="M105 230 C125 220 145 235 152 270 C158 305 152 350 137 375 C125 395 107 400 92 385 C77 370 70 340 72 305 C74 265 85 240 105 230 M308 270 C315 235 335 220 355 230 C375 240 386 265 388 305 C390 340 383 370 368 385 C353 400 335 395 323 375 C308 350 302 305 308 270 Z"/>
+      <path ${F('lower-back')} ${ST} d="M185 420 L295 420 C310 420 320 445 320 480 C320 525 290 555 240 560 C190 555 160 525 160 480 C160 445 170 420 185 420 Z"/>
+      <path ${F('glutes')} ${ST} d="M175 565 C210 555 235 575 240 615 C245 655 220 685 185 690 C150 685 125 655 130 615 C135 575 150 555 175 565 M240 615 C245 575 270 555 305 565 C330 555 345 575 350 615 C355 655 330 685 295 690 C260 685 235 655 240 615 Z"/>
+      <path ${F('hamstrings')} ${ST} d="M165 700 C195 690 220 710 228 760 C236 810 220 850 190 860 C160 850 145 810 152 760 C160 710 165 700 165 700 M252 760 C260 710 285 690 315 700 C315 700 320 710 328 760 C335 810 320 850 290 860 C260 850 244 810 252 760 Z"/>
+      <path ${F('calves-back')} ${ST} d="M180 860 C200 855 215 870 218 900 C220 930 205 950 185 955 C165 950 150 930 152 900 C155 870 170 855 180 860 M262 900 C265 870 280 855 300 860 C310 855 325 870 328 900 C330 930 315 950 295 955 C275 950 260 930 262 900 Z"/>
+      <text x="240" y="888" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" fill="#6a7d72">COSTAS</text>
     </g>
   </svg>`;
 }
