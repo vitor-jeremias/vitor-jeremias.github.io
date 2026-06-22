@@ -53,7 +53,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .complete-title{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-0.5px;}
 .complete-sub{font-size:13px;color:var(--text2);margin-top:6px;font-family:var(--mono);}
 .complete-quote{font-size:18px;font-weight:700;color:var(--text2);margin-top:20px;}
-.save-btn.one-more{background:transparent;color:var(--accent);border:1px solid var(--accent);margin-top:12px;box-shadow:none;}
+.week-progress{margin-top:18px;padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);}
+.week-progress.complete{background:rgba(57,255,136,0.08);border-color:rgba(57,255,136,0.3);}
+.week-progress-count{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text);}
+.week-progress.complete .week-progress-count{color:var(--accent);}
+.week-progress-msg{font-size:13px;color:var(--text2);margin-top:4px;line-height:1.4;}
 .day-card.today{border-color:var(--accent);border-width:2px;}
 .day-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
 .day-card:active{transform:scale(0.97);}
@@ -73,19 +77,32 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .session-title{font-size:28px;font-weight:800;letter-spacing:-0.3px;margin-bottom:5px;}
 .last-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;}
 .session-timer-bar{position:sticky;top:calc(58px + env(safe-area-inset-top, 0px));z-index:90;box-shadow:0 4px 16px rgba(0,0,0,0.4);backdrop-filter:blur(10px);background:rgba(28,36,32,0.96);}
+.timer-mini-btn{padding:8px 16px;border:1px solid var(--border);border-radius:9px;background:transparent;color:var(--text2);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.15s;}
+.timer-mini-btn.running{color:var(--orange);border-color:rgba(255,159,67,0.4);}
+.timer-mini-btn.paused{color:var(--accent);border-color:rgba(57,255,136,0.4);}
+.timer-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background 0.2s;}
+.timer-dot.running{background:var(--accent);animation:timerPulse 2s ease-in-out infinite;}
+@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:0.35}}
 .last-bar-text{font-size:12px;color:var(--text2);}
 .last-bar-text strong{color:var(--text);}
-.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
-.ex-header{padding:14px 16px 10px;}
-.ex-name{font-size:22px;font-weight:700;margin-bottom:4px;line-height:1.2;}
+.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:opacity 0.3s ease,border-color 0.3s ease;}
+.ex-card.ex-done{opacity:0.55;border-color:rgba(57,255,136,0.3);}
+.ex-card.ex-done .ex-suggestion,.ex-card.ex-done .ex-warmup{opacity:0.6;}
+.ex-done-check{display:none;color:var(--accent);vertical-align:middle;margin-left:6px;}
+.ex-card.ex-done .ex-done-check{display:inline-flex;}
+.ex-header{padding:16px 16px 12px;}
+.ex-name{font-size:22px;font-weight:700;margin-bottom:10px;line-height:1.2;}
 .ex-meta{font-size:15px;color:var(--text2);font-family:var(--mono);line-height:1.4;}
-.ex-suggestion{font-size:16px;font-weight:700;font-family:var(--mono);margin-top:8px;padding:8px 14px;border-radius:8px;display:inline-block;}
+.ex-suggestion{font-size:16px;font-weight:700;font-family:var(--mono);margin-bottom:10px;padding:8px 14px;border-radius:8px;display:inline-block;}
 .ex-suggestion.up{background:rgba(57,255,136,0.12);color:var(--accent);}
 .ex-suggestion.keep{background:rgba(243,156,18,0.1);color:var(--yellow);}
 .ex-suggestion.down{background:rgba(231,76,60,0.1);color:var(--red);}
 .ex-suggestion.max{background:rgba(120,160,255,0.12);color:#8fb0ff;font-size:14px;line-height:1.35;}
+.ex-ref{font-size:12.5px;color:var(--text3);font-family:var(--mono);line-height:1.5;}
+.ex-ref-sep{margin:0 7px;opacity:0.5;}
 .ex-prev{font-size:15px;color:var(--text2);font-family:var(--mono);margin-top:6px;}
-.ex-warmup{font-size:11px;font-family:var(--mono);margin-top:5px;padding:6px 10px;border-radius:8px;background:rgba(230,126,34,0.08);border:1px solid rgba(230,126,34,0.2);color:var(--orange);}
+.ex-warmup{font-size:12.5px;font-family:var(--mono);margin-top:8px;color:var(--orange);line-height:1.4;}
+.ex-warmup-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:rgba(255,159,67,0.12);padding:2px 7px;border-radius:5px;margin-right:6px;}
 .ex-warmup-title{font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;opacity:0.8;}
 .ex-warmup-sets{color:var(--text);font-weight:600;font-size:15px;}
 .sets-area{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;}
@@ -645,6 +662,7 @@ const ICON_PLAY = '<svg viewBox="0 0 24 24" width="34" height="34" fill="current
 const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
 const ICON_PLAY_SM = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:-3px"><path d="M8 5v14l11-7z"/></svg>';
 const ICON_PAUSE_SM = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:-3px"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+const ICON_CHECK_SM = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 // Inline icons used across the app (sized to text via 1em, inherit color)
 const SVG = {
   fire: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M12 2c1 3-1 4-2 6-1 1.6-2 3.2-2 5a6 6 0 0 0 12 .3c.1-2.6-1.4-4.8-2.7-6.4-.4 1-1.3 1.6-2.1 1.3 1-2.4.3-4.9-1.2-6.2z"/></svg>',
@@ -826,7 +844,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.4';
+const APP_VERSION = '1.13';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1160,12 +1178,19 @@ function renderHome() {
   // Hero card — today's session
   if (todayWorkout) {
     const exCount = todayWorkout.exercises.length;
+    // verifica se há um treino a meio: rascunho preenchido OU cronómetro iniciado
+    let hasDraft = false;
+    try {
+      hasDraft = !!localStorage.getItem('vt_draft_' + todayDay.key)
+              || !!localStorage.getItem('vt_timer_' + todayDay.key);
+    } catch(e) {}
+    const btnLabel = hasDraft ? 'Continuar treino' : 'Começar treino';
     html += `<div class="hero-card" onclick="startWorkout('${todayDay.key}')">
-      <div class="hero-label">Sessão de hoje</div>
+      <div class="hero-label">${hasDraft ? 'Treino a meio' : 'Sessão de hoje'}</div>
       <div class="hero-title">${todayWorkout.name}</div>
       <div class="hero-sub">${todayWorkout.sub}</div>
       <div class="hero-meta">${exCount} exercícios · ${todayWorkout.type === 'upper' ? 'Tronco' : 'Pernas'}</div>
-      <div class="hero-btn">${SVG.play} Começar treino</div>
+      <div class="hero-btn">${SVG.play} ${btnLabel}</div>
     </div>`;
   } else if (todayDay.name === 'Natação') {
     html += `<div class="hero-card cardio" onclick="showCardio('natacao')">
@@ -1276,12 +1301,16 @@ function restoreTimer() {
     timerElapsed = st.elapsed || 0;
     timerStart = st.start || null;
     const btn = document.getElementById('timer-btn');
+    const dot = document.getElementById('timer-dot');
+    const disp = document.getElementById('timer-display');
     if (timerStart) {
       // was running — resume ticking
       timerInterval = setInterval(updateTimerDisplay, 1000);
-      if (btn) { btn.innerHTML = ICON_PAUSE_SM + '<span>Pausar</span>'; btn.style.background = 'var(--orange)'; }
+      if (btn) { btn.innerHTML = ICON_PAUSE_SM + '<span>Pausar</span>'; btn.className = 'timer-mini-btn running'; }
+      if (dot) dot.className = 'timer-dot running';
+      if (disp) disp.style.color = 'var(--accent)';
     } else if (timerElapsed > 0) {
-      if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.style.background = 'var(--accent)'; }
+      if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.className = 'timer-mini-btn paused'; }
     }
     updateTimerDisplay();
   } catch(e) {}
@@ -1305,17 +1334,23 @@ function updateTimerDisplay() {
 
 function toggleTimer() {
   const btn = document.getElementById('timer-btn');
+  const dot = document.getElementById('timer-dot');
+  const disp = document.getElementById('timer-display');
   if (timerStart) {
     // pause
     timerElapsed += Math.floor((Date.now()-timerStart)/1000);
     timerStart = null;
     clearInterval(timerInterval); timerInterval = null;
-    if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.style.background = 'var(--accent)'; }
+    if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.className = 'timer-mini-btn paused'; }
+    if (dot) dot.className = 'timer-dot';
+    if (disp) disp.style.color = 'var(--text2)';
   } else {
     // start/resume
     timerStart = Date.now();
     timerInterval = setInterval(updateTimerDisplay, 1000);
-    if (btn) { btn.innerHTML = ICON_PAUSE_SM + '<span>Pausar</span>'; btn.style.background = 'var(--orange)'; }
+    if (btn) { btn.innerHTML = ICON_PAUSE_SM + '<span>Pausar</span>'; btn.className = 'timer-mini-btn running'; }
+    if (dot) dot.className = 'timer-dot running';
+    if (disp) disp.style.color = 'var(--accent)';
     updateTimerDisplay();
   }
   saveTimerState();
@@ -1338,6 +1373,19 @@ let _autoRestTimeout = null;
 // Called on every input in a set row: saves draft, marks the row done, and
 // auto-starts the rest countdown after each set EXCEPT the last (no rest needed
 // after the final set — you move to the next exercise).
+function updateExerciseDone(exId) {
+  const w = WORKOUTS[currentWorkout];
+  const ex = w && w.exercises.find(e => e.id === exId);
+  if (!ex) return;
+  let allDone = true;
+  for (let i = 1; i <= ex.sets; i++) {
+    const rv = parseInt(document.getElementById(`r_${exId}_${i}`)?.value, 10);
+    if (!(isFinite(rv) && rv > 0)) { allDone = false; break; }
+  }
+  const card = document.getElementById(`card_${exId}`);
+  if (card) card.classList.toggle('ex-done', allDone);
+}
+
 function onSetInput(exId, setNum) {
   saveDraft();
   const row = document.getElementById(`row_${exId}_${setNum}`);
@@ -1350,6 +1398,7 @@ function onSetInput(exId, setNum) {
   // a set counts as done once it has valid REPS (weight may be pre-filled, so reps is the real signal)
   const filled = isFinite(rv) && rv > 0;
   row.classList.toggle('done', filled);
+  updateExerciseDone(exId);
 
   // Auto-rest after completing a set that is NOT the last one.
   // Debounced: waits ~1.2s after you stop typing, so writing "10" (1 then 0)
@@ -1423,6 +1472,7 @@ function loadDraft() {
         row.classList.toggle('done', filled);
         if (filled && row.dataset.last !== '1') _autoRestFired[ex.id + '_' + i] = true;
       }
+      updateExerciseDone(ex.id);
     });
     if (restored) showToast('Rascunho recuperado');
   } catch(e) {}
@@ -1506,9 +1556,12 @@ function renderSession() {
     <div class="session-day" style="color:var(--${w.type})">${w.day} · ${w.name}</div>
     <div class="session-title">${w.sub}</div>
   </div>
-  <div id="timer-bar" class="last-bar session-timer-bar" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-    <div id="timer-display" style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--accent)">00:00</div>
-    <button id="timer-btn" onclick="toggleTimer()" style="padding:12px 24px;border:none;border-radius:10px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px">${ICON_PLAY_SM}<span>Iniciar treino</span></button>
+  <div id="timer-bar" class="last-bar session-timer-bar" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="timer-dot" class="timer-dot"></span>
+      <div id="timer-display" style="font-family:var(--mono);font-size:19px;font-weight:700;color:var(--text2);letter-spacing:0.5px">00:00</div>
+    </div>
+    <button id="timer-btn" onclick="toggleTimer()" class="timer-mini-btn">${ICON_PLAY_SM}<span>Iniciar</span></button>
   </div>
   <div class="day-card ${w.type}" onclick="showWarmup('${w.type}', '${currentWorkout}')" style="margin-bottom:16px">
     <div class="day-label">Antes de começar</div>
@@ -1526,13 +1579,12 @@ function renderSession() {
     const suggestedWeight = prog ? prog.weight : null;
     const warmup = ex.warmup ? calcWarmup(ex, currentWorkout) : null;
 
-    html += `<div class="ex-card"><div class="ex-header">
+    html += `<div class="ex-card" id="card_${ex.id}"><div class="ex-header">
       <div class="ex-name">${ex.name}</div>
-      <div class="ex-meta">${ex.sets} séries · ${ex.reps}${ex.rest ? ' · descanso '+ex.rest : ''}${ex.bodyweight ? ' · peso corporal + lastro' : ''}${ex.pulley ? ' · '+ex.pulley : ''}</div>
       ${prog ? `<div class="ex-suggestion ${prog.status}">${prog.label}</div>` : ''}
-      ${lastEx ? `<div class="ex-prev">Anterior: ${lastEx.sets.map(s=>`${ex.bodyweight ? (s.weight>0?'+'+s.weight+'kg':'PC') : s.weight+'kg'}×${s.reps}`).join(' · ')}</div>` : ''}
-      ${warmup ? `<div class="ex-warmup"><div class="ex-warmup-title">Aquecimento</div><div class="ex-warmup-sets">${warmup.text}</div></div>` : ''}
-      ${ex.bodyweight ? `<div class="ex-prev" style="color:var(--text3)">Lastro 0 = só peso corporal. Adiciona lastro quando fizeres 3×${ex.repsMax} com RIR 2+.</div>` : ''}
+      <div class="ex-ref">${ex.sets}×${ex.reps}${ex.rest ? ' · ' + ex.rest : ''}${ex.pulley ? ' · '+ex.pulley : ''}${lastEx ? `<span class="ex-ref-sep">·</span>último: ${lastEx.sets.map(s=>`${ex.bodyweight ? (s.weight>0?'+'+s.weight+'kg':'PC') : s.weight+'kg'}×${s.reps}`).join(', ')}` : ''}</div>
+      ${warmup ? `<div class="ex-warmup"><span class="ex-warmup-tag">Aquecer</span> ${warmup.text}</div>` : ''}
+      ${ex.bodyweight ? `<div class="ex-ref" style="margin-top:4px">Lastro 0 = só peso corporal. Adiciona lastro quando fizeres 3×${ex.repsMax} com RIR 2+.</div>` : ''}
     </div><div class="sets-area">`;
 
     for (let i = 1; i <= ex.sets; i++) {
@@ -1669,15 +1721,56 @@ async function syncPending() {
   if (synced > 0) { showToast(`${synced} treino(s) sincronizado(s) ✓`); _sessions = await sb.getSessions(); }
 }
 
+// Conta treinos de musculação na semana atual (Seg-Dom) e devolve {done, frase}
+function weekProgressMessage(sessions) {
+  const LIFT_KEYS = ['upper1','lower1','upper2','lower2'];
+  const now = new Date();
+  const day = now.getDay(); // 0=Dom
+  const diffToMon = (day === 0 ? 6 : day - 1);
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - diffToMon);
+  monday.setHours(0,0,0,0);
+
+  const done = sessions.filter(s => {
+    if (!LIFT_KEYS.includes(s.workoutKey)) return false;
+    return new Date(s.date) >= monday;
+  }).length;
+
+  const FRASES = {
+    1: ["Boa abertura. Faltam 3 para fechar a semana.",
+        "Primeiro da semana feito. O resto constrói-se a partir daqui.",
+        "Começaste. Agora é manter o ritmo — faltam 3."],
+    2: ["A meio caminho. Mais 2 e a semana está feita.",
+        "Dois na conta. A semana está a ganhar forma.",
+        "Metade feita. Continua a empurrar."],
+    3: ["Quase lá. Falta um treino para a semana completa.",
+        "Três feitos. Só falta fechar.",
+        "Mais um e a semana fica redonda."],
+    4: ["Semana completa. Foi tudo.",
+        "Quatro de quatro. Semana fechada como deve ser.",
+        "Está feito. Semana cheia."],
+  };
+  const lvl = Math.min(done, 4);
+  if (lvl < 1) return null;
+  const opts = FRASES[lvl];
+  const frase = opts[Math.floor(Math.random()*opts.length)];
+  return { done, total: 4, frase, complete: done >= 4 };
+}
+
 function showProgressionSummary(exData, w) {
   const container = document.getElementById('view-home');
   const sessions = getSessions();
   const weekStreak = calcStreak(sessions);
+  const wp = weekProgressMessage(sessions);
   let html = `<div class="complete-hero">
     <div class="complete-check">✓</div>
     <div class="complete-title">Session complete.</div>
     <div class="complete-sub">${w.name} · ${formatDate(new Date().toISOString())}</div>
     ${weekStreak > 0 ? `<div class="home-streak" style="margin-top:16px">${SVG.fire} ${weekStreak} semana${weekStreak>1?'s':''} seguida${weekStreak>1?'s':''}</div>` : ''}
+    ${wp ? `<div class="week-progress${wp.complete?' complete':''}">
+      <div class="week-progress-count">${wp.done} de ${wp.total} treinos esta semana</div>
+      <div class="week-progress-msg">${wp.frase}</div>
+    </div>` : ''}
     <div class="complete-quote">Still becoming<span style="color:var(--accent)">.</span></div>
   </div>
   <p class="section-title">Progressão para a Próxima Sessão</p>
@@ -1699,9 +1792,7 @@ function showProgressionSummary(exData, w) {
   });
 
   html += `</div>
-    <button class="save-btn" onclick="renderHome()">Terminar</button>
-    <button class="save-btn one-more" onclick="startWorkout('${currentWorkout}')">+ One More</button>
-    <p style="text-align:center;font-size:12px;color:var(--text3);margin-top:4px">Sentes que tens mais? Faz mais uma.</p>`;
+    <button class="save-btn" onclick="renderHome()">Terminar</button>`;
   container.innerHTML = html;
 }
 
@@ -1984,13 +2075,6 @@ function statsResumoHTML(sessions) {
       ? `<div class="stat-card kpi" style="--kpi:#feca57"><div class="stat-value" style="color:#feca57">${formatTimer(avgDuration)}</div><div class="stat-label">Tempo médio</div></div>`
       : `<div class="stat-card kpi" style="--kpi:#feca57"><div class="stat-value" style="color:#feca57">${fmtNum(Math.round(totalVol/Math.max(totalSessions,1)))}</div><div class="stat-label">kg / sessão</div></div>`}
   </div>`;
-
-  if (streak > 0) {
-    html += `<div class="streak-hero">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#39FF88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3 4 5 4 9a4 4 0 0 1-8 0c0-1 .5-2 1-2.5C8 10 8 7 12 2z"/><path d="M12 22a6 6 0 0 0 6-6c0-2-1-4-2.5-5"/></svg>
-      <div><div class="streak-num">${streak}</div><div class="streak-lbl">semana${streak>1?'s':''} consecutiva${streak>1?'s':''} a treinar</div></div>
-    </div>`;
-  }
 
   // Comparação semana vs anterior — só quando faz sentido
   const cmp = calcWeekComparison(sessions);
