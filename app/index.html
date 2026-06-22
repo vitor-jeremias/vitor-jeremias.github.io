@@ -826,7 +826,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.2';
+const APP_VERSION = '1.4';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1145,7 +1145,7 @@ function renderHome() {
   // Quote of the day (stable per day)
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
   const quote = UNFYN_QUOTES[dayOfYear % UNFYN_QUOTES.length];
-  const dayStreak = calcDayStreak(sessions);
+  const weekStreak = calcStreak(sessions);
 
   // Today's workout (hero)
   const todayDay = DAYS[todayDayIdx];
@@ -1154,7 +1154,7 @@ function renderHome() {
   let html = `<div class="home-header">
     <div class="home-greeting">${greeting}</div>
     <div class="home-quote">${quote}</div>
-    ${dayStreak > 0 ? `<div class="home-streak">${SVG.fire} ${dayStreak} dia${dayStreak>1?'s':''} seguido${dayStreak>1?'s':''}</div>` : ''}
+    ${weekStreak > 0 ? `<div class="home-streak">${SVG.fire} ${weekStreak} semana${weekStreak>1?'s':''} seguida${weekStreak>1?'s':''}</div>` : ''}
   </div>`;
 
   // Hero card — today's session
@@ -1210,8 +1210,6 @@ function renderHome() {
     </div>`;
   });
   html += `</div>`;
-
-  html += consistencyGridHTML(sessions);
 
   container.innerHTML = html;
 }
@@ -1674,12 +1672,12 @@ async function syncPending() {
 function showProgressionSummary(exData, w) {
   const container = document.getElementById('view-home');
   const sessions = getSessions();
-  const dayStreak = calcDayStreak(sessions);
+  const weekStreak = calcStreak(sessions);
   let html = `<div class="complete-hero">
     <div class="complete-check">✓</div>
     <div class="complete-title">Session complete.</div>
     <div class="complete-sub">${w.name} · ${formatDate(new Date().toISOString())}</div>
-    ${dayStreak > 0 ? `<div class="home-streak" style="margin-top:16px">🔥 ${dayStreak} dia${dayStreak>1?'s':''} seguido${dayStreak>1?'s':''}</div>` : ''}
+    ${weekStreak > 0 ? `<div class="home-streak" style="margin-top:16px">${SVG.fire} ${weekStreak} semana${weekStreak>1?'s':''} seguida${weekStreak>1?'s':''}</div>` : ''}
     <div class="complete-quote">Still becoming<span style="color:var(--accent)">.</span></div>
   </div>
   <p class="section-title">Progressão para a Próxima Sessão</p>
@@ -1984,10 +1982,10 @@ function statsResumoHTML(sessions) {
     <div class="stat-card kpi" style="--kpi:#ff9f43"><div class="stat-value" style="color:#ff9f43">${totalSets}</div><div class="stat-label">Séries Total</div></div>
     ${avgDuration > 0
       ? `<div class="stat-card kpi" style="--kpi:#feca57"><div class="stat-value" style="color:#feca57">${formatTimer(avgDuration)}</div><div class="stat-label">Tempo médio</div></div>`
-      : `<div class="stat-card kpi" style="--kpi:#feca57"><div class="stat-value" style="color:#feca57">${streak}</div><div class="stat-label">Semanas seguidas</div></div>`}
+      : `<div class="stat-card kpi" style="--kpi:#feca57"><div class="stat-value" style="color:#feca57">${fmtNum(Math.round(totalVol/Math.max(totalSessions,1)))}</div><div class="stat-label">kg / sessão</div></div>`}
   </div>`;
 
-  if (streak > 0 && avgDuration > 0) {
+  if (streak > 0) {
     html += `<div class="streak-hero">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#39FF88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3 4 5 4 9a4 4 0 0 1-8 0c0-1 .5-2 1-2.5C8 10 8 7 12 2z"/><path d="M12 22a6 6 0 0 0 6-6c0-2-1-4-2.5-5"/></svg>
       <div><div class="streak-num">${streak}</div><div class="streak-lbl">semana${streak>1?'s':''} consecutiva${streak>1?'s':''} a treinar</div></div>
