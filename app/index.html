@@ -137,6 +137,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 /* Stats */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+.streak-hero{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(57,255,136,0.12),rgba(57,255,136,0.03));border:1px solid rgba(57,255,136,0.25);border-radius:var(--radius);padding:16px 18px;margin-bottom:24px;}
+.streak-num{font-family:var(--mono);font-size:30px;font-weight:800;color:var(--accent);line-height:1;}
+.streak-lbl{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin-top:4px;}
 .cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
 .cmp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:0 1px 4px rgba(0,0,0,0.3);}
 .cmp-label{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);font-weight:600;margin-bottom:8px;}
@@ -173,8 +176,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .muscle-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
 .muscle-row:last-child{border-bottom:none;}
 .muscle-name{font-size:14px;font-weight:600;width:90px;flex-shrink:0;color:var(--text);}
-.muscle-bar-bg{flex:1;background:var(--surface2);border-radius:5px;height:12px;overflow:hidden;}
-.muscle-bar-fill{height:12px;border-radius:5px;background:linear-gradient(90deg,#2ecc71,#39FF88);transition:width 0.5s ease;}
+.muscle-bar-bg{flex:1;background:var(--surface2);border-radius:5px;height:12px;overflow:hidden;position:relative;}
+.muscle-ideal-zone{position:absolute;top:0;bottom:0;background:rgba(57,255,136,0.1);border-left:1px dashed rgba(57,255,136,0.35);border-right:1px dashed rgba(57,255,136,0.35);z-index:0;}
+.muscle-bar-fill{height:12px;border-radius:5px;background:linear-gradient(90deg,#2ecc71,#39FF88);transition:width 0.5s ease;position:relative;z-index:1;}
 .muscle-vol{font-size:12px;color:var(--text2);font-family:var(--mono);font-weight:600;width:48px;text-align:right;flex-shrink:0;}
 .trend-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
 .pr-group-header{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);padding:12px 0 4px;border-bottom:1px solid var(--border);}
@@ -822,7 +826,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v141';
+const APP_VERSION = '1.2';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1899,6 +1903,46 @@ function svgBars(data, opts) {
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:130px;display:block">${bars}${vals}${labels}</svg>`;
 }
 
+// Gráfico de LINHA para evolução no tempo (1RM, reps). Escala ajustada para a tendência ser visível.
+function svgLine(data) {
+  if (!data.length) return '';
+  if (data.length === 1) { // um só ponto: mostra-o centrado
+    data = [data[0], data[0]];
+  }
+  const W = 320, H = 150, padL = 8, padR = 8, padB = 22, padT = 26;
+  const n = data.length;
+  const vals = data.map(d=>d.value);
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  if (lo === hi) { lo -= 1; hi += 1; } // evitar divisão por zero
+  // margem de 15% para a linha não colar ao topo/fundo
+  const range = hi - lo;
+  lo -= range * 0.18; hi += range * 0.18;
+  const plotW = W - padL - padR, plotH = H - padB - padT;
+  const x = i => padL + (n===1?plotW/2:(i/(n-1))*plotW);
+  const y = v => padT + plotH - ((v-lo)/(hi-lo))*plotH;
+
+  let pts = data.map((d,i)=>`${x(i).toFixed(1)},${y(d.value).toFixed(1)}`).join(' ');
+  // área sob a linha (gradiente subtil)
+  let area = `${padL},${(padT+plotH).toFixed(1)} ${pts} ${(padL+plotW).toFixed(1)},${(padT+plotH).toFixed(1)}`;
+  let dots = '', labels = '', topvals = '';
+  data.forEach((d,i) => {
+    const cx = x(i), cy = y(d.value);
+    const isLast = i === n-1;
+    dots += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${isLast?5:3.5}" fill="${isLast?'#39FF88':'#2ecc71'}" stroke="#0a0e0c" stroke-width="2"/>`;
+    topvals += `<text x="${cx.toFixed(1)}" y="${(cy-10).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="${isLast?'#39FF88':'#9fb3a8'}">${d.top}</text>`;
+    if (d.label) labels += `<text x="${cx.toFixed(1)}" y="${H-6}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#6a7d72">${d.label}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:160px;display:block">
+    <defs><linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#39FF88" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#39FF88" stop-opacity="0"/>
+    </linearGradient></defs>
+    <polygon points="${area}" fill="url(#lineGrad)"/>
+    <polyline points="${pts}" fill="none" stroke="#39FF88" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}${topvals}${labels}
+  </svg>`;
+}
+
 function renderStats() {
   const container = document.getElementById('view-stats');
   const sessions = getSessions();
@@ -1944,9 +1988,9 @@ function statsResumoHTML(sessions) {
   </div>`;
 
   if (streak > 0 && avgDuration > 0) {
-    html += `<div class="stat-card" style="margin-bottom:20px">
-      <div class="stat-value" style="color:var(--accent)">${streak}</div>
-      <div class="stat-label">Semana${streak>1?'s':''} consecutiva${streak>1?'s':''} a treinar</div>
+    html += `<div class="streak-hero">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#39FF88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3 4 5 4 9a4 4 0 0 1-8 0c0-1 .5-2 1-2.5C8 10 8 7 12 2z"/><path d="M12 22a6 6 0 0 0 6-6c0-2-1-4-2.5-5"/></svg>
+      <div><div class="streak-num">${streak}</div><div class="streak-lbl">semana${streak>1?'s':''} consecutiva${streak>1?'s':''} a treinar</div></div>
     </div>`;
   }
 
@@ -1974,14 +2018,14 @@ function statsResumoHTML(sessions) {
     </div>`;
   }
 
-  // Gráficos de volume e frequência (SVG)
+  // Gráficos de volume e frequência (linha — evolução no tempo)
   const weekly = calcWeeklyVolume(sessions);
   if (weekly.length >= 2) {
     const volData = weekly.slice(-8).map(wk => ({ value: wk.vol, top: wk.vol>=1000?`${Math.round(wk.vol/1000*10)/10}k`:`${Math.round(wk.vol)}`, label: wk.label }));
-    html += `<p class="section-title">Volume Semanal (kg)</p><div class="chart-wrap">${svgBars(volData)}</div>`;
+    html += `<p class="section-title">Volume Semanal (kg)</p><div class="chart-wrap">${svgLine(volData)}</div>`;
 
     const freqData = weekly.slice(-8).map(wk => ({ value: wk.count, top: `${wk.count}`, label: wk.label }));
-    html += `<p class="section-title">Frequência (sessões/semana)</p><div class="chart-wrap">${svgBars(freqData, {color:'#feca57'})}</div>`;
+    html += `<p class="section-title">Frequência (sessões/semana)</p><div class="chart-wrap">${svgLine(freqData)}</div>`;
   } else {
     html += `<div class="stat-card" style="margin-bottom:24px;text-align:center;color:var(--text3);font-size:13px;padding:24px">Treina mais uma semana para veres os gráficos de tendência.</div>`;
   }
@@ -2076,20 +2120,24 @@ function statsMusculosHTML(sessions) {
     </div>`;
 
   // ----- Séries por músculo por semana (lista, rigorosa) -----
+  const SCALE = 24; // escala fixa: 0 a 24 séries (zona ideal 10-20 fica visível)
   html += `<p class="section-title">Séries por Músculo / Semana</p>
     <div class="stat-card" style="margin-bottom:24px"><div class="nutri-card-intro" style="margin-bottom:14px">Para hipertrofia, a zona habitual é 10–20 séries por semana por grupo.</div>`;
   Object.entries(MUSCLES)
     .map(([key,label])=>({key,label,sw:setsWk[key]||0}))
     .sort((a,b)=>b.sw-a.sw)
     .forEach(({label,sw}) => {
-      const v = Math.round(sw*10)/10;
+      const v = Math.round(sw); // inteiro
       let zone = 'low';
-      if (v >= 10 && v <= 20) zone = 'good';
-      else if (v > 20) zone = 'high';
-      const pct = Math.min(100, Math.round((v/20)*100));
+      if (sw >= 10 && sw <= 20) zone = 'good';
+      else if (sw > 20) zone = 'high';
+      const pct = Math.min(100, Math.round((sw/SCALE)*100));
       html += `<div class="muscle-row">
         <div class="muscle-name">${label}</div>
-        <div class="muscle-bar-bg"><div class="muscle-bar-fill zone-${zone}" style="width:${pct}%"></div></div>
+        <div class="muscle-bar-bg">
+          <div class="muscle-ideal-zone" style="left:${(10/SCALE)*100}%;width:${((20-10)/SCALE)*100}%"></div>
+          <div class="muscle-bar-fill zone-${zone}" style="width:${pct}%"></div>
+        </div>
         <div class="muscle-vol">${v}</div>
       </div>`;
     });
@@ -2215,7 +2263,7 @@ function updateChart() {
     <div class="e1rm-item"><div class="e1rm-val">${current}<span class="e1rm-unit">${unit}</span></div><div class="e1rm-lbl">${lblCur}</div></div>
     <div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${best}<span class="e1rm-unit">${unit}</span></div><div class="e1rm-lbl">${lblBest}</div></div>
   </div>`;
-  html += svgBars(data);
+  html += svgLine(data);
   html += bw
     ? `<div class="e1rm-note">Peso corporal: o progresso é medido pelo total de repetições por sessão. Quando fizeres 3×${exDef(exId)?.repsMax||10} folgado, adiciona lastro.</div>`
     : `<div class="e1rm-note">Força máxima teórica (peso × reps). Sobe mesmo que mantenhas a carga e faças mais repetições.</div>`;
