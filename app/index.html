@@ -117,6 +117,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .set-input::placeholder{color:var(--text3);font-weight:500;opacity:0.6;}
 .set-input:focus{outline:none;border-color:var(--accent);background:#283530;box-shadow:0 0 0 3px rgba(57,255,136,0.12);}
 .set-input:not(:placeholder-shown){border-color:#4a5a52;background:#283530;}
+/* Peso pré-preenchido (sugestão) fica verde apagado até a série ter reps registadas */
+.w-input{color:#5f8f73;}
+.set-row.done .w-input,.w-input:focus{color:var(--accent);}
 .save-btn{width:100%;padding:22px;background:var(--accent);border:none;border-radius:var(--radius);color:#0a0e0c;font-family:var(--font);font-size:20px;font-weight:800;cursor:pointer;margin-top:12px;transition:all 0.2s;}
 .save-btn:active{transform:scale(0.98);opacity:0.9;}
 .discard-btn{width:100%;padding:14px;background:transparent;border:1px solid var(--red);border-radius:var(--radius);color:var(--red);font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;transition:all 0.2s;}
@@ -332,7 +335,6 @@ input[type="file"]{display:none;}
 .cgrid-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:11px;color:var(--text3);font-family:var(--mono);}
 .cgrid-legend{display:flex;align-items:center;gap:5px;}
 .cgrid-legend .cgrid-cell{width:11px;height:11px;aspect-ratio:auto;display:inline-block;}
-.rest-btn{width:100%;padding:16px;background:rgba(57,255,136,0.08);border:1.5px solid var(--accent);border-radius:12px;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .timer-mini{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px));z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px;background:var(--accent);color:#0a0e0c;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.35);cursor:pointer;animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1);}
 .timer-mini.show{display:flex;}
 @keyframes miniUp{from{transform:translateY(120%);}to{transform:translateY(0);}}
@@ -355,7 +357,6 @@ input[type="file"]{display:none;}
 .timer-lock-ring .ring-bg{fill:none;stroke:rgba(255,255,255,0.2);stroke-width:5;}
 .timer-lock-ring .ring-fill{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:214;stroke-dashoffset:214;transition:stroke-dashoffset 0.05s linear;}
 .timer-lock-text{font-family:var(--mono);font-size:13px;text-align:center;line-height:1.5;letter-spacing:1px;text-transform:uppercase;}
-.rest-btn:active{background:var(--accent);color:#0a0e0c;}
 /* Timer FAB + Modal */
 #timer-fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);z-index:500;transition:transform 0.15s;}
 #timer-fab:active{transform:scale(0.92);}
@@ -750,9 +751,7 @@ const NUTRITION_PLAN = {
   ],
   ruleGroups: [
     { title: "Notas", items: [
-      "Mercadona",
-      "Preteridos: iogurtes proteicos (enjoa)",
-      "Pode comer até 10 azeitonas por dia; até 1 colher de sopa de abacate por dia",
+      "Pode comer até 10 azeitonas por dia; até 1 colher de sopa (cerca de 15g) de abacate por dia",
       "Deve beber 3L de água por dia",
       "1 refeição principal + 1 pequeno-almoço livre por semana",
     ]},
@@ -844,7 +843,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.13';
+const APP_VERSION = '1.19';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1596,7 +1595,7 @@ function renderSession() {
       html += `<div class="set-row" id="row_${ex.id}_${i}" data-ex="${ex.id}" data-set="${i}" data-last="${isLast}">
         <div class="set-num">${i}</div>
         <div class="set-input-wrap"><span class="set-input-label">${ex.bodyweight ? 'lastro' : 'kg'}</span>
-          <input class="set-input" type="number" inputmode="decimal" id="w_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" value="${preWeight}" style="${ex.bodyweight?'padding-left:48px':''}">
+          <input class="set-input w-input" type="number" inputmode="decimal" id="w_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" value="${preWeight}" style="${ex.bodyweight?'padding-left:48px':''}">
         </div>
         <div class="set-input-wrap"><span class="set-input-label">×</span>
           <input class="set-input" type="number" inputmode="numeric" id="r_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" placeholder="${ls?ls.reps:''}">
@@ -1604,11 +1603,6 @@ function renderSession() {
       </div>`;
     }
     html += `</div>`;
-    // Rest button per exercise (opens countdown with that exercise's rest time)
-    if (ex.rest) {
-      const rs = parseRestSeconds(ex.rest);
-      html += `<div style="padding:0 16px 16px"><button class="rest-btn" onclick="startRest(${rs})">${SVG.timer} Descansar</button></div>`;
-    }
     html += `</div>`;
   });
   if (w.coreRef && w.coreRef.length) {
@@ -1948,8 +1942,6 @@ let _statsTab = 'resumo';
 function setStatsTab(tab) {
   _statsTab = tab;
   renderStats();
-  const c = document.querySelector('.nutri-subtabs');
-  if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function buildAllEx() {
@@ -2069,7 +2061,7 @@ function statsResumoHTML(sessions) {
 
   let html = `<div class="stats-grid">
     <div class="stat-card kpi" style="--kpi:#39FF88"><div class="stat-value">${totalSessions}</div><div class="stat-label">Sessões</div></div>
-    <div class="stat-card kpi" style="--kpi:#39FF88"><div class="stat-value" style="color:#39FF88">${fmtNum(totalVol)}</div><div class="stat-label">Volume kg</div></div>
+    <div class="stat-card kpi" style="--kpi:#39FF88"><div class="stat-value" style="color:#39FF88">${fmtNum(totalVol)}</div><div class="stat-label">Volume (kg)</div></div>
     <div class="stat-card kpi" style="--kpi:#ff9f43"><div class="stat-value" style="color:#ff9f43">${totalSets}</div><div class="stat-label">Séries Total</div></div>
     ${avgDuration > 0
       ? `<div class="stat-card kpi" style="--kpi:#feca57"><div class="stat-value" style="color:#feca57">${formatTimer(avgDuration)}</div><div class="stat-label">Tempo médio</div></div>`
@@ -2082,12 +2074,12 @@ function statsResumoHTML(sessions) {
     const volDiff = cmp.thisVol - cmp.lastVol;
     const volPct = cmp.lastVol > 0 ? Math.round((volDiff/cmp.lastVol)*100) : null;
     const volUp = volDiff >= 0;
-    const fmtKg = (v)=> v>=1000 ? Math.round(v/1000*10)/10+'k kg' : Math.round(v)+'kg';
+    const fmtKg = (v)=> v>=1000 ? Math.round(v/1000*10)/10+'k' : Math.round(v)+'';
     html += `<p class="section-title">Esta Semana vs Anterior</p>
     <div class="cmp-grid">
       <div class="cmp-card">
-        <div class="cmp-label">Volume</div>
-        <div class="cmp-value">${fmtNum(cmp.thisVol)}<span class="cmp-unit">kg</span></div>
+        <div class="cmp-label">Volume (kg)</div>
+        <div class="cmp-value">${fmtNum(cmp.thisVol)}</div>
         <div class="cmp-delta ${volUp?'up':'down'}">${volUp?'▲':'▼'} ${volPct!==null?Math.abs(volPct)+'%':fmtKg(Math.abs(volDiff))}</div>
         <div class="cmp-prev">anterior: ${fmtKg(cmp.lastVol)}</div>
       </div>
@@ -2314,41 +2306,59 @@ function isBodyweight(exId) { const d = exDef(exId); return !!(d && d.bodyweight
 function updateChart() {
   const exId = document.getElementById('ex-select')?.value; if(!exId) return;
   const bw = isBodyweight(exId);
-  const points = [];
+  const points = [];      // para o gráfico
+  let bestReal = null;    // recorde real (peso × reps)
+  let best1rm = 0;        // melhor 1RM estimado
   getSessions().forEach(s => {
     const w = WORKOUTS[s.workoutKey]; if(!w) return;
     const se = s.exercises.find(e=>e.id===exId); if(!se) return;
     if (bw) {
-      // Peso corporal: progresso medido em reps (soma de reps válidas na sessão)
       const valid = se.sets.filter(st=>st.reps>0); if(!valid.length) return;
       const totalReps = valid.reduce((a,st)=>a+st.reps,0);
-      points.push({date:formatDateShort(s.date), val:totalReps});
+      points.push({date:formatDateShort(s.date), val:totalReps, top:`${totalReps} reps`});
+      valid.forEach(st => {
+        if (!bestReal || st.reps > bestReal.reps || (st.reps === bestReal.reps && st.weight > bestReal.weight)) bestReal = { weight: st.weight, reps: st.reps };
+      });
     } else {
       const valid = se.sets.filter(st=>st.weight>0&&st.reps>0); if(!valid.length) return;
-      const best1rm = Math.max(...valid.map(st=>estimate1RM(st.weight, st.reps)));
-      points.push({date:formatDateShort(s.date), val:Math.round(best1rm)});
+      // top set da sessão = maior peso (desempata por reps)
+      let topSet = valid[0];
+      valid.forEach(st => { if (st.weight > topSet.weight || (st.weight === topSet.weight && st.reps > topSet.reps)) topSet = st; });
+      points.push({date:formatDateShort(s.date), val:topSet.weight, top:`${topSet.weight}×${topSet.reps}`});
+      valid.forEach(st => {
+        if (!bestReal || st.weight > bestReal.weight || (st.weight === bestReal.weight && st.reps > bestReal.reps)) bestReal = { weight: st.weight, reps: st.reps };
+        const e = estimate1RM(st.weight, st.reps);
+        if (e > best1rm) best1rm = e;
+      });
     }
   });
 
   const wrap = document.getElementById('chart-wrap'); if(!wrap) return;
-  if (!points.length) { wrap.innerHTML=`<div class="no-data">Ainda não há dados para este exercício.</div>`; return; }
+  if (!points.length || !bestReal) { wrap.innerHTML=`<div class="no-data">Ainda não há dados para este exercício.</div>`; return; }
 
   const recent = points.slice(-10);
-  const current = recent[recent.length-1].val;
-  const best = Math.max(...points.map(p=>p.val));
-  const data = recent.map(p => ({ value: p.val, top: `${p.val}`, label: p.date }));
-  const unit = bw ? '' : 'kg';
-  const lblCur = bw ? 'Reps totais (última)' : '1RM estimado';
-  const lblBest = bw ? 'Melhor de sempre' : 'Melhor de sempre';
+  const data = recent.map(p => ({ value: p.val, top: p.top, label: p.date }));
+
+  // Card esquerdo: recorde REAL. Card direito: 1RM estimado.
+  const realVal = bw
+    ? `${bestReal.reps}<span class="e1rm-unit"> reps</span>`
+    : `${bestReal.weight}<span class="e1rm-unit">kg</span>`;
+  const realSub = bw
+    ? (bestReal.weight > 0 ? `+${bestReal.weight}kg lastro` : 'Recorde de reps')
+    : `${bestReal.reps} reps`;
 
   let html = `<div class="e1rm-summary">
-    <div class="e1rm-item"><div class="e1rm-val">${current}<span class="e1rm-unit">${unit}</span></div><div class="e1rm-lbl">${lblCur}</div></div>
-    <div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${best}<span class="e1rm-unit">${unit}</span></div><div class="e1rm-lbl">${lblBest}</div></div>
-  </div>`;
+    <div class="e1rm-item"><div class="e1rm-val">${realVal}</div><div class="e1rm-lbl">Recorde${bw?'':' · '+realSub}</div></div>`;
+  if (!bw) {
+    html += `<div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${Math.round(best1rm)}<span class="e1rm-unit">kg</span></div><div class="e1rm-lbl">1RM estimado</div></div>`;
+  } else {
+    html += `<div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${bestReal.reps}<span class="e1rm-unit"> reps</span></div><div class="e1rm-lbl">Melhor série</div></div>`;
+  }
+  html += `</div>`;
   html += svgLine(data);
   html += bw
-    ? `<div class="e1rm-note">Peso corporal: o progresso é medido pelo total de repetições por sessão. Quando fizeres 3×${exDef(exId)?.repsMax||10} folgado, adiciona lastro.</div>`
-    : `<div class="e1rm-note">Força máxima teórica (peso × reps). Sobe mesmo que mantenhas a carga e faças mais repetições.</div>`;
+    ? `<div class="e1rm-note">Progresso por total de repetições por sessão. Quando fizeres 3×${exDef(exId)?.repsMax||10} folgado, adiciona lastro.</div>`
+    : `<div class="e1rm-note">Evolução do peso real (série mais pesada de cada sessão). Cada ponto mostra peso × repetições.</div>`;
   wrap.innerHTML = html;
 }
 
@@ -2500,9 +2510,6 @@ function renderNutricao() {
 function setNutriTab(tab) {
   _nutriTab = tab;
   renderNutricao();
-  // scroll suave para o conteúdo
-  const c = document.querySelector('.nutri-subtabs');
-  if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function goToMeal(idx) {
@@ -2666,7 +2673,7 @@ function renderDados() {
     <p class="section-title">Dados Guardados</p>
     <div class="dados-stats">
       <div class="dados-stat"><div class="dados-stat-val">${sessions.length}</div><div class="dados-stat-lbl">Sessões</div></div>
-      <div class="dados-stat"><div class="dados-stat-val">${Math.round(totalVol/1000*10)/10}k</div><div class="dados-stat-lbl">Volume kg</div></div>
+      <div class="dados-stat"><div class="dados-stat-val">${Math.round(totalVol/1000*10)/10}k</div><div class="dados-stat-lbl">Volume (kg)</div></div>
     </div>
     <div class="dados-tip">
       <strong>${SVG.bulb} Como manter os dados seguros</strong>
