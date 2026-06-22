@@ -177,6 +177,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .muscle-bar-fill{height:12px;border-radius:5px;background:linear-gradient(90deg,#2ecc71,#39FF88);transition:width 0.5s ease;}
 .muscle-vol{font-size:12px;color:var(--text2);font-family:var(--mono);font-weight:600;width:48px;text-align:right;flex-shrink:0;}
 .trend-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.pr-group-header{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);padding:12px 0 4px;border-bottom:1px solid var(--border);}
 .trend-row:last-child{border-bottom:none;}
 .trend-name{font-size:12px;font-weight:600;flex:1;}
 .trend-val{font-size:13px;font-family:var(--mono);font-weight:700;}
@@ -821,7 +822,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = 'v140';
+const APP_VERSION = 'v141';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1999,44 +2000,39 @@ function statsProgHTML(sessions) {
   allEx.forEach(ex => { html += `<option value="${ex.id}">${ex.name}</option>`; });
   html += `</select><div class="chart-wrap" id="chart-wrap"></div>`;
 
-  // PRs
+  // PRs agrupados por grupo muscular
   html += `<p class="section-title">Recordes Pessoais</p><div class="stat-card" style="margin-bottom:24px">`;
   const prs = calcPRs(sessions, allEx);
   if (prs.length) {
-    prs.forEach(pr => {
-      const main = pr.bodyweight
-        ? (pr.weight > 0 ? `${pr.reps} reps <span style="font-size:13px;color:var(--text2)">+${pr.weight}kg</span>` : `${pr.reps} reps`)
-        : `${pr.weight}kg`;
-      const sub = pr.bodyweight ? 'peso corporal' : `${pr.reps} reps`;
-      html += `<div class="trend-row">
-        <div class="trend-name">${pr.name}</div>
-        <div style="text-align:right">
-          <div class="trend-val up">${main}</div>
-          <div class="trend-change">${sub}</div>
-        </div>
-      </div>`;
+    // ordem dos grupos de cima para baixo no corpo
+    const ordem = ['peito','costas','ombros','biceps','triceps','abdomen','quad','femoral','gluteo','gemeos'];
+    const grupos = {};
+    prs.forEach(pr => { (grupos[pr.muscle] = grupos[pr.muscle] || []).push(pr); });
+    const chaves = Object.keys(grupos).sort((a,b)=>{
+      const ia = ordem.indexOf(a), ib = ordem.indexOf(b);
+      return (ia<0?99:ia) - (ib<0?99:ib);
+    });
+    chaves.forEach((mk, gi) => {
+      // dentro do grupo: maior peso primeiro (bodyweight por reps ao fundo)
+      const lista = grupos[mk].sort((a,b)=> (b.weight-a.weight) || (b.reps-a.reps));
+      const nomeGrupo = MUSCLES[mk] || mk;
+      html += `<div class="pr-group-header"${gi>0?' style="margin-top:6px"':''}>${nomeGrupo}</div>`;
+      lista.forEach(pr => {
+        const main = pr.bodyweight
+          ? (pr.weight > 0 ? `${pr.reps} reps <span style="font-size:13px;color:var(--text2)">+${pr.weight}kg</span>` : `${pr.reps} reps`)
+          : `${pr.weight}kg`;
+        const sub = pr.bodyweight ? 'peso corporal' : `${pr.reps} reps`;
+        html += `<div class="trend-row">
+          <div class="trend-name">${pr.name}</div>
+          <div style="text-align:right">
+            <div class="trend-val up">${main}</div>
+            <div class="trend-change">${sub}</div>
+          </div>
+        </div>`;
+      });
     });
   } else {
     html += `<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">Ainda sem recordes registados</div>`;
-  }
-  html += `</div>`;
-
-  // Maiores progressões
-  html += `<p class="section-title">Maiores Progressões</p><div class="stat-card" style="margin-bottom:24px">`;
-  const progressions = calcTopProgressions(sessions, allEx);
-  if (progressions.length) {
-    progressions.slice(0,6).forEach(p => {
-      const u = p.bodyweight ? ' reps' : 'kg';
-      html += `<div class="trend-row">
-        <div class="trend-name">${p.name}</div>
-        <div style="text-align:right">
-          <div class="trend-val up">+${p.gain}${u}</div>
-          <div class="trend-change">${p.from}${u} → ${p.to}${u}</div>
-        </div>
-      </div>`;
-    });
-  } else {
-    html += `<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">Ainda sem dados suficientes</div>`;
   }
   html += `</div>`;
   return html;
@@ -2282,10 +2278,13 @@ function calcPRs(sessions, allEx) {
         }
       });
     });
-    if (best) prs.push({ name: ex.name, weight: best.weight, reps: best.reps, bodyweight: bw });
+    if (best) {
+      const def = exDef(ex.id);
+      const muscle = def && def.muscles && def.muscles.length ? def.muscles[0] : 'outro';
+      prs.push({ name: ex.name, weight: best.weight, reps: best.reps, bodyweight: bw, muscle });
+    }
   });
-  // ordenar: bodyweight por reps, restantes por peso; mistura ordenada por peso desc (bodyweight ao fim com peso 0)
-  return prs.sort((a,b)=>b.weight-a.weight);
+  return prs;
 }
 
 function calcTopProgressions(sessions, allEx) {
