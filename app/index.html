@@ -78,6 +78,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .last-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;}
 .session-timer-bar{position:sticky;top:calc(58px + env(safe-area-inset-top, 0px));z-index:90;background:rgba(10,14,12,0.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(42,52,46,0.6);}
 .timer-mini-btn{padding:8px 16px;border:1px solid var(--border);border-radius:9px;background:transparent;color:var(--text2);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.15s;}
+.timer-start-btn{padding:13px 26px;border:none;border-radius:11px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(57,255,136,0.28);transition:all 0.15s;}
+.timer-start-btn:active{transform:scale(0.97);}
 .timer-mini-btn.running{color:var(--orange);border-color:rgba(255,159,67,0.4);}
 .timer-mini-btn.paused{color:var(--accent);border-color:rgba(57,255,136,0.4);}
 .timer-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background 0.2s;}
@@ -843,7 +845,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.21';
+const APP_VERSION = '1.22';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1309,7 +1311,7 @@ function restoreTimer() {
       if (dot) dot.className = 'timer-dot running';
       if (disp) disp.style.color = 'var(--accent)';
     } else if (timerElapsed > 0) {
-      if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.className = 'timer-mini-btn paused'; }
+      if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.className = 'timer-start-btn'; }
     }
     updateTimerDisplay();
   } catch(e) {}
@@ -1346,7 +1348,7 @@ function toggleTimer() {
     timerElapsed += Math.floor((Date.now()-timerStart)/1000);
     timerStart = null;
     clearInterval(timerInterval); timerInterval = null;
-    if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.className = 'timer-mini-btn paused'; }
+    if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.className = 'timer-start-btn'; }
     if (dot) dot.className = 'timer-dot';
     if (disp) disp.style.color = 'var(--text2)';
   } else {
@@ -1569,7 +1571,7 @@ function renderSession() {
     <span id="timer-hint" style="font-size:11px;color:var(--text3);font-family:var(--mono)">tempo de treino</span>
   </div>
   <div id="timer-control" style="display:flex;justify-content:flex-end;margin-bottom:16px">
-    <button id="timer-btn" onclick="toggleTimer()" class="timer-mini-btn">${ICON_PLAY_SM}<span>Iniciar</span></button>
+    <button id="timer-btn" onclick="toggleTimer()" class="timer-start-btn">${ICON_PLAY_SM}<span>Iniciar</span></button>
   </div>
   <div class="day-card ${w.type}" onclick="showWarmup('${w.type}', '${currentWorkout}')" style="margin-bottom:16px">
     <div class="day-label">Antes de começar</div>
