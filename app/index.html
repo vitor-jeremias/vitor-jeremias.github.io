@@ -845,7 +845,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.22';
+const APP_VERSION = '1.23';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2349,8 +2349,9 @@ function updateChart() {
 
   const recent = points.slice(-10);
   const data = recent.map(p => ({ value: p.val, top: p.top, label: p.date }));
+  const bestSession = bw ? Math.max(...points.map(p=>p.val)) : 0;
 
-  // Card esquerdo: recorde REAL. Card direito: 1RM estimado.
+  // Card esquerdo: recorde REAL. Card direito: 1RM estimado (peso) ou melhor sessão (bodyweight).
   const realVal = bw
     ? `${bestReal.reps}<span class="e1rm-unit"> reps</span>`
     : `${bestReal.weight}<span class="e1rm-unit">kg</span>`;
@@ -2359,11 +2360,11 @@ function updateChart() {
     : `${bestReal.reps} reps`;
 
   let html = `<div class="e1rm-summary">
-    <div class="e1rm-item"><div class="e1rm-val">${realVal}</div><div class="e1rm-lbl">Recorde${bw?'':' · '+realSub}</div></div>`;
+    <div class="e1rm-item"><div class="e1rm-val">${realVal}</div><div class="e1rm-lbl">${bw?'Melhor série':'Recorde · '+realSub}</div></div>`;
   if (!bw) {
     html += `<div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${Math.round(best1rm)}<span class="e1rm-unit">kg</span></div><div class="e1rm-lbl">1RM estimado</div></div>`;
   } else {
-    html += `<div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${bestReal.reps}<span class="e1rm-unit"> reps</span></div><div class="e1rm-lbl">Melhor série</div></div>`;
+    html += `<div class="e1rm-item"><div class="e1rm-val" style="color:var(--text2)">${bestSession}<span class="e1rm-unit"> reps</span></div><div class="e1rm-lbl">Melhor sessão</div></div>`;
   }
   html += `</div>`;
   html += svgLine(data);
