@@ -330,6 +330,14 @@ input[type="file"]{display:none;}
 .profile-row textarea{resize:vertical;min-height:42px;line-height:1.4;}
 .profile-save{width:100%;padding:16px;background:var(--accent);border:none;border-radius:12px;color:#0a0e0c;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;margin-bottom:26px;box-shadow:0 4px 14px rgba(57,255,136,0.22);}
 .profile-save:active{transform:scale(0.99);}
+.profile-edit-btn{position:absolute;top:16px;right:16px;z-index:2;width:38px;height:38px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.profile-edit-btn:active{transform:scale(0.95);}
+.profile-lesoes{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:14px;color:var(--text);line-height:1.5;position:relative;z-index:1;}
+.profile-lesoes-lbl{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);margin-bottom:4px;}
+.profile-actions{display:flex;gap:10px;margin-bottom:26px;}
+.profile-actions .profile-save{margin-bottom:0;flex:1;}
+.profile-cancel{padding:16px 22px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text2);font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;}
+.profile-cancel:active{transform:scale(0.99);}
 .tools-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);margin:4px 0 12px;}
 /* ===== Medições (Corpo) ===== */
 .meas-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
@@ -426,6 +434,14 @@ input[type="file"]{display:none;}
 .timer-modal{position:fixed;inset:0;background:rgba(10,14,12,0.96);backdrop-filter:blur(12px);z-index:1500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .timer-modal.open{display:flex;}
 .timer-modal.running{background:#0a0e0c;transition:background 0.4s ease;}
+/* Aviso grande de descanso terminado — ocupa o ecrã do cronómetro, legível a vários metros */
+.rest-done-overlay{display:none;position:absolute;inset:0;z-index:50;background:#39FF88;color:#0a0e0c;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;cursor:pointer;animation:restDonePulse 1s ease-in-out infinite;}
+.timer-modal.rest-done-active .rest-done-overlay{display:flex;}
+@keyframes restDonePulse{0%,100%{background:#39FF88;}50%{background:#2ee07a;}}
+.rest-done-inner{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.rest-done-big{font-size:42px;font-weight:800;letter-spacing:-1px;line-height:1.05;margin-top:10px;}
+.rest-done-sub{font-size:22px;font-weight:700;font-family:var(--mono);opacity:0.85;margin-top:4px;}
+.rest-done-tap{font-size:13px;font-weight:600;font-family:var(--mono);opacity:0.6;margin-top:24px;text-transform:uppercase;letter-spacing:1px;}
 /* Phase background colors (fullscreen, only while running intervals) */
 .timer-modal.running.phase-prep{background:#feca57;}
 .timer-modal.running.phase-work{background:#39FF88;}
@@ -559,6 +575,14 @@ input[type="file"]{display:none;}
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a0e0c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg>
 </button>
 <div id="timer-modal" class="timer-modal">
+  <div id="rest-done-overlay" class="rest-done-overlay" onclick="dismissRestDone()">
+    <div class="rest-done-inner">
+      <svg viewBox="0 0 24 24" width="64" height="64" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <div class="rest-done-big">DESCANSO TERMINADO</div>
+      <div class="rest-done-sub">Próxima série</div>
+      <div class="rest-done-tap">toca para fechar</div>
+    </div>
+  </div>
   <div class="timer-modal-inner">
     <button class="timer-close" onclick="closeTimerModal()" aria-label="Fechar cronómetro">✕</button>
     <div id="timer-total" class="timer-total"></div>
@@ -756,7 +780,8 @@ const SVG = {
   bulb: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19A7 7 0 0 0 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 0 0-7-7z"/></svg>',
   download: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>',
   upload: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M5 20h14v-2H5v2zM5 9h4v6h6V9h4l-7-7-7 7z"/></svg>',
-  trash: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>'
+  trash: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>'
 };
 
 const CARDIO_PLANS = {
@@ -923,7 +948,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.36';
+const APP_VERSION = '1.38';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1127,10 +1152,6 @@ function getSessions() {
   return [...cloud, ...pending].sort((a,b)=>new Date(a.date)-new Date(b.date));
 }
 
-async function addSession(session) {
-  await sb.saveSession(session);
-  _sessions = await sb.getSessions();
-}
 
 async function removeSession(id) {
   removePending(id);
@@ -1314,7 +1335,7 @@ async function showView(v) {
   if(v==='nutricao'){ if(_measurements===null) await loadMeasurements(); renderNutricao(); }
   if(v==='historico')renderHistorico();
   if(v==='stats')renderStats();
-  if(v==='dados'){ await loadProfile(); renderDados(); }
+  if(v==='dados'){ _profileEditing = false; await loadProfile(); renderDados(); }
 }
 
 // ======================== HOME ========================
@@ -1329,29 +1350,6 @@ const UNFYN_QUOTES = [
   "You're not finished."
 ];
 
-function calcDayStreak(sessions) {
-  if (!sessions.length) return 0;
-  // Unique training days (YYYY-MM-DD)
-  const days = new Set(sessions.map(s => {
-    const d = new Date(s.date);
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-  }));
-  let streak = 0;
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  // Allow streak to count if trained today or yesterday (so it doesn't break mid-day)
-  let cursor = new Date(today);
-  const key = d => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-  if (!days.has(key(cursor))) {
-    cursor.setDate(cursor.getDate()-1);
-    if (!days.has(key(cursor))) return 0;
-  }
-  while (days.has(key(cursor))) {
-    streak++;
-    cursor.setDate(cursor.getDate()-1);
-  }
-  return streak;
-}
 
 function renderHome() {
   // returning to home means we're no longer in a session
@@ -1446,33 +1444,6 @@ function renderHome() {
 }
 
 // Grelha de consistência — últimos 35 dias (estilo contribuições)
-function consistencyGridHTML(sessions) {
-  // dias com treino (chave YYYY-M-D)
-  const trained = new Set(sessions.map(s => {
-    const d = new Date(s.date);
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-  }));
-  const DAYS_SHOWN = 35;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const key = d => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-
-  let cells = '';
-  let trainedCount = 0;
-  for (let i = DAYS_SHOWN - 1; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    const did = trained.has(key(d));
-    if (did) trainedCount++;
-    const isToday = i === 0;
-    cells += `<div class="cgrid-cell${did?' on':''}${isToday?' today':''}" title="${d.getDate()}/${d.getMonth()+1}"></div>`;
-  }
-
-  return `<p class="section-title">Consistência · últimos 5 semanas</p>
-  <div class="cgrid-card">
-    <div class="cgrid">${cells}</div>
-    <div class="cgrid-foot"><span>${trainedCount} dias treinados</span><span class="cgrid-legend"><span class="cgrid-cell"></span> menos <span class="cgrid-cell on"></span> treino</span></div>
-  </div>`;
-}
 
 let timerInterval = null;
 let timerStart = null;
@@ -2155,32 +2126,6 @@ function calcWeekComparison(sessions) {
   return { thisVol, lastVol, thisCount, lastCount };
 }
 
-function calcExerciseTrends(sessions, allEx) {
-  const trends = [];
-  allEx.forEach(ex => {
-    const points = [];
-    sessions.forEach(s => {
-      const se = s.exercises.find(e=>e.id===ex.id); if(!se) return;
-      const valid = se.sets.filter(st=>st.weight>0&&st.reps>0);
-      if (!valid.length) return;
-      const topWeight = Math.max(...valid.map(st=>st.weight));
-      points.push({date:new Date(s.date), weight:topWeight});
-    });
-    if (points.length < 2) return; // need 2+ to show trend
-    points.sort((a,b)=>a.date-b.date);
-    const recent = points.slice(-3); // last 3 sessions
-    const first = recent[0].weight;
-    const last = recent[recent.length-1].weight;
-    let status, label;
-    if (last > first) { status='up'; label='A subir'; }
-    else if (last < first) { status='down'; label='A descer'; }
-    else { status='keep'; label='Estagnado'; }
-    trends.push({ name: ex.name, status, label, current: last, sessions: points.length });
-  });
-  // Sort: up first, then stagnant, then down
-  const order = {up:0, keep:1, down:2};
-  return trends.sort((a,b)=>order[a.status]-order[b.status]);
-}
 
 let _statsTab = 'resumo';
 
@@ -2206,28 +2151,6 @@ function buildAllEx() {
 }
 
 // Gráfico de barras em SVG (limpo, escalável)
-function svgBars(data, opts) {
-  opts = opts || {};
-  if (!data.length) return '';
-  const W = 320, H = 120, padB = 18, padT = 16;
-  const max = Math.max(...data.map(d=>d.value), 1);
-  const n = data.length;
-  const gap = 6;
-  const bw = (W - gap*(n-1)) / n;
-  let bars = '', labels = '', vals = '';
-  data.forEach((d, i) => {
-    const h = Math.max(3, (d.value/max) * (H - padB - padT));
-    const x = i * (bw + gap);
-    const y = H - padB - h;
-    const isLast = i === n-1;
-    const fill = isLast ? '#39FF88' : (opts.color || '#2ecc71');
-    const op = isLast ? '1' : '0.55';
-    bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="4" fill="${fill}" opacity="${op}"/>`;
-    vals += `<text x="${(x+bw/2).toFixed(1)}" y="${(y-4).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#9fb3a8">${d.top}</text>`;
-    labels += `<text x="${(x+bw/2).toFixed(1)}" y="${H-5}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#6a7d72">${d.label}</text>`;
-  });
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:130px;display:block">${bars}${vals}${labels}</svg>`;
-}
 
 // Gráfico de LINHA para evolução no tempo (1RM, reps). Escala ajustada para a tendência ser visível.
 function svgLine(data) {
@@ -2673,30 +2596,6 @@ function calcPRs(sessions, allEx) {
   return prs;
 }
 
-function calcTopProgressions(sessions, allEx) {
-  const progressions = [];
-  allEx.forEach(ex => {
-    const bw = isBodyweight(ex.id);
-    const exSessions = sessions.filter(s => {
-      const w = WORKOUTS[s.workoutKey]; if(!w) return false;
-      return s.exercises.some(e=>e.id===ex.id);
-    });
-    if (exSessions.length < 2) return;
-    const vals = exSessions.map(s => {
-      const se = s.exercises.find(e=>e.id===ex.id); if(!se) return 0;
-      if (bw) {
-        const valid = se.sets.filter(st=>st.reps>0); if(!valid.length) return 0;
-        return Math.max(...valid.map(st=>st.reps)); // melhor set em reps
-      }
-      const valid = se.sets.filter(st=>st.weight>0); if(!valid.length) return 0;
-      return Math.max(...valid.map(st=>st.weight));
-    }).filter(v=>v>0);
-    if (vals.length < 2) return;
-    const gain = vals[vals.length-1] - vals[0];
-    if (gain > 0) progressions.push({name:ex.name, gain, from:vals[0], to:vals[vals.length-1], bodyweight:bw});
-  });
-  return progressions.sort((a,b)=>b.gain-a.gain);
-}
 
 // ======================== NUTRIÇÃO ========================
 let _nutriTab = 'meals'; // sub-aba ativa dentro da Nutrição
@@ -3090,30 +2989,9 @@ function renderDados() {
   const sessions = getSessions();
   const totalVol = sessions.reduce((a,s)=>a+calcVolume(s),0);
   const lastDate = sessions.length ? formatDate(sessions[sessions.length-1].date) : '—';
-  const p = getProfile() || {};
-  const nome = p.nome || '';
-  const idade = ageFromDOB(p.data_nascimento);
-  const inicial = (nome.trim()[0] || 'U').toUpperCase();
-  const metaBits = [];
-  if (idade != null) metaBits.push(`${idade} anos`);
-  if (p.altura) metaBits.push(`${p.altura} cm`);
-  if (p.peso) metaBits.push(`${p.peso} kg`);
 
   container.innerHTML = `
-    <div class="profile-head">
-      <div class="profile-avatar">${inicial}</div>
-      <div class="profile-name">${nome ? nome : 'O teu perfil'}</div>
-      ${metaBits.length ? `<div class="profile-meta">${metaBits.join('  ·  ')}</div>` : `<div class="profile-meta">Preenche os teus dados abaixo</div>`}
-    </div>
-
-    <div class="profile-form">
-      <div class="profile-row"><label>Nome</label><input id="pf-nome" type="text" value="${nome.replace(/"/g,'&quot;')}" placeholder="O teu nome"></div>
-      <div class="profile-row"><label>Nascimento</label><input id="pf-dob" type="date" value="${p.data_nascimento || ''}"></div>
-      <div class="profile-row"><label>Altura (cm)</label><input id="pf-altura" type="number" inputmode="numeric" value="${p.altura || ''}" placeholder="—"></div>
-      <div class="profile-row"><label>Peso (kg)</label><input id="pf-peso" type="number" inputmode="decimal" value="${p.peso || ''}" placeholder="—"></div>
-      <div class="profile-row"><label>Condicionantes</label><textarea id="pf-lesoes" placeholder="Ex: ombro direito, anca...">${(p.lesoes || '').replace(/</g,'&lt;')}</textarea></div>
-    </div>
-    <button class="profile-save" onclick="saveProfileForm()">Guardar perfil</button>
+    ${profileSectionHTML()}
 
     <p class="tools-title">Ferramentas</p>
     <div class="dados-stats">
@@ -3149,6 +3027,50 @@ function renderDados() {
     <div style="text-align:center;padding:8px 0 4px;color:var(--text3);font-size:11px;font-family:var(--mono);letter-spacing:1px">UNFYN · ${APP_VERSION}</div>`;
 }
 
+let _profileEditing = false;
+
+function profileSectionHTML() {
+  const p = getProfile() || {};
+  const nome = p.nome || '';
+  const idade = ageFromDOB(p.data_nascimento);
+  const inicial = (nome.trim()[0] || 'U').toUpperCase();
+  const hasProfile = !!(p.nome || p.data_nascimento || p.altura || p.peso || p.lesoes);
+
+  // Modo edição: quando o utilizador toca em Editar, ou quando ainda não há perfil
+  if (_profileEditing || !hasProfile) {
+    return `
+    <div class="profile-form">
+      <div class="profile-row"><label>Nome</label><input id="pf-nome" type="text" value="${nome.replace(/"/g,'&quot;')}" placeholder="O teu nome"></div>
+      <div class="profile-row"><label>Nascimento</label><input id="pf-dob" type="date" value="${p.data_nascimento || ''}"></div>
+      <div class="profile-row"><label>Altura (cm)</label><input id="pf-altura" type="number" inputmode="numeric" value="${p.altura || ''}" placeholder="—"></div>
+      <div class="profile-row"><label>Peso (kg)</label><input id="pf-peso" type="number" inputmode="decimal" value="${p.peso || ''}" placeholder="—"></div>
+      <div class="profile-row"><label>Condicionantes</label><textarea id="pf-lesoes" placeholder="Ex: ombro direito, anca...">${(p.lesoes || '').replace(/</g,'&lt;')}</textarea></div>
+    </div>
+    <div class="profile-actions">
+      <button class="profile-save" onclick="saveProfileForm()">Guardar perfil</button>
+      ${hasProfile ? `<button class="profile-cancel" onclick="cancelProfileEdit()">Cancelar</button>` : ''}
+    </div>`;
+  }
+
+  // Modo leitura: cartão arrumado + botão Editar
+  const metaBits = [];
+  if (idade != null) metaBits.push(`${idade} anos`);
+  if (p.altura) metaBits.push(`${p.altura} cm`);
+  if (p.peso) metaBits.push(`${p.peso} kg`);
+  const lesoes = p.lesoes ? String(p.lesoes).replace(/</g,'&lt;') : '';
+  return `
+    <div class="profile-head">
+      <button class="profile-edit-btn" onclick="startProfileEdit()" aria-label="Editar perfil">${SVG.edit || 'Editar'}</button>
+      <div class="profile-avatar">${inicial}</div>
+      <div class="profile-name">${nome || '—'}</div>
+      ${metaBits.length ? `<div class="profile-meta">${metaBits.join('  ·  ')}</div>` : ''}
+      ${lesoes ? `<div class="profile-lesoes"><span class="profile-lesoes-lbl">Condicionantes</span> ${lesoes}</div>` : ''}
+    </div>`;
+}
+
+function startProfileEdit() { _profileEditing = true; renderDados(); }
+function cancelProfileEdit() { _profileEditing = false; renderDados(); }
+
 async function saveProfileForm() {
   const p = {
     nome: document.getElementById('pf-nome').value.trim(),
@@ -3161,6 +3083,7 @@ async function saveProfileForm() {
   const ok = await sb.saveProfile(p);
   if (ok) {
     _profile = { ...(_profile||{}), ...p };
+    _profileEditing = false;
     showToast('Perfil guardado ✓');
     renderDados();
   } else {
@@ -3368,6 +3291,7 @@ let bt = {
 
 function openTimerModal() {
   bt.autoRest = false;
+  clearRestDoneState();
   document.getElementById('timer-modal').classList.add('open');
   resetBigTimer();
 }
@@ -3390,6 +3314,7 @@ function parseRestSeconds(txt) {
 function startRest(seconds) {
   bt.autoRest = true;
   hideRestDoneAlert();
+  clearRestDoneState();
   hideMiniTimer();
   document.getElementById('timer-modal').classList.add('open');
   setTimerMode('simple');
@@ -3470,21 +3395,33 @@ function unlockComplete() {
 }
 
 let _restDoneTimeout = null;
-function showRestDoneAlert() {
-  const el = document.getElementById('timer-mini');
-  if (!el) return;
-  const iconEl = document.getElementById('timer-mini-icon');
-  const labelEl = document.getElementById('timer-mini-label');
-  const timeEl = document.getElementById('timer-mini-time');
-  if (iconEl) iconEl.innerHTML = SVG.play || SVG.timer;
-  if (labelEl) labelEl.textContent = 'Descanso terminado';
-  if (timeEl) timeEl.textContent = 'Próxima série';
-  el.classList.add('show', 'done');
-  const fab = document.getElementById('timer-fab');
-  if (fab) fab.style.display = 'none';
+function showRestDoneBig() {
+  const m = document.getElementById('timer-modal');
+  if (!m) return;
+  hideMiniTimer();
+  // Garante o cronómetro aberto e limpa o estado de "a correr" (cores de fase)
+  m.classList.add('open');
+  m.classList.remove('running','phase-prep','phase-work','phase-rest');
+  m.classList.add('rest-done-active');
   if (_restDoneTimeout) clearTimeout(_restDoneTimeout);
-  _restDoneTimeout = setTimeout(hideRestDoneAlert, 12000);
+  _restDoneTimeout = setTimeout(dismissRestDone, 12000);
 }
+function dismissRestDone() {
+  if (_restDoneTimeout) { clearTimeout(_restDoneTimeout); _restDoneTimeout = null; }
+  const m = document.getElementById('timer-modal');
+  if (!m || !m.classList.contains('rest-done-active')) return;
+  m.classList.remove('rest-done-active');
+  // Fecha o cronómetro e volta ao treino (como o auto-descanso fazia antes)
+  m.classList.remove('open','running');
+  const fab = document.getElementById('timer-fab');
+  if (fab) fab.style.display = '';
+}
+function clearRestDoneState() {
+  if (_restDoneTimeout) { clearTimeout(_restDoneTimeout); _restDoneTimeout = null; }
+  const m = document.getElementById('timer-modal');
+  if (m) m.classList.remove('rest-done-active');
+}
+
 function hideRestDoneAlert() {
   if (_restDoneTimeout) { clearTimeout(_restDoneTimeout); _restDoneTimeout = null; }
   const el = document.getElementById('timer-mini');
@@ -3589,13 +3526,6 @@ function adjInt(field, delta) {
   resetBigTimer();
 }
 
-function setIntPreset(work, rest, rounds) {
-  bt.work = work; bt.rest = rest; bt.rounds = rounds;
-  document.getElementById('int-work').textContent = work;
-  document.getElementById('int-rest').textContent = rest;
-  document.getElementById('int-rounds').textContent = rounds;
-  resetBigTimer();
-}
 
 function fmtBig(sec) {
   const m = Math.floor(sec/60);
@@ -3745,11 +3675,6 @@ function bell(freqBase, vol) {
 }
 
 // Play several bell hits in a row (3x no fim do treino)
-function bellSequence(count, freq, gap) {
-  for (let i = 0; i < (count || 1); i++) {
-    setTimeout(() => bell(freq || 880, 1.0), i * (gap || 650));
-  }
-}
 
 // Play a sequence of beeps: array of [freq, durationSec, gapSec]
 function beepSequence(steps) {
@@ -3813,12 +3738,10 @@ function tickBigTimer() {
       stopBigTimer();
       bt.remaining = bt.simpleTime;
       if (bt.autoRest) {
-        // Auto-descanso entre séries: fecha o timer e volta ao treino,
-        // para o próximo "registar reps" não reabrir/empilhar nova contagem.
-        const m = document.getElementById('timer-modal');
-        if (m) { m.classList.remove('open'); m.classList.remove('running'); }
-        // Aviso visível (~12s) na barra, para o notares com o telemóvel pousado.
-        showRestDoneAlert();
+        // Auto-descanso entre séries: mantém o cronómetro aberto e mostra um
+        // aviso GRANDE no ecrã (legível a vários metros, telemóvel pousado).
+        // Fecha sozinho ao fim de 12s, ou quando o utilizador toca.
+        showRestDoneBig();
       } else {
         // Cronómetro manual (ex: prancha 30s/lado): NÃO fecha — fica aberto,
         // pronto a recomeçar com o mesmo tempo (ex: segundo lado) sem reabrir.
