@@ -100,13 +100,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ex-suggestion.keep{background:rgba(243,156,18,0.1);color:var(--yellow);}
 .ex-suggestion.down{background:rgba(231,76,60,0.1);color:var(--red);}
 .ex-suggestion.max{background:rgba(120,160,255,0.12);color:#8fb0ff;font-size:14px;line-height:1.35;}
-.ex-ref{font-size:12.5px;color:var(--text3);font-family:var(--mono);line-height:1.5;}
+.ex-ref{font-size:12.5px;color:var(--text3);font-family:var(--mono);line-height:1.5;margin-bottom:10px;}
 .ex-ref-sep{margin:0 7px;opacity:0.5;}
 .ex-prev{font-size:15px;color:var(--text2);font-family:var(--mono);margin-top:6px;}
-.ex-warmup{font-size:12.5px;font-family:var(--mono);margin-top:8px;color:var(--orange);line-height:1.4;}
-.ex-warmup-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:rgba(255,159,67,0.12);padding:2px 7px;border-radius:5px;margin-right:6px;}
+.ex-warmup{font-size:15px;font-family:var(--mono);margin-top:10px;color:var(--orange);line-height:1.6;background:rgba(255,159,67,0.07);border:1px solid rgba(255,159,67,0.18);border-radius:9px;padding:10px 12px;}
+.ex-warmup-text{font-weight:600;}
+.ex-warmup-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:rgba(255,159,67,0.18);padding:3px 8px;border-radius:5px;margin-right:8px;}
 .ex-warmup-title{font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;opacity:0.8;}
 .ex-warmup-sets{color:var(--text);font-weight:600;font-size:15px;}
+.ex-plates{font-size:15px;font-family:var(--mono);margin-top:10px;color:var(--text2);line-height:1.5;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;}
+.ex-plates .ex-warmup-tag{background:rgba(159,179,168,0.15);color:var(--text2);}
 .sets-area{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;}
 .set-row{display:grid;grid-template-columns:32px 1fr 1fr;gap:10px;align-items:center;position:relative;transition:opacity 0.15s;}
 .set-row.done .set-num{color:var(--accent);}
@@ -312,6 +315,40 @@ input[type="file"]{display:none;}
 .sl-dot.high{background:#ff9f43;}
 .mm-legend-grad{display:inline-block;width:80px;height:10px;border-radius:5px;background:linear-gradient(90deg,#2a342e,#39FF88);}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#0a0e0c;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;z-index:999;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;box-shadow:0 4px 12px rgba(57,255,136,0.3);}
+/* ===== Perfil ===== */
+.profile-head{background:linear-gradient(145deg,#1a2420,#141a17);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;margin-bottom:14px;position:relative;overflow:hidden;}
+.profile-head::before{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;background:radial-gradient(circle,rgba(57,255,136,0.13),transparent 70%);}
+.profile-avatar{width:54px;height:54px;border-radius:50%;background:var(--accent);color:#0a0e0c;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:var(--font);margin-bottom:14px;}
+.profile-name{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.3px;line-height:1.1;}
+.profile-meta{font-size:13px;color:var(--text2);font-family:var(--mono);margin-top:6px;}
+.profile-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 16px;margin-bottom:14px;}
+.profile-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);}
+.profile-row:last-child{border-bottom:none;}
+.profile-row label{font-size:13px;color:var(--text2);font-weight:600;width:118px;flex-shrink:0;}
+.profile-row input,.profile-row textarea{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;color:var(--text);font-family:var(--font);font-size:15px;-webkit-appearance:none;}
+.profile-row input:focus,.profile-row textarea:focus{outline:none;border-color:var(--accent);}
+.profile-row textarea{resize:vertical;min-height:42px;line-height:1.4;}
+.profile-save{width:100%;padding:16px;background:var(--accent);border:none;border-radius:12px;color:#0a0e0c;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;margin-bottom:26px;box-shadow:0 4px 14px rgba(57,255,136,0.22);}
+.profile-save:active{transform:scale(0.99);}
+.tools-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);margin:4px 0 12px;}
+/* ===== Medições (Corpo) ===== */
+.meas-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
+.meas-row:last-child{border-bottom:none;}
+.meas-row-date{font-size:14px;font-weight:700;color:var(--text);}
+.meas-row-fonte{font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:2px;}
+.meas-row-actions{display:flex;gap:8px;}
+.meas-row-actions button{background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;}
+.meas-row-actions .meas-del{color:var(--red);border-color:rgba(255,94,87,0.3);}
+.measure-modal{position:fixed;inset:0;z-index:1500;background:rgba(10,14,12,0.96);backdrop-filter:blur(8px);display:none;overflow-y:auto;padding:0 18px calc(40px + env(safe-area-inset-bottom,0px));}
+.measure-modal.open{display:block;}
+.measure-modal-inner{max-width:520px;margin:0 auto;padding-top:18px;}
+.measure-modal-head{display:flex;align-items:center;gap:12px;position:sticky;top:0;background:rgba(10,14,12,0.96);padding:8px 0 14px;z-index:2;}
+.measure-modal-title{font-size:20px;font-weight:800;color:var(--text);}
+.measure-form-body{}
+.meas-form-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 16px;margin-bottom:14px;}
+.meas-form-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-family:var(--mono);padding:12px 0 4px;}
+.profile-row select{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;color:var(--text);font-family:var(--font);font-size:15px;-webkit-appearance:none;}
+.profile-row select:focus{outline:none;border-color:var(--accent);}
 
 /* ===== Login screen ===== */
 .login-glow{position:absolute;left:50%;bottom:-30%;width:140%;height:80%;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(57,255,136,0.18),rgba(57,255,136,0.05) 40%,transparent 70%);pointer-events:none;animation:loginGlowPulse 6s ease-in-out infinite;}
@@ -345,6 +382,10 @@ input[type="file"]{display:none;}
 .timer-mini-icon svg{width:15px;height:15px;}
 .timer-mini-label{font-family:var(--font);font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .timer-mini-time{font-family:var(--mono);font-size:17px;font-weight:800;letter-spacing:0.5px;}
+/* Aviso de descanso terminado — barra pulsa suavemente para chamar a atenção */
+.timer-mini.done{animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1), miniPulse 1.1s ease-in-out 0.25s infinite;}
+@keyframes miniPulse{0%,100%{box-shadow:0 4px 16px rgba(0,0,0,0.35);}50%{box-shadow:0 4px 24px rgba(57,255,136,0.7);}}
+.timer-mini.done .timer-mini-time{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
 /* Water lock */
 .timer-lock-btn{display:none;align-items:center;justify-content:center;gap:7px;margin:18px auto 0;padding:11px 22px;background:transparent;border:1px solid var(--border);border-radius:50px;color:var(--text2);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;}
 .timer-modal.running .timer-lock-btn{display:flex;}
@@ -546,6 +587,16 @@ input[type="file"]{display:none;}
   </div>
   <span id="timer-mini-time" class="timer-mini-time">00:00</span>
 </div>
+<div id="measure-modal" class="measure-modal">
+  <div class="measure-modal-inner">
+    <div class="measure-modal-head">
+      <button class="timer-close" onclick="closeMeasureForm()" aria-label="Fechar">✕</button>
+      <div id="measure-form-title" class="measure-modal-title">Nova avaliação</div>
+    </div>
+    <div id="measure-form-body" class="measure-form-body"></div>
+    <button class="profile-save" style="margin:8px 0 0" onclick="saveMeasureForm()">Guardar avaliação</button>
+  </div>
+</div>
 
 <script>
 // ======================== WORKOUT DATA ========================
@@ -572,7 +623,7 @@ const WORKOUTS = {
     {id:"rpd1",name:"Face Pull",                     sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
   ]},
   lower1:{name:"Lower 1",type:"lower",day:"Terça",sub:"Quad · Glúteo · Femoral · Gémeos",exercises:[
-    {id:"bs",  name:"Barbell Squat", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
+    {id:"bs",  name:"Barbell Squat", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
     {id:"bss", name:"Bulgarian Split Squat",         sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"dumbbell",rest:"2–3 min"},
     {id:"slle1",name:"Single-Leg Leg Extension",     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"slc1",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
@@ -592,7 +643,7 @@ const WORKOUTS = {
     {id:"rpd2",name:"Reverse Pec Deck",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
   ]},
   lower2:{name:"Lower 2",type:"lower",day:"Sexta",sub:"Femoral · Quad · Gémeos · Abdómen",exercises:[
-    {id:"rdl", name:"Romanian Deadlift",       sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
+    {id:"rdl", name:"Romanian Deadlift",       sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
     {id:"lp",  name:"Leg Press",                     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
     {id:"slle2",name:"Leg Extension (bilateral)",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg",maxWeight:100},
     {id:"slc2",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
@@ -845,7 +896,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.23';
+const APP_VERSION = '1.31';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -982,6 +1033,49 @@ const sb = {
         headers: authHeaders()
       });
     } catch(e) {}
+  },
+  async getProfile() {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/profile?user_id=eq.${authUserId}&select=*`, { headers: authHeaders() });
+      if (res.status === 401) { handleAuthExpired(); return null; }
+      const data = await res.json();
+      return Array.isArray(data) && data.length ? data[0] : null;
+    } catch(e) { return null; }
+  },
+  async saveProfile(p) {
+    const body = JSON.stringify({ user_id: authUserId, nome: p.nome, data_nascimento: p.data_nascimento, altura: p.altura, peso: p.peso, lesoes: p.lesoes, updated_at: new Date().toISOString() });
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/profile?on_conflict=user_id`, {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body
+      });
+      return res.ok;
+    } catch(e) { return false; }
+  },
+  async getMeasurements() {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/measurements?user_id=eq.${authUserId}&order=data.asc`, { headers: authHeaders() });
+      if (res.status === 401) { handleAuthExpired(); return []; }
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    } catch(e) { return []; }
+  },
+  async saveMeasurement(m) {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/measurements?on_conflict=id`, {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ ...m, user_id: authUserId })
+      });
+      return res.ok;
+    } catch(e) { return false; }
+  },
+  async deleteMeasurement(id) {
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/measurements?id=eq.${id}`, { method: 'DELETE', headers: authHeaders() });
+      return true;
+    } catch(e) { return false; }
   }
 };
 
@@ -1015,6 +1109,71 @@ async function removeSession(id) {
   removePending(id);
   await sb.deleteSession(id);
   _sessions = await sb.getSessions();
+}
+
+// ======================== PERFIL ========================
+let _profile = null;
+
+async function loadProfile() {
+  _profile = await sb.getProfile();
+  return _profile;
+}
+function getProfile() { return _profile; }
+
+function ageFromDOB(dob) {
+  if (!dob) return null;
+  const b = new Date(dob);
+  if (isNaN(b)) return null;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
+  return age;
+}
+// Peso corporal atual (para volume real das pull-ups). null se não definido.
+function bodyWeight() {
+  const p = getProfile();
+  return (p && p.peso > 0) ? Number(p.peso) : null;
+}
+
+// ======================== MEDIÇÕES (CORPO) ========================
+let _measurements = null;
+
+async function loadMeasurements() {
+  _measurements = await sb.getMeasurements();
+  return _measurements;
+}
+function getMeasurements() { return _measurements || []; }
+
+// Migração única: converte as 6 avaliações InBody do código para registos individuais.
+// Corre só se a tabela estiver vazia (não duplica).
+function buildMigrationRecords() {
+  const peso=[85.8,87.1,85.7,84.5,83.3,81.6];
+  const musculo=[38.2,38.3,37.3,38.3,38.8,38.4];
+  const gordura=[23.1,24.0,24.7,21.5,19.8,18.7];
+  const datas=['2025-09-01','2025-10-01','2025-12-01','2026-01-01','2026-04-01','2026-05-12'];
+  const per={p_braco:[36,36,36,35,35,36],p_coxa:[67,68,68,66,68,66],p_gemeo:[40,40,40,39,41,40],p_ombros:[120,120,120,120,122,119],p_peito:[100,100,98,99,101,100],p_cintura:[90,91,90,89,88,86],p_abdominal:[96,96,95,93,90,87],p_anca:[103,104,104,101,101,99]};
+  // pregas: só nas últimas 4 avaliações (Dez,Jan,Abr,Maio = índices 2..5)
+  const preg={pr_bicipital:[4.8,4,4,3.2],pr_tricipital:[17.4,16.4,15.8,13.4],pr_subscapular:[16.6,15.8,14.8,14.4],pr_ilieocristal:[22,22,21,19.2],pr_abdominal:[37,36.4,31.6,27.4],pr_supraespinal:[23.6,23.6,18.8,16.6],pr_crural:[27.6,26.6,26,24.4],pr_geminal:[16,14,12,9.8]};
+  const recs = [];
+  for (let i=0;i<6;i++){
+    const r = { id: 1700000000000 + i, data: datas[i], fonte: 'InBody', peso: peso[i], gordura: gordura[i], musculo: musculo[i] };
+    Object.keys(per).forEach(k=>r[k]=per[k][i]);
+    if (i>=2){ const pi=i-2; Object.keys(preg).forEach(k=>r[k]=preg[k][pi]); }
+    recs.push(r);
+  }
+  // Extras InBody só na última (Maio 2026): massa gorda, imc, pontuação, visceral, segmentos
+  const last = recs[5];
+  last.massa_gorda=15.3; last.imc=28.2; last.pontuacao=88; last.visceral=6;
+  last.seg_braco_esq=4.05; last.seg_braco_dir=4.10; last.seg_perna_esq=9.59; last.seg_perna_dir=9.79; last.seg_tronco=30.5;
+  return recs;
+}
+
+async function migrateMeasurementsIfEmpty() {
+  if (getMeasurements().length > 0) return;
+  const recs = buildMigrationRecords();
+  for (const r of recs) { await sb.saveMeasurement(r); }
+  await loadMeasurements();
 }
 
 // ======================== PROGRESSION LOGIC ========================
@@ -1068,6 +1227,23 @@ function getSuggestedWeight(ex, workoutKey) {
   return prog ? prog.weight : null;
 }
 
+// Discos por lado para uma barra olímpica de 20kg. Discos disponíveis: 20,15,10,5kg.
+function platesPerSide(totalWeight) {
+  const BAR = 20;
+  const PLATES = [20, 15, 10, 5];
+  if (!(totalWeight > BAR)) return null; // só barra (ou menos)
+  let perSide = (totalWeight - BAR) / 2;
+  if (perSide <= 0) return null;
+  const out = [];
+  let rem = Math.round(perSide * 100) / 100;
+  for (const p of PLATES) {
+    let n = Math.floor(rem / p);
+    if (n > 0) { out.push(n > 1 ? `${n}×${p}` : `${p}`); rem = Math.round((rem - n*p) * 100) / 100; }
+  }
+  if (rem > 0.01) return null; // não montável com estes discos
+  return out.length ? out.join(' + ') + '/lado' : null;
+}
+
 function calcWarmup(ex, workoutKey) {
   const workWeight = getSuggestedWeight(ex, workoutKey);
   if (!workWeight || workWeight <= 0) return null;
@@ -1078,18 +1254,20 @@ function calcWarmup(ex, workoutKey) {
   const round = (v) => Math.round(v / step) * step;
   let w50 = round(workWeight * 0.5);
   let w75 = round(workWeight * 0.75);
+  const showPlates = !!ex.plates;
+  const wp = (w) => { if (!showPlates) return `${w}kg`; const p = platesPerSide(w); return p ? `${w}kg (${p})` : `${w}kg`; };
   // Squat: empty bar first, then warmup sets
   if (ex.id === 'bs') {
     if (w50 < 20) w50 = 20;
     if (w75 < 20) w75 = 20;
-    return { text: `barra vazia × 10  →  ${w50}kg × 8  →  ${w75}kg × 4`, work: workWeight };
+    return { text: `barra vazia × 10  →  ${wp(w50)} × 8  →  ${wp(w75)} × 4`, work: workWeight };
   }
   // Barbell exercises with a real bar (squat, rdl): don't suggest below empty bar (20kg)
   if (isBarbell && (ex.id === 'rdl')) {
     if (w50 < 20) w50 = 20;
     if (w75 < 20) w75 = 20;
   }
-  return { text: `${w50}kg × 10  →  ${w75}kg × 6`, work: workWeight };
+  return { text: `${wp(w50)} × 10  →  ${wp(w75)} × 6`, work: workWeight };
 }
 
 function getLastSession(key){const s=getSessions().filter(s=>s.workoutKey===key);return s.length?s[s.length-1]:null;}
@@ -1106,10 +1284,10 @@ async function showView(v) {
   document.querySelectorAll('.nav-tab')[['home','nutricao','stats','historico','dados'].indexOf(v)].classList.add('active');
   await loadSessions();
   if(v==='home')renderHome();
-  if(v==='nutricao')renderNutricao();
+  if(v==='nutricao'){ if(_measurements===null) await loadMeasurements(); renderNutricao(); }
   if(v==='historico')renderHistorico();
   if(v==='stats')renderStats();
-  if(v==='dados')renderDados();
+  if(v==='dados'){ await loadProfile(); renderDados(); }
 }
 
 // ======================== HOME ========================
@@ -1339,6 +1517,24 @@ function scrollToSessionTop() {
   else window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// Rola até ao primeiro exercício que ainda tem séries por preencher (ao continuar treino)
+function scrollToFirstIncomplete() {
+  const w = WORKOUTS[currentWorkout];
+  if (!w) return;
+  for (const ex of w.exercises) {
+    let complete = true;
+    for (let i = 1; i <= ex.sets; i++) {
+      const rv = parseInt(document.getElementById(`r_${ex.id}_${i}`)?.value, 10);
+      if (!(isFinite(rv) && rv > 0)) { complete = false; break; }
+    }
+    if (!complete) {
+      const card = document.getElementById(`card_${ex.id}`);
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+  }
+}
+
 function toggleTimer() {
   const btn = document.getElementById('timer-btn');
   const dot = document.getElementById('timer-dot');
@@ -1369,7 +1565,17 @@ function getTimerSeconds() {
   return total;
 }
 
-function startWorkout(key) { currentWorkout = key; _autoRestFired = {}; if (_autoRestTimeout) { clearTimeout(_autoRestTimeout); _autoRestTimeout = null; } resetTimer(); requestWakeLock(); renderSession(); restoreTimer(); }
+function startWorkout(key) {
+  currentWorkout = key;
+  _autoRestFired = {};
+  if (_autoRestTimeout) { clearTimeout(_autoRestTimeout); _autoRestTimeout = null; }
+  resetTimer();
+  requestWakeLock();
+  const hadDraft = !!localStorage.getItem('vt_draft_' + key);
+  renderSession();
+  restoreTimer();
+  if (hadDraft) setTimeout(scrollToFirstIncomplete, 100);
+}
 
 function draftKey() { return 'vt_draft_' + currentWorkout; }
 
@@ -1591,9 +1797,10 @@ function renderSession() {
 
     html += `<div class="ex-card" id="card_${ex.id}"><div class="ex-header">
       <div class="ex-name">${ex.name}</div>
-      ${prog ? `<div class="ex-suggestion ${prog.status}">${prog.label}</div>` : ''}
       <div class="ex-ref">${ex.sets}×${ex.reps}${ex.rest ? ' · ' + ex.rest : ''}${ex.pulley ? ' · '+ex.pulley : ''}${lastEx ? `<span class="ex-ref-sep">·</span>último: ${lastEx.sets.map(s=>`${ex.bodyweight ? (s.weight>0?'+'+s.weight+'kg':'PC') : s.weight+'kg'}×${s.reps}`).join(', ')}` : ''}</div>
-      ${warmup ? `<div class="ex-warmup"><span class="ex-warmup-tag">Aquecer</span> ${warmup.text}</div>` : ''}
+      ${prog ? `<div class="ex-suggestion ${prog.status}">${prog.label}</div>` : ''}
+      ${(ex.plates && suggestedWeight > 0 && platesPerSide(suggestedWeight)) ? `<div class="ex-plates"><span class="ex-warmup-tag">Discos</span> <span class="ex-warmup-text">${suggestedWeight}kg = barra + ${platesPerSide(suggestedWeight)}</span></div>` : ''}
+      ${warmup ? `<div class="ex-warmup"><span class="ex-warmup-tag">Aquecer</span> <span class="ex-warmup-text">${warmup.text}</span></div>` : ''}
       ${ex.bodyweight ? `<div class="ex-ref" style="margin-top:4px">Lastro 0 = só peso corporal. Adiciona lastro quando fizeres 3×${ex.repsMax} com RIR 2+.</div>` : ''}
     </div><div class="sets-area">`;
 
@@ -2580,43 +2787,120 @@ function nutriRulesHTML(p) {
 }
 
 function nutriMeasuresHTML(p) {
-  const ib = p.measures.inbody;
+  const recs = getMeasurements();
   let html = '';
 
-  if (ib) {
-    const u = ib.ultimo;
-    // Cabeçalho InBody com pontuação
-    html += `<div class="ib-head">
-      <div><div class="ib-head-title">InBody</div><div class="ib-head-date">Último teste · ${u.data}</div></div>
-      <div class="ib-score"><span class="ib-score-num">${u.pontuacao}</span><span class="ib-score-max">/100</span></div>
-    </div>`;
+  // Botão de nova avaliação (sempre visível no topo)
+  html += `<button class="profile-save" style="margin-bottom:18px" onclick="openMeasureForm()">+ Nova avaliação</button>`;
 
-    // Cartões do último teste
+  if (!recs.length) {
+    html += `<div class="no-data" style="padding:40px 20px">Ainda não há avaliações. Toca em "+ Nova avaliação" para registar a primeira.</div>`;
+    return html;
+  }
+
+  const last = recs[recs.length - 1];
+  const labels = recs.map(r => mLabel(r.data));
+  const fmt = (v) => (v == null ? '—' : String(v).replace('.', ','));
+
+  // Cabeçalho com pontuação (se a última for InBody e tiver pontuação)
+  html += `<div class="ib-head">
+    <div><div class="ib-head-title">${last.fonte || 'Corpo'}</div><div class="ib-head-date">Último · ${mLabelFull(last.data)}</div></div>
+    ${last.pontuacao != null ? `<div class="ib-score"><span class="ib-score-num">${last.pontuacao}</span><span class="ib-score-max">/100</span></div>` : ''}
+  </div>`;
+
+  // Cards de destaque do último registo
+  const cardDefs = [
+    ['gordura','% Gordura','%'], ['musculo','Massa Muscular','kg'], ['massa_gorda','Massa Gorda','kg'],
+    ['peso','Peso','kg'], ['imc','IMC',''], ['visceral','Gord. Visceral','/9']
+  ];
+  const cards = cardDefs.filter(([k]) => last[k] != null);
+  if (cards.length) {
     html += `<div class="ib-cards">`;
-    u.cards.forEach(c => {
-      html += `<div class="ib-card"><div class="ib-card-val">${c.value}<span class="ib-card-unit">${c.unit}</span></div><div class="ib-card-lbl">${c.label}</div></div>`;
-    });
-    html += `</div>`;
-
-    // Gráficos de evolução
-    html += `<div class="ib-section-title">Evolução</div>`;
-    ib.evolucao.forEach(metric => {
-      html += ibSparkline(metric, ib.labels);
-    });
-
-    // Segmentos (massa magra)
-    html += `<div class="ib-section-title">Massa magra por segmento</div>
-      <div class="nutri-card"><div class="nutri-card-intro">Distribuição da massa muscular (kg). Útil para acompanhar simetria entre lados.</div>`;
-    u.segmentos.forEach(([name, val]) => {
-      html += `<div class="ib-seg"><span class="ib-seg-name">${name}</span><span class="ib-seg-val">${val} kg</span></div>`;
+    cards.forEach(([k,label,unit]) => {
+      html += `<div class="ib-card"><div class="ib-card-val">${fmt(last[k])}<span class="ib-card-unit">${unit}</span></div><div class="ib-card-lbl">${label}</div></div>`;
     });
     html += `</div>`;
   }
 
-  // Tabelas da nutricionista
-  html += `<div class="ib-section-title">Perímetros & Pregas (nutricionista)</div>`;
-  html += renderMeasureTable('Perímetros (cm)', p.measures.perimetros)
-        + renderMeasureTable('Pregas (mm)', p.measures.pregas);
+  // Gráficos de evolução (peso, % gordura, massa muscular)
+  html += `<div class="ib-section-title">Evolução</div>`;
+  [['peso','Peso','kg'],['gordura','% Gordura','%'],['musculo','Massa Muscular','kg']].forEach(([k,name,unit]) => {
+    const vals = recs.map(r => r[k]);
+    if (vals.some(v => v != null)) html += ibSparklineFromRecs(name, unit, vals, labels);
+  });
+
+  // Segmentos do último registo (se existirem)
+  const segDefs = [['seg_braco_esq','Braço esq.'],['seg_braco_dir','Braço dir.'],['seg_perna_esq','Perna esq.'],['seg_perna_dir','Perna dir.'],['seg_tronco','Tronco']];
+  const segs = segDefs.filter(([k]) => last[k] != null);
+  if (segs.length) {
+    html += `<div class="ib-section-title">Massa magra por segmento</div>
+      <div class="nutri-card"><div class="nutri-card-intro">Distribuição da massa muscular (kg). Útil para acompanhar simetria entre lados.</div>`;
+    segs.forEach(([k,name]) => {
+      html += `<div class="ib-seg"><span class="ib-seg-name">${name}</span><span class="ib-seg-val">${fmt(last[k])} kg</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Tabelas de perímetros e pregas (a partir dos registos)
+  html += `<div class="ib-section-title">Perímetros & Pregas</div>`;
+  const perDefs = [['p_braco','Braço'],['p_coxa','Coxa'],['p_gemeo','M. Gémeo'],['p_ombros','Ombros'],['p_peito','Peito'],['p_cintura','Cintura'],['p_abdominal','Abdominal'],['p_anca','Anca']];
+  const pregDefs = [['pr_bicipital','Bicipital'],['pr_tricipital','Tricipital'],['pr_subscapular','Subscapular'],['pr_ilieocristal','Ilieocristal'],['pr_abdominal','Abdominal'],['pr_supraespinal','Supraespinal'],['pr_crural','Crural'],['pr_geminal','Geminal']];
+  html += measureTableFromRecs('Perímetros (cm)', perDefs, recs, labels);
+  html += measureTableFromRecs('Pregas (mm)', pregDefs, recs, labels);
+
+  // Lista de avaliações (editar/apagar)
+  html += `<div class="ib-section-title">Avaliações registadas</div><div class="nutri-card" style="padding:6px 16px">`;
+  [...recs].reverse().forEach(r => {
+    html += `<div class="meas-row">
+      <div><div class="meas-row-date">${mLabelFull(r.data)}</div><div class="meas-row-fonte">${r.fonte||'—'}${r.peso!=null?' · '+fmt(r.peso)+'kg':''}</div></div>
+      <div class="meas-row-actions">
+        <button onclick="openMeasureForm(${r.id})">Editar</button>
+        <button class="meas-del" onclick="deleteMeasure(${r.id})">Apagar</button>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  return html;
+}
+
+function mLabel(iso) {
+  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const d = new Date(iso); return meses[d.getMonth()];
+}
+function mLabelFull(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-PT', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function ibSparklineFromRecs(name, unit, vals, labels) {
+  // Filtra pares (valor, label) onde há valor
+  const pairs = vals.map((v,i)=>[v,labels[i]]).filter(p=>p[0]!=null);
+  if (pairs.length < 2) {
+    const only = pairs.length ? `${String(pairs[0][0]).replace('.',',')}${unit}` : '—';
+    return `<div class="ib-spark"><div class="ib-spark-head"><span class="ib-spark-name">${name}</span><span class="ib-spark-now">${only}</span></div><div style="font-size:11px;color:var(--text3);font-family:var(--mono)">Precisa de 2+ avaliações para o gráfico.</div></div>`;
+  }
+  return ibSparkline({ name, unit, vals: pairs.map(p=>p[0]) }, pairs.map(p=>p[1]));
+}
+
+function measureTableFromRecs(title, defs, recs, labels) {
+  // Mantém só as linhas que têm algum valor em qualquer avaliação
+  const rows = defs.map(([k,name]) => [name, recs.map(r=>r[k])]).filter(([n,vals]) => vals.some(v=>v!=null));
+  if (!rows.length) return '';
+  // Para as pregas, recortar colunas vazias no início (avaliações sem pregas)
+  let html = `<div class="nutri-card" style="overflow-x:auto"><div class="nutri-rules-title" style="padding:0 0 10px">${title}</div>
+    <table class="nutri-table"><thead><tr><th></th>`;
+  labels.forEach(l => { html += `<th>${l}</th>`; });
+  html += `</tr></thead><tbody>`;
+  rows.forEach(([name, vals]) => {
+    html += `<tr><td class="nutri-tname">${name}</td>`;
+    vals.forEach((v, i) => {
+      const isLast = i === vals.length - 1;
+      html += `<td class="${isLast?'nutri-last':''}">${v==null?'·':String(v).replace('.',',')}</td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table></div>`;
   return html;
 }
 
@@ -2657,21 +2941,94 @@ function ibSparkline(metric, labels) {
   </div>`;
 }
 
-function renderMeasureTable(title, data) {
-  let html = `<div class="nutri-card" style="overflow-x:auto"><div class="nutri-rules-title" style="padding:0 0 10px">${title}</div>
-    <table class="nutri-table"><thead><tr><th></th>`;
-  data.labels.forEach(l => { html += `<th>${l}</th>`; });
-  html += `</tr></thead><tbody>`;
-  data.rows.forEach(([name, vals]) => {
-    html += `<tr><td class="nutri-tname">${name}</td>`;
-    vals.forEach((v, i) => {
-      const isLast = i === vals.length - 1;
-      html += `<td class="${isLast?'nutri-last':''}">${v}</td>`;
+// ======================== FORMULÁRIO DE AVALIAÇÃO ========================
+const MEAS_FIELDS = {
+  comp: { title:'Composição', fields:[['peso','Peso','kg'],['gordura','% Gordura','%'],['musculo','Massa muscular','kg'],['massa_gorda','Massa gorda','kg'],['imc','IMC','']] },
+  per:  { title:'Perímetros (cm)', fields:[['p_braco','Braço','cm'],['p_coxa','Coxa','cm'],['p_gemeo','Gémeo','cm'],['p_ombros','Ombros','cm'],['p_peito','Peito','cm'],['p_cintura','Cintura','cm'],['p_abdominal','Abdominal','cm'],['p_anca','Anca','cm']] },
+  preg: { title:'Pregas (mm)', fields:[['pr_bicipital','Bicipital','mm'],['pr_tricipital','Tricipital','mm'],['pr_subscapular','Subscapular','mm'],['pr_ilieocristal','Ilieocristal','mm'],['pr_abdominal','Abdominal','mm'],['pr_supraespinal','Supraespinal','mm'],['pr_crural','Crural','mm'],['pr_geminal','Geminal','mm']] },
+  inbody: { title:'Extra InBody', fields:[['pontuacao','Pontuação','/100'],['visceral','Gord. visceral','/9'],['seg_braco_esq','Massa magra braço esq.','kg'],['seg_braco_dir','Massa magra braço dir.','kg'],['seg_perna_esq','Massa magra perna esq.','kg'],['seg_perna_dir','Massa magra perna dir.','kg'],['seg_tronco','Massa magra tronco','kg']] }
+};
+
+let _editingMeasureId = null;
+
+function openMeasureForm(id) {
+  _editingMeasureId = id || null;
+  const rec = id ? getMeasurements().find(m => m.id === id) : null;
+  const today = new Date().toISOString().slice(0,10);
+  const v = (k) => (rec && rec[k] != null ? rec[k] : '');
+  const fonte = rec ? (rec.fonte || 'InBody') : 'InBody';
+
+  let body = `<div class="meas-form-group">
+    <div class="profile-row"><label>Data</label><input id="mf-data" type="date" value="${rec ? rec.data : today}"></div>
+    <div class="profile-row"><label>Fonte</label>
+      <select id="mf-fonte" onchange="toggleInbodyFields()">
+        ${['InBody','Manual','Báscula','Outro'].map(f=>`<option ${f===fonte?'selected':''}>${f}</option>`).join('')}
+      </select>
+    </div>
+  </div>`;
+
+  ['comp','per','preg','inbody'].forEach(gk => {
+    const g = MEAS_FIELDS[gk];
+    body += `<div class="meas-form-group${gk==='inbody'?' mf-inbody':''}" id="mf-grp-${gk}">
+      <div class="meas-form-title">${g.title}</div>`;
+    g.fields.forEach(([k,label,unit]) => {
+      body += `<div class="profile-row"><label>${label}${unit?` (${unit})`:''}</label><input id="mf-${k}" type="number" inputmode="decimal" value="${v(k)}" placeholder="—"></div>`;
     });
-    html += `</tr>`;
+    body += `</div>`;
   });
-  html += `</tbody></table></div>`;
-  return html;
+
+  document.getElementById('measure-form-body').innerHTML = body;
+  document.getElementById('measure-form-title').textContent = id ? 'Editar avaliação' : 'Nova avaliação';
+  document.getElementById('measure-modal').classList.add('open');
+  toggleInbodyFields();
+}
+
+function toggleInbodyFields() {
+  const fonte = document.getElementById('mf-fonte')?.value;
+  const grp = document.getElementById('mf-grp-inbody');
+  if (grp) grp.style.display = (fonte === 'InBody') ? 'block' : 'none';
+}
+
+function closeMeasureForm() {
+  document.getElementById('measure-modal').classList.remove('open');
+  _editingMeasureId = null;
+}
+
+async function saveMeasureForm() {
+  const num = (k) => { const el = document.getElementById('mf-'+k); const val = parseFloat(el?.value); return isFinite(val) ? val : null; };
+  const data = document.getElementById('mf-data').value;
+  if (!data) { showToast('Escolhe a data'); return; }
+  const fonte = document.getElementById('mf-fonte').value;
+  const rec = { id: _editingMeasureId || Date.now(), data, fonte };
+  ['comp','per','preg','inbody'].forEach(gk => {
+    MEAS_FIELDS[gk].fields.forEach(([k]) => {
+      if (gk === 'inbody' && fonte !== 'InBody') { rec[k] = null; return; }
+      rec[k] = num(k);
+    });
+  });
+  showToast('A guardar...');
+  const ok = await sb.saveMeasurement(rec);
+  if (ok) {
+    await loadMeasurements();
+    closeMeasureForm();
+    showToast('Avaliação guardada ✓');
+    renderNutricao();
+  } else {
+    showToast('Erro ao guardar');
+  }
+}
+
+async function deleteMeasure(id) {
+  if (!confirm('Apagar esta avaliação?')) return;
+  showToast('A apagar...');
+  const ok = await sb.deleteMeasurement(id);
+  if (ok) {
+    await loadMeasurements();
+    showToast('Avaliação apagada');
+    renderNutricao();
+  } else {
+    showToast('Erro ao apagar');
+  }
 }
 
 // ======================== DADOS ========================
@@ -2680,9 +3037,32 @@ function renderDados() {
   const sessions = getSessions();
   const totalVol = sessions.reduce((a,s)=>a+calcVolume(s),0);
   const lastDate = sessions.length ? formatDate(sessions[sessions.length-1].date) : '—';
+  const p = getProfile() || {};
+  const nome = p.nome || '';
+  const idade = ageFromDOB(p.data_nascimento);
+  const inicial = (nome.trim()[0] || 'U').toUpperCase();
+  const metaBits = [];
+  if (idade != null) metaBits.push(`${idade} anos`);
+  if (p.altura) metaBits.push(`${p.altura} cm`);
+  if (p.peso) metaBits.push(`${p.peso} kg`);
 
   container.innerHTML = `
-    <p class="section-title">Dados Guardados</p>
+    <div class="profile-head">
+      <div class="profile-avatar">${inicial}</div>
+      <div class="profile-name">${nome ? nome : 'O teu perfil'}</div>
+      ${metaBits.length ? `<div class="profile-meta">${metaBits.join('  ·  ')}</div>` : `<div class="profile-meta">Preenche os teus dados abaixo</div>`}
+    </div>
+
+    <div class="profile-form">
+      <div class="profile-row"><label>Nome</label><input id="pf-nome" type="text" value="${nome.replace(/"/g,'&quot;')}" placeholder="O teu nome"></div>
+      <div class="profile-row"><label>Nascimento</label><input id="pf-dob" type="date" value="${p.data_nascimento || ''}"></div>
+      <div class="profile-row"><label>Altura (cm)</label><input id="pf-altura" type="number" inputmode="numeric" value="${p.altura || ''}" placeholder="—"></div>
+      <div class="profile-row"><label>Peso (kg)</label><input id="pf-peso" type="number" inputmode="decimal" value="${p.peso || ''}" placeholder="—"></div>
+      <div class="profile-row"><label>Condicionantes</label><textarea id="pf-lesoes" placeholder="Ex: ombro direito, anca...">${(p.lesoes || '').replace(/</g,'&lt;')}</textarea></div>
+    </div>
+    <button class="profile-save" onclick="saveProfileForm()">Guardar perfil</button>
+
+    <p class="tools-title">Ferramentas</p>
     <div class="dados-stats">
       <div class="dados-stat"><div class="dados-stat-val">${sessions.length}</div><div class="dados-stat-lbl">Sessões</div></div>
       <div class="dados-stat"><div class="dados-stat-val">${Math.round(totalVol/1000*10)/10}k</div><div class="dados-stat-lbl">Volume (kg)</div></div>
@@ -2709,11 +3089,30 @@ function renderDados() {
       <button class="dados-btn danger" onclick="clearAllData()">${SVG.trash} Apagar Todos os Dados</button>
     </div>
     <div class="dados-card">
-      <div class="dados-title">Conta</div>
+      <div class="dados-title">Sessão</div>
       <div class="dados-desc">Termina a sessão neste dispositivo.</div>
       <button class="dados-btn" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)" onclick="logout()">Terminar sessão</button>
     </div>
     <div style="text-align:center;padding:8px 0 4px;color:var(--text3);font-size:11px;font-family:var(--mono);letter-spacing:1px">UNFYN · ${APP_VERSION}</div>`;
+}
+
+async function saveProfileForm() {
+  const p = {
+    nome: document.getElementById('pf-nome').value.trim(),
+    data_nascimento: document.getElementById('pf-dob').value || null,
+    altura: parseInt(document.getElementById('pf-altura').value, 10) || null,
+    peso: parseFloat(document.getElementById('pf-peso').value) || null,
+    lesoes: document.getElementById('pf-lesoes').value.trim() || null
+  };
+  showToast('A guardar...');
+  const ok = await sb.saveProfile(p);
+  if (ok) {
+    _profile = { ...(_profile||{}), ...p };
+    showToast('Perfil guardado ✓');
+    renderDados();
+  } else {
+    showToast('Erro ao guardar perfil');
+  }
 }
 
 function exportData() {
@@ -2768,7 +3167,26 @@ async function clearAllData() {
 }
 
 // ======================== UTILS ========================
-function calcVolume(s){let v=0;s.exercises.forEach(ex=>ex.sets.forEach(st=>{if(st.weight>0&&st.reps>0)v+=st.weight*st.reps;}));return Math.round(v);}
+// Peso corporal de referência para o volume das pull-ups.
+// Usa o peso do perfil (atualizável); se não houver, a média das pesagens InBody (~84.7kg).
+const INBODY_AVG_WEIGHT = 84.7;
+function refBodyWeight() {
+  const bw = bodyWeight();
+  return (bw && bw > 0) ? bw : INBODY_AVG_WEIGHT;
+}
+function calcVolume(s){
+  let v=0;
+  s.exercises.forEach(ex=>{
+    const bw = isBodyweight(ex.id) ? refBodyWeight() : 0;
+    ex.sets.forEach(st=>{
+      if(st.reps>0){
+        if(bw>0){ v += (bw + (st.weight>0?st.weight:0)) * st.reps; }       // pull-ups: corpo + lastro
+        else if(st.weight>0){ v += st.weight*st.reps; }                     // restantes: carga externa
+      }
+    });
+  });
+  return Math.round(v);
+}
 function formatDate(iso){return new Date(iso).toLocaleDateString('pt-PT',{weekday:'short',day:'numeric',month:'short',year:'numeric'});}
 function formatDateShort(iso){const d=new Date(iso);return`${d.getDate()}/${d.getMonth()+1}`;}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
@@ -2828,6 +3246,9 @@ async function logout() {
 async function startApp() {
   document.getElementById('view-home').innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--text3)"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-family:var(--mono);font-size:13px">A carregar...</div></div>';
   await loadSessions();
+  await loadProfile();
+  await loadMeasurements();
+  await migrateMeasurementsIfEmpty();
   await syncPending();
   renderHome();
 }
@@ -2872,10 +3293,12 @@ let bt = {
   masterChain: null,
   wakeLock: null,
   startedAt: 0,        // stopwatch real start (ms)
-  phaseEndsAt: 0       // countdown/interval phase end (ms)
+  phaseEndsAt: 0,      // countdown/interval phase end (ms)
+  autoRest: false      // true = descanso disparado pela app (fecha ao acabar); false = cronómetro manual (fica aberto)
 };
 
 function openTimerModal() {
+  bt.autoRest = false;
   document.getElementById('timer-modal').classList.add('open');
   resetBigTimer();
 }
@@ -2896,6 +3319,8 @@ function parseRestSeconds(txt) {
 
 // Open timer in countdown mode pre-set to the given seconds and start immediately
 function startRest(seconds) {
+  bt.autoRest = true;
+  hideRestDoneAlert();
   hideMiniTimer();
   document.getElementById('timer-modal').classList.add('open');
   setTimerMode('simple');
@@ -2926,6 +3351,8 @@ function minimizeTimer() {
 }
 
 function reopenTimer() {
+  const mini = document.getElementById('timer-mini');
+  if (mini && mini.classList.contains('done')) { hideRestDoneAlert(); return; }
   const m = document.getElementById('timer-modal');
   m.classList.add('open');
   hideMiniTimer();
@@ -2971,6 +3398,29 @@ function unlockComplete() {
   const ringFill = document.getElementById('lock-ring-fill');
   if (ringFill) ringFill.style.strokeDashoffset = '214';
   if (navigator.vibrate) navigator.vibrate(40);
+}
+
+let _restDoneTimeout = null;
+function showRestDoneAlert() {
+  const el = document.getElementById('timer-mini');
+  if (!el) return;
+  const iconEl = document.getElementById('timer-mini-icon');
+  const labelEl = document.getElementById('timer-mini-label');
+  const timeEl = document.getElementById('timer-mini-time');
+  if (iconEl) iconEl.innerHTML = SVG.play || SVG.timer;
+  if (labelEl) labelEl.textContent = 'Descanso terminado';
+  if (timeEl) timeEl.textContent = 'Próxima série';
+  el.classList.add('show', 'done');
+  const fab = document.getElementById('timer-fab');
+  if (fab) fab.style.display = 'none';
+  if (_restDoneTimeout) clearTimeout(_restDoneTimeout);
+  _restDoneTimeout = setTimeout(hideRestDoneAlert, 12000);
+}
+function hideRestDoneAlert() {
+  if (_restDoneTimeout) { clearTimeout(_restDoneTimeout); _restDoneTimeout = null; }
+  const el = document.getElementById('timer-mini');
+  if (el) el.classList.remove('done');
+  hideMiniTimer();
 }
 
 function showMiniTimer() {
@@ -3291,15 +3741,20 @@ function tickBigTimer() {
     if (bt.mode === 'simple') {
       beepSequence([[900,0.18,0.08],[900,0.18,0.08],[1100,0.45,0]]);
       vibrate([300,120,300]);
-      const wasMinimized = document.getElementById('timer-mini')?.classList.contains('show');
       stopBigTimer();
       bt.remaining = bt.simpleTime;
-      // Rest finished → close the timer entirely and return to the workout,
-      // so the next "register reps" doesn't reopen/stack a fresh countdown.
-      const m = document.getElementById('timer-modal');
-      if (m) { m.classList.remove('open'); m.classList.remove('running'); }
-      hideMiniTimer();
-      showToast('Descanso terminado');
+      if (bt.autoRest) {
+        // Auto-descanso entre séries: fecha o timer e volta ao treino,
+        // para o próximo "registar reps" não reabrir/empilhar nova contagem.
+        const m = document.getElementById('timer-modal');
+        if (m) { m.classList.remove('open'); m.classList.remove('running'); }
+        // Aviso visível (~12s) na barra, para o notares com o telemóvel pousado.
+        showRestDoneAlert();
+      } else {
+        // Cronómetro manual (ex: prancha 30s/lado): NÃO fecha — fica aberto,
+        // pronto a recomeçar com o mesmo tempo (ex: segundo lado) sem reabrir.
+        renderBigTimer();
+      }
       return;
     } else {
       if (bt.phase === 'prep') {
