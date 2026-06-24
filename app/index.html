@@ -334,14 +334,29 @@ input[type="file"]{display:none;}
 /* ===== Medições (Corpo) ===== */
 .meas-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
 .meas-row:last-child{border-bottom:none;}
+.sym-row{padding:12px 0;border-bottom:1px solid var(--border);}
+.sym-row:last-child{border-bottom:none;}
+.sym-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
+.sym-name{font-size:14px;font-weight:700;color:var(--text);}
+.sym-note{font-size:12px;font-family:var(--mono);font-weight:600;}
+.sym-note.ok{color:var(--accent);}
+.sym-note.warn{color:var(--orange);}
+.sym-bar{display:flex;height:34px;border-radius:9px;overflow:hidden;gap:2px;}
+.sym-side{display:flex;align-items:center;font-family:var(--mono);font-size:13px;font-weight:700;color:#0a0e0c;padding:0 10px;min-width:42px;}
+.sym-left{background:linear-gradient(90deg,#2ecc71,#39FF88);justify-content:flex-start;}
+.sym-right{background:linear-gradient(90deg,#9fb3a8,#c7d6cd);justify-content:flex-end;}
+.sym-labels{display:flex;justify-content:space-between;margin-top:4px;}
+.sym-labels span{font-size:10px;color:var(--text3);font-family:var(--mono);}
 .meas-row-date{font-size:14px;font-weight:700;color:var(--text);}
 .meas-row-fonte{font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:2px;}
 .meas-row-actions{display:flex;gap:8px;}
 .meas-row-actions button{background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;}
 .meas-row-actions .meas-del{color:var(--red);border-color:rgba(255,94,87,0.3);}
-.measure-modal{position:fixed;inset:0;z-index:1500;background:rgba(10,14,12,0.96);backdrop-filter:blur(8px);display:none;overflow-y:auto;padding:0 18px calc(40px + env(safe-area-inset-bottom,0px));}
+.measure-modal{position:fixed;inset:0;z-index:1500;background:rgba(10,14,12,0.96);backdrop-filter:blur(8px);display:none;overflow-y:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 18px calc(40px + env(safe-area-inset-bottom,0px));}
 .measure-modal.open{display:block;}
-.measure-modal-inner{max-width:520px;margin:0 auto;padding-top:18px;}
+.measure-modal-inner{max-width:520px;margin:0 auto;}
+.measure-modal-head{display:flex;align-items:center;gap:12px;position:sticky;top:calc(env(safe-area-inset-top,0px));background:rgba(10,14,12,0.96);padding:8px 0 14px;z-index:2;}
+.measure-modal-head .timer-close{position:static;width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .measure-modal-head{display:flex;align-items:center;gap:12px;position:sticky;top:0;background:rgba(10,14,12,0.96);padding:8px 0 14px;z-index:2;}
 .measure-modal-title{font-size:20px;font-weight:800;color:var(--text);}
 .measure-form-body{}
@@ -364,6 +379,11 @@ input[type="file"]{display:none;}
 .login-submit:active{transform:scale(0.98);box-shadow:0 3px 14px rgba(57,255,136,0.3);}
 .login-quote{text-align:center;margin-top:30px;font-family:var(--mono);font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);min-height:18px;opacity:0;animation:loginQuoteIn 0.8s ease 0.3s forwards;padding-left:2.5px;}
 @keyframes loginQuoteIn{to{opacity:1;}}
+/* ===== Splash de arranque (marca) ===== */
+.splash-mark{position:relative;z-index:1;width:96px;animation:splashMark 1.6s ease-in-out infinite;}
+.splash-mark svg{width:100%;height:auto;filter:drop-shadow(0 0 24px rgba(57,255,136,0.35));}
+@keyframes splashMark{0%,100%{transform:translateY(0) scale(1);opacity:0.92;}50%{transform:translateY(-6px) scale(1.04);opacity:1;}}
+.splash-tag{position:relative;z-index:1;margin-top:22px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:7px;color:var(--text2);padding-left:7px;opacity:0;animation:loginQuoteIn 0.7s ease 0.25s forwards;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .history-empty{text-align:center;padding:60px 20px;color:var(--text3);}
 .cgrid-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:24px;}
@@ -508,6 +528,13 @@ input[type="file"]{display:none;}
     <button id="login-btn" onclick="doLogin()" class="login-submit">Entrar</button>
     <div id="login-quote" class="login-quote"></div>
   </div>
+</div>
+<div id="splash-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:2500;flex-direction:column;align-items:center;justify-content:center;overflow:hidden">
+  <div class="login-glow"></div>
+  <div class="splash-mark">
+    <svg viewBox="0 0 200 177" xmlns="http://www.w3.org/2000/svg"><path d="M 66.9,157.1 L 33.6,156.8 L 41.4,146.7 L 72.9,109.1 L 20.2,49.7 L 20.0,48.8 L 57.4,48.5 L 58.4,49.0 L 87.0,82.6 L 91.6,87.1 L 130.7,40.5 L 124.5,31.1 L 124.6,29.9 L 179.9,20.0 L 180.0,20.9 L 169.3,33.9 L 66.9,157.1 Z" fill="#39FF88"/></svg>
+  </div>
+  <div class="splash-tag">STILL BECOMING<span style="color:#39FF88;font-weight:800">.</span></div>
 </div>
 <div id="app-wrap" style="display:none">
 <nav class="nav">
@@ -896,7 +923,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.31';
+const APP_VERSION = '1.36';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2839,6 +2866,9 @@ function nutriMeasuresHTML(p) {
       html += `<div class="ib-seg"><span class="ib-seg-name">${name}</span><span class="ib-seg-val">${fmt(last[k])} kg</span></div>`;
     });
     html += `</div>`;
+
+    // Comparação de simetria esquerdo vs direito (relevante p/ lado direito mais fraco)
+    html += symmetryHTML(last);
   }
 
   // Tabelas de perímetros e pregas (a partir dos registos)
@@ -2861,6 +2891,37 @@ function nutriMeasuresHTML(p) {
   });
   html += `</div>`;
 
+  return html;
+}
+
+function symmetryHTML(rec) {
+  const pairs = [
+    ['Braço', 'seg_braco_esq', 'seg_braco_dir'],
+    ['Perna', 'seg_perna_esq', 'seg_perna_dir'],
+  ];
+  const rows = pairs.filter(([_,e,d]) => rec[e] != null && rec[d] != null);
+  if (!rows.length) return '';
+  let html = `<div class="ib-section-title">Simetria esquerdo / direito</div>
+    <div class="nutri-card"><div class="nutri-card-intro">Massa magra de cada lado (kg). Acompanhar o equilíbrio — o lado direito tende a ser mais fraco.</div>`;
+  rows.forEach(([name, ke, kd]) => {
+    const e = Number(rec[ke]), d = Number(rec[kd]);
+    const max = Math.max(e, d);
+    const diffPct = max > 0 ? Math.round(((max - Math.min(e, d)) / max) * 1000) / 10 : 0;
+    const fracaoDir = d < e;
+    const pe = Math.round((e / (e + d)) * 100);
+    const pd = 100 - pe;
+    const balanced = diffPct < 2;
+    const note = balanced ? 'Equilibrado' : `${fracaoDir ? 'Direito' : 'Esquerdo'} mais fraco · ${String(diffPct).replace('.', ',')}%`;
+    html += `<div class="sym-row">
+      <div class="sym-head"><span class="sym-name">${name}</span><span class="sym-note ${balanced?'ok':'warn'}">${note}</span></div>
+      <div class="sym-bar">
+        <div class="sym-side sym-left" style="width:${pe}%">${String(e).replace('.', ',')}</div>
+        <div class="sym-side sym-right" style="width:${pd}%">${String(d).replace('.', ',')}</div>
+      </div>
+      <div class="sym-labels"><span>Esq.</span><span>Dir.</span></div>
+    </div>`;
+  });
+  html += `</div>`;
   return html;
 }
 
@@ -2943,10 +3004,10 @@ function ibSparkline(metric, labels) {
 
 // ======================== FORMULÁRIO DE AVALIAÇÃO ========================
 const MEAS_FIELDS = {
-  comp: { title:'Composição', fields:[['peso','Peso','kg'],['gordura','% Gordura','%'],['musculo','Massa muscular','kg'],['massa_gorda','Massa gorda','kg'],['imc','IMC','']] },
+  comp: { title:'Composição', fields:[['peso','Peso','kg'],['gordura','% Gordura','%'],['musculo','Massa muscular','kg'],['massa_gorda','Massa gorda','kg'],['visceral','Gord. visceral','/9'],['imc','IMC','']] },
   per:  { title:'Perímetros (cm)', fields:[['p_braco','Braço','cm'],['p_coxa','Coxa','cm'],['p_gemeo','Gémeo','cm'],['p_ombros','Ombros','cm'],['p_peito','Peito','cm'],['p_cintura','Cintura','cm'],['p_abdominal','Abdominal','cm'],['p_anca','Anca','cm']] },
   preg: { title:'Pregas (mm)', fields:[['pr_bicipital','Bicipital','mm'],['pr_tricipital','Tricipital','mm'],['pr_subscapular','Subscapular','mm'],['pr_ilieocristal','Ilieocristal','mm'],['pr_abdominal','Abdominal','mm'],['pr_supraespinal','Supraespinal','mm'],['pr_crural','Crural','mm'],['pr_geminal','Geminal','mm']] },
-  inbody: { title:'Extra InBody', fields:[['pontuacao','Pontuação','/100'],['visceral','Gord. visceral','/9'],['seg_braco_esq','Massa magra braço esq.','kg'],['seg_braco_dir','Massa magra braço dir.','kg'],['seg_perna_esq','Massa magra perna esq.','kg'],['seg_perna_dir','Massa magra perna dir.','kg'],['seg_tronco','Massa magra tronco','kg']] }
+  avancado: { title:'Avançado (InBody)', fields:[['pontuacao','Pontuação','/100'],['seg_braco_esq','Massa magra braço esq.','kg'],['seg_braco_dir','Massa magra braço dir.','kg'],['seg_perna_esq','Massa magra perna esq.','kg'],['seg_perna_dir','Massa magra perna dir.','kg'],['seg_tronco','Massa magra tronco','kg']] }
 };
 
 let _editingMeasureId = null;
@@ -2961,15 +3022,15 @@ function openMeasureForm(id) {
   let body = `<div class="meas-form-group">
     <div class="profile-row"><label>Data</label><input id="mf-data" type="date" value="${rec ? rec.data : today}"></div>
     <div class="profile-row"><label>Fonte</label>
-      <select id="mf-fonte" onchange="toggleInbodyFields()">
+      <select id="mf-fonte">
         ${['InBody','Manual','Báscula','Outro'].map(f=>`<option ${f===fonte?'selected':''}>${f}</option>`).join('')}
       </select>
     </div>
   </div>`;
 
-  ['comp','per','preg','inbody'].forEach(gk => {
+  ['comp','per','preg','avancado'].forEach(gk => {
     const g = MEAS_FIELDS[gk];
-    body += `<div class="meas-form-group${gk==='inbody'?' mf-inbody':''}" id="mf-grp-${gk}">
+    body += `<div class="meas-form-group" id="mf-grp-${gk}">
       <div class="meas-form-title">${g.title}</div>`;
     g.fields.forEach(([k,label,unit]) => {
       body += `<div class="profile-row"><label>${label}${unit?` (${unit})`:''}</label><input id="mf-${k}" type="number" inputmode="decimal" value="${v(k)}" placeholder="—"></div>`;
@@ -2980,13 +3041,6 @@ function openMeasureForm(id) {
   document.getElementById('measure-form-body').innerHTML = body;
   document.getElementById('measure-form-title').textContent = id ? 'Editar avaliação' : 'Nova avaliação';
   document.getElementById('measure-modal').classList.add('open');
-  toggleInbodyFields();
-}
-
-function toggleInbodyFields() {
-  const fonte = document.getElementById('mf-fonte')?.value;
-  const grp = document.getElementById('mf-grp-inbody');
-  if (grp) grp.style.display = (fonte === 'InBody') ? 'block' : 'none';
 }
 
 function closeMeasureForm() {
@@ -3000,9 +3054,8 @@ async function saveMeasureForm() {
   if (!data) { showToast('Escolhe a data'); return; }
   const fonte = document.getElementById('mf-fonte').value;
   const rec = { id: _editingMeasureId || Date.now(), data, fonte };
-  ['comp','per','preg','inbody'].forEach(gk => {
+  ['comp','per','preg','avancado'].forEach(gk => {
     MEAS_FIELDS[gk].fields.forEach(([k]) => {
-      if (gk === 'inbody' && fonte !== 'InBody') { rec[k] = null; return; }
       rec[k] = num(k);
     });
   });
@@ -3229,8 +3282,11 @@ async function doLogin() {
   btn.textContent = 'Entrar'; btn.disabled = false;
   if (result.ok) {
     errEl.textContent = '';
+    showSplash();
     showApp();
+    const t0 = Date.now();
     await startApp();
+    setTimeout(hideSplash, Math.max(0, 1000 - (Date.now() - t0)));
   } else {
     errEl.textContent = result.error;
   }
@@ -3243,8 +3299,16 @@ async function logout() {
   showLogin();
 }
 
+function showSplash() {
+  const s = document.getElementById('splash-screen');
+  if (s) s.style.display = 'flex';
+}
+function hideSplash() {
+  const s = document.getElementById('splash-screen');
+  if (s) { s.style.opacity = '0'; s.style.transition = 'opacity 0.4s ease'; setTimeout(()=>{ s.style.display = 'none'; s.style.opacity = '1'; }, 400); }
+}
+
 async function startApp() {
-  document.getElementById('view-home').innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--text3)"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-family:var(--mono);font-size:13px">A carregar...</div></div>';
   await loadSessions();
   await loadProfile();
   await loadMeasurements();
@@ -3269,8 +3333,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     lockOv.addEventListener('mouseleave', unlockCancel);
   }
   if (loadAuth()) {
+    showSplash();
     showApp();
+    const t0 = Date.now();
     await startApp();
+    const elapsed = Date.now() - t0;
+    const minShow = 1200; // garante que a marca aparece, mesmo se carregar rápido
+    setTimeout(hideSplash, Math.max(0, minShow - elapsed));
   } else {
     showLogin();
   }
