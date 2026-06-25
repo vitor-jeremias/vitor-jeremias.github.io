@@ -695,12 +695,12 @@ const WORKOUTS = {
     {id:"pal1",name:"Pallof Press",          sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
   ],coreRef:["Side Plank — 3×20–30seg/lado","Back Extension — 3×12–15 (leve, foco glúteo)"]},
   upper2:{name:"Upper 2",type:"upper",day:"Quinta",sub:"Costas · Peito · Ombros · Braços",exercises:[
-    {id:"ilr", name:"Iso-Lateral Row",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"machine",warmup:true,rest:"2–3 min"},
-    {id:"ism", name:"Iso-Lateral Incline Press",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","ombros"],inc:"machine",warmup:true,rest:"2–3 min"},
+    {id:"ilr", name:"Iso-Lateral Row",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"dumbbell",warmup:true,rest:"2–3 min"},
+    {id:"ism", name:"Iso-Lateral Incline Press",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","ombros"],inc:"dumbbell",warmup:true,rest:"2–3 min"},
     {id:"tglp",name:"Triangle Grip Lat Pulldown",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"msp", name:"Machine Shoulder Press",        sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"ccf", name:"Cable Chest Fly",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"cable_fly",rest:"90 seg",pulley:"Polia média (cintura)"},
-    {id:"ote", name:"Overhead Triceps Extension",  sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable_fly",rest:"90 seg",pulley:"Polia baixa (canela)"},
+    {id:"ote", name:"Overhead Triceps Extension",  sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable_fly",rest:"90 seg",pulley:"Polia média (anca)"},
     {id:"dlr", name:"Shoulder Trainer Lateral",    sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"dic", name:"Dumbbell Incline Curl",         sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"dumbbell",rest:"90 seg"},
     {id:"rpd2",name:"Reverse Pec Deck",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"machine",rest:"90 seg"},
@@ -963,7 +963,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.45';
+const APP_VERSION = '1.48';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2052,7 +2052,7 @@ function renderHistorico() {
   const sessions = [...getSessions()].reverse();
   if (!sessions.length) { container.innerHTML = `<div class="history-empty"><p style="font-size:17px;font-weight:700;color:var(--text2);margin-bottom:6px">Ainda nada por aqui.</p><p>O primeiro treino que guardares começa a tua história. Still becoming<span style="color:var(--accent)">.</span></p></div>`; return; }
 
-  let html = `<p class="section-title">${sessions.length} sessão${sessions.length!==1?'ões':''} registada${sessions.length!==1?'s':''}</p>`;
+  let html = `<p class="section-title">${sessions.length} ${sessions.length!==1?'sessões registadas':'sessão registada'}</p>`;
   sessions.forEach(s => {
     const w = WORKOUTS[s.workoutKey];
     const vol = calcVolume(s);
