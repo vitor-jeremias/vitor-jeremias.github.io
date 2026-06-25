@@ -682,7 +682,7 @@ const WORKOUTS = {
     {id:"ctp", name:"Cable Triceps Pushdown",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
     {id:"skc", name:"Skull Crusher",                 sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"dumbbell",rest:"90 seg"},
     {id:"bc",  name:"Bayesian Curl",                 sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"cable",rest:"90 seg",pulley:"Polia baixa (canela)"},
-    {id:"rpd1",name:"Face Pull",                     sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
+    {id:"rpd1",name:"Face Pull",                     sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
   ]},
   lower1:{name:"Lower 1",type:"lower",day:"Terça",sub:"Quad · Glúteo · Femoral · Gémeos",exercises:[
     {id:"bs",  name:"Barbell Squat", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
@@ -703,7 +703,7 @@ const WORKOUTS = {
     {id:"ote", name:"Overhead Triceps Extension",  sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable_fly",rest:"90 seg",pulley:"Polia baixa (canela)"},
     {id:"dlr", name:"Shoulder Trainer Lateral",    sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"dic", name:"Dumbbell Incline Curl",         sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"dumbbell",rest:"90 seg"},
-    {id:"rpd2",name:"Reverse Pec Deck",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
+    {id:"rpd2",name:"Reverse Pec Deck",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"machine",rest:"90 seg"},
   ]},
   lower2:{name:"Lower 2",type:"lower",day:"Sexta",sub:"Femoral · Quad · Gémeos · Abdómen",exercises:[
     {id:"rdl", name:"Romanian Deadlift",       sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
@@ -963,7 +963,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.43';
+const APP_VERSION = '1.44';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
