@@ -963,7 +963,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.44';
+const APP_VERSION = '1.45';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -3054,11 +3054,6 @@ function renderDados() {
         <span class="tool-row-text"><span class="tool-row-name">Terminar sessão</span><span class="tool-row-desc">Sair neste dispositivo</span></span>
         <span class="tool-row-chev">›</span>
       </button>
-      <button class="tool-row danger" onclick="clearAllData()">
-        <span class="tool-row-icon danger">${SVG.trash}</span>
-        <span class="tool-row-text"><span class="tool-row-name">Apagar tudo</span><span class="tool-row-desc">Apaga todos os dados — faz backup antes</span></span>
-        <span class="tool-row-chev">›</span>
-      </button>
     </div>
     <div style="text-align:center;padding:14px 0 4px;color:var(--text3);font-size:11px;font-family:var(--mono);letter-spacing:1px">UNFYN · ${APP_VERSION}</div>`;
 }
@@ -3168,6 +3163,8 @@ function importData(event) {
   event.target.value = '';
 }
 
+// NOTA: função desativada na UI (removida das Ferramentas por ser app pessoal de 1 user).
+// Mantida para reativar se a app for para multi-utilizador (apagar conta/dados — RGPD).
 async function clearAllData() {
   if (!confirm('Tens a certeza? Esta ação não pode ser desfeita.\nFizeste backup?')) return;
   if (!confirm('Última confirmação — apagar mesmo tudo?')) return;
