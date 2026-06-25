@@ -227,6 +227,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .dados-tip{background:rgba(255,140,66,0.08);border:1px solid rgba(255,140,66,0.2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--orange);line-height:1.5;margin-bottom:14px;}
 .dados-tip strong{display:block;margin-bottom:4px;font-size:13px;}
 input[type="file"]{display:none;}
+/* Ferramentas compactas (lista de linhas) */
+.tool-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;}
+.tool-row{width:100%;display:flex;align-items:center;gap:14px;padding:15px 16px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left;font-family:var(--font);}
+.tool-row:last-child{border-bottom:none;}
+.tool-row:active{background:var(--surface2);}
+.tool-row-icon{width:38px;height:38px;flex-shrink:0;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text2);}
+.tool-row-icon.accent{background:rgba(57,255,136,0.14);color:var(--accent);}
+.tool-row-icon.danger{background:rgba(255,94,87,0.12);color:var(--red);}
+.tool-row-text{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;}
+.tool-row-name{font-size:15px;font-weight:700;color:var(--text);}
+.tool-row.danger .tool-row-name{color:var(--red);}
+.tool-row-desc{font-size:12px;color:var(--text3);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tool-row-chev{flex-shrink:0;font-size:22px;color:var(--text3);font-weight:400;line-height:1;}
 
 /* ===== Nutrição ===== */
 .nutri-sub{font-size:13px;color:var(--text3);font-family:var(--mono);}
@@ -313,11 +326,11 @@ input[type="file"]{display:none;}
 .mm-legend-grad{display:inline-block;width:80px;height:10px;border-radius:5px;background:linear-gradient(90deg,#2a342e,#39FF88);}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#0a0e0c;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;z-index:999;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;box-shadow:0 4px 12px rgba(57,255,136,0.3);}
 /* ===== Perfil ===== */
-.profile-head{background:linear-gradient(160deg,#1d2823,#141a17 70%);border:1px solid var(--border);border-radius:20px;padding:32px 24px 28px;margin-bottom:20px;position:relative;overflow:hidden;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.3);}
-.profile-head::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:240px;height:160px;background:radial-gradient(ellipse,rgba(57,255,136,0.16),transparent 70%);pointer-events:none;}
-.profile-avatar{width:76px;height:76px;border-radius:50%;background:var(--accent);color:#0a0e0c;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;font-family:var(--font);margin:0 auto 16px;position:relative;z-index:1;box-shadow:0 4px 20px rgba(57,255,136,0.35);}
-.profile-name{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-0.3px;line-height:1.1;position:relative;z-index:1;}
-.profile-meta{font-size:13px;color:var(--text2);font-family:var(--mono);margin-top:8px;position:relative;z-index:1;letter-spacing:0.5px;}
+.profile-head{background:linear-gradient(160deg,#1d2823,#141a17 70%);border:1px solid var(--border);border-radius:22px;padding:44px 24px 38px;margin-bottom:24px;position:relative;overflow:hidden;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.3);}
+.profile-head::before{content:'';position:absolute;top:-70px;left:50%;transform:translateX(-50%);width:280px;height:200px;background:radial-gradient(ellipse,rgba(57,255,136,0.18),transparent 70%);pointer-events:none;}
+.profile-avatar{width:92px;height:92px;border-radius:50%;background:var(--accent);color:#0a0e0c;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:800;font-family:var(--font);margin:0 auto 20px;position:relative;z-index:1;box-shadow:0 6px 24px rgba(57,255,136,0.4);}
+.profile-name{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.1;position:relative;z-index:1;}
+.profile-meta{font-size:14px;color:var(--text2);font-family:var(--mono);margin-top:10px;position:relative;z-index:1;letter-spacing:0.5px;}
 .profile-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 16px;margin-bottom:14px;}
 .profile-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);}
 .profile-row:last-child{border-bottom:none;}
@@ -782,7 +795,8 @@ const SVG = {
   download: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>',
   upload: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M5 20h14v-2H5v2zM5 9h4v6h6V9h4l-7-7-7 7z"/></svg>',
   trash: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>',
-  edit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>'
+  edit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>',
+  exit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>'
 };
 
 const CARDIO_PLANS = {
@@ -949,7 +963,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.42';
+const APP_VERSION = '1.43';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -3021,31 +3035,32 @@ function renderDados() {
     <p class="tools-title">Ferramentas</p>
     <div class="dados-tip">
       <strong>${SVG.bulb} Como manter os dados seguros</strong>
-      Faz backup 1× por semana após o treino de sexta. Guarda nos Ficheiros → iCloud Drive para sincronização automática.
+      Faz backup 1× por semana após o treino de sexta. Guarda nos Ficheiros → iCloud Drive.
     </div>
-    <div class="dados-card">
-      <div class="dados-title">Exportar Backup</div>
-      <div class="dados-desc">Guarda um ficheiro com todos os teus treinos no iCloud Drive.</div>
-      <button class="dados-btn export" onclick="exportData()">${SVG.download} Guardar Backup</button>
-      ${sessions.length?`<div style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center;font-family:var(--mono)">Última sessão: ${lastDate}</div>`:''}
+    <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+    <div class="tool-list">
+      <button class="tool-row" onclick="exportData()">
+        <span class="tool-row-icon accent">${SVG.download}</span>
+        <span class="tool-row-text"><span class="tool-row-name">Exportar backup</span><span class="tool-row-desc">${sessions.length?`Última sessão: ${lastDate}`:'Guarda os treinos no iCloud Drive'}</span></span>
+        <span class="tool-row-chev">›</span>
+      </button>
+      <button class="tool-row" onclick="document.getElementById('import-file').click()">
+        <span class="tool-row-icon">${SVG.upload}</span>
+        <span class="tool-row-text"><span class="tool-row-name">Importar backup</span><span class="tool-row-desc">Restaurar de um ficheiro</span></span>
+        <span class="tool-row-chev">›</span>
+      </button>
+      <button class="tool-row" onclick="logout()">
+        <span class="tool-row-icon">${SVG.exit || '⎋'}</span>
+        <span class="tool-row-text"><span class="tool-row-name">Terminar sessão</span><span class="tool-row-desc">Sair neste dispositivo</span></span>
+        <span class="tool-row-chev">›</span>
+      </button>
+      <button class="tool-row danger" onclick="clearAllData()">
+        <span class="tool-row-icon danger">${SVG.trash}</span>
+        <span class="tool-row-text"><span class="tool-row-name">Apagar tudo</span><span class="tool-row-desc">Apaga todos os dados — faz backup antes</span></span>
+        <span class="tool-row-chev">›</span>
+      </button>
     </div>
-    <div class="dados-card">
-      <div class="dados-title">Importar Backup</div>
-      <div class="dados-desc">Restaurar dados a partir de um ficheiro de backup.</div>
-      <input type="file" id="import-file" accept=".json" onchange="importData(event)">
-      <button class="dados-btn import" onclick="document.getElementById('import-file').click()">${SVG.upload} Escolher Ficheiro</button>
-    </div>
-    <div class="dados-card">
-      <div class="dados-title" style="color:var(--red)">Apagar Tudo</div>
-      <div class="dados-desc">Apaga todos os dados. Faz backup primeiro!</div>
-      <button class="dados-btn danger" onclick="clearAllData()">${SVG.trash} Apagar Todos os Dados</button>
-    </div>
-    <div class="dados-card">
-      <div class="dados-title">Sessão</div>
-      <div class="dados-desc">Termina a sessão neste dispositivo.</div>
-      <button class="dados-btn" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)" onclick="logout()">Terminar sessão</button>
-    </div>
-    <div style="text-align:center;padding:8px 0 4px;color:var(--text3);font-size:11px;font-family:var(--mono);letter-spacing:1px">UNFYN · ${APP_VERSION}</div>`;
+    <div style="text-align:center;padding:14px 0 4px;color:var(--text3);font-size:11px;font-family:var(--mono);letter-spacing:1px">UNFYN · ${APP_VERSION}</div>`;
 }
 
 let _profileEditing = false;
