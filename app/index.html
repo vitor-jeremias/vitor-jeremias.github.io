@@ -94,6 +94,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ex-card.ex-done .ex-done-check{display:inline-flex;}
 .ex-header{padding:16px 16px 12px;}
 .ex-name{font-size:22px;font-weight:700;margin-bottom:10px;line-height:1.2;}
+.ex-name-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.ex-info-btn{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-size:15px;font-weight:800;font-family:Georgia,serif;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;margin-top:2px;transition:background 0.15s,color 0.15s;}
+.ex-info-btn:active{background:var(--accent);color:#0a0e0c;}
 .ex-meta{font-size:15px;color:var(--text2);font-family:var(--mono);line-height:1.4;}
 .ex-suggestion{font-size:16px;font-weight:700;font-family:var(--mono);margin-bottom:10px;padding:8px 14px;border-radius:8px;display:inline-block;}
 .ex-suggestion.up{background:rgba(57,255,136,0.12);color:var(--accent);}
@@ -371,6 +374,16 @@ input[type="file"]{display:none;}
 .meas-row-actions button{background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;}
 .meas-row-actions .meas-del{color:var(--red);border-color:rgba(255,94,87,0.3);}
 .measure-modal{position:fixed;inset:0;z-index:1500;background:rgba(10,14,12,0.96);backdrop-filter:blur(8px);display:none;overflow-y:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 18px calc(40px + env(safe-area-inset-bottom,0px));}
+.exnote-modal{position:fixed;inset:0;z-index:1600;background:rgba(0,0,0,0.5);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center;}
+.exnote-modal.open{display:flex;}
+.exnote-sheet{background:var(--surface);width:100%;max-width:520px;border-radius:20px 20px 0 0;border:1px solid var(--border);border-bottom:none;padding:10px 22px calc(22px + env(safe-area-inset-bottom,0px));animation:exnoteUp 0.22s ease;}
+@keyframes exnoteUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.exnote-grip{width:40px;height:4px;border-radius:2px;background:var(--border);margin:4px auto 16px;}
+.exnote-head{display:flex;align-items:center;gap:11px;margin-bottom:14px;}
+.exnote-badge{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#0a0e0c;font-size:18px;font-weight:800;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;}
+.exnote-title{font-size:19px;font-weight:800;color:var(--text);line-height:1.2;}
+.exnote-body{font-size:16px;line-height:1.55;color:var(--text2);margin-bottom:20px;}
+.exnote-close{width:100%;padding:14px;border-radius:12px;border:none;background:var(--surface2);color:var(--text);font-size:16px;font-weight:700;cursor:pointer;}
 .measure-modal.open{display:block;}
 .measure-modal-inner{max-width:520px;margin:0 auto;}
 .measure-modal-head{display:flex;align-items:center;gap:12px;position:sticky;top:calc(env(safe-area-inset-top,0px));background:rgba(10,14,12,0.96);padding:8px 0 14px;z-index:2;}
@@ -659,6 +672,18 @@ input[type="file"]{display:none;}
   </div>
 </div>
 
+<div id="exnote-modal" class="exnote-modal" onclick="closeExNote(event)">
+  <div class="exnote-sheet" onclick="event.stopPropagation()">
+    <div class="exnote-grip"></div>
+    <div class="exnote-head">
+      <span class="exnote-badge">!</span>
+      <div id="exnote-title" class="exnote-title">Exercício</div>
+    </div>
+    <div id="exnote-body" class="exnote-body"></div>
+    <button class="exnote-close" onclick="closeExNote()">Fechar</button>
+  </div>
+</div>
+
 <script>
 // ======================== WORKOUT DATA ========================
 const INCREMENTS = {
@@ -671,6 +696,45 @@ const INCREMENTS = {
   bodyweight: 2.5
 };
 const CABLE_FLY_STACK = [9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 64, 68, 73, 77, 82, 86, 91, 95];
+
+// Notas de execução por exercício (mostradas no botão "!" do card).
+// Chave = id do exercício. Texto curto, focado em técnica e segurança.
+const EX_NOTES = {
+  elev:  "Esticar os braços completamente em baixo. Peso corporal + lastro. Subir até o queixo passar a barra.",
+  mbp:   "Pausa 1 seg no fundo. Amplitude controlada — atenção ao ombro direito, nunca forçar com dor.",
+  csr:   "Braços estiram completamente no fundo. Aperta as omoplatas no topo. Peito apoiado.",
+  mcf:   "Abre o máximo possível no fundo (alongamento do peito). Porção média. Sem trancar os cotovelos.",
+  clr:   "Cotovelo ligeiramente fletido. Subir até à altura do ombro. Descida lenta, sem balanço.",
+  ctp:   "Cabeça lateral do tríceps. Dobrar os cotovelos completamente no fundo. Cotovelos junto ao corpo. Polia alta.",
+  skc:   "Cabeça longa do tríceps. Halteres ou barra EZ. Descida atrás da cabeça (mais alongamento). Cuidado com o ombro — testa leve primeiro.",
+  bc:    "Braço atrás do corpo — bíceps em alongamento máximo. Polia baixa (canela). Sem balanço do tronco.",
+  rpd1:  "OBRIGATÓRIO — saúde do ombro direito. Puxar à altura da cara, cotovelos altos. Trabalha deltóide posterior + trapézio médio. Polia alta.",
+  bs:    "Descer abaixo do paralelo. Joelhos apontam para os pés. Peito alto, core firme.",
+  bss:   "Por perna. Joelho traseiro quase no chão. Começa pelo lado fraco (direito). Tronco ligeiramente à frente para mais glúteo.",
+  slle1: "Por perna. Extensão completa no topo, segura 1 seg. Descida lenta 2–3 seg.",
+  slc1:  "Esticar totalmente antes de cada rep. Pausa 1 seg no fundo (contração). Sem levantar a anca.",
+  abd1:  "Glúteo médio — estabilidade para a anca e corrida. Tronco ligeiramente à frente. Controla a descida.",
+  mcr:   "Sóleo (joelho dobrado). Pausa 2 seg no fundo — máximo alongamento. Amplitude completa.",
+  cc1:   "Abdómen (flexão). Expira na contração, enrola a coluna. Sem usar momentum. Polia alta.",
+  pal1:  "Abdómen (anti-rotação). Tronco imóvel, resiste à rotação. Estende os braços e segura. Polia média.",
+  ilr:   "Unilateral (disco, +2,5 kg). Braço estira completamente no fundo. Começa pelo direito. Regista um lado.",
+  ism:   "Unilateral (disco, +2,5 kg). Peito superior. Pausa breve no fundo. Atenção ao ombro direito. Regista um lado.",
+  tglp:  "Braços sobem totalmente no topo (alongamento do dorsal). Puxar até ao peito, cotovelos para baixo.",
+  msp:   "Deltóide anterior. Não bloquear os cotovelos no topo. Amplitude controlada — atenção ao ombro direito.",
+  ccf:   "Abre os braços o máximo — o fundo é o mais importante. Polia média (cintura). Junta à frente sem trancar.",
+  ote:   "Cabeça longa do tríceps. Máximo alongamento acima da cabeça. Polia média (anca) para posicionar sem esforço.",
+  dlr:   "Ligeira inclinação do tronco para a frente. Subir até à altura do ombro. Cotovelo ligeiramente fletido.",
+  dic:   "Braço desce completamente — máximo alongamento do bíceps. Banco inclinado. Sem balanço.",
+  rpd2:  "OBRIGATÓRIO — ombro direito. Deltóide posterior + trapézio médio. Aperta as omoplatas. Controla a descida.",
+  rdl:   "O mais importante do dia. Descer até sentir o femoral estirar — não limites a amplitude. Costas direitas, anca para trás.",
+  lp:    "Descer o máximo sem tirar a lombar do banco. Anca: reintroduzir com cuidado. Joelhos alinhados com os pés.",
+  slle2: "Extensão completa no topo. Descida lenta 2–3 seg. Sem balanço.",
+  slc2:  "Esticar totalmente antes de cada rep. Pausa 1 seg no fundo. Sem levantar a anca.",
+  abd2:  "Glúteo médio — 2ª vez na semana, estabilidade anca/corrida. Tronco ligeiramente à frente. Controla a descida.",
+  cr:    "Gastrocnémio (joelho esticado). Pausa 2 seg no fundo — máximo alongamento. Amplitude completa na Smith.",
+  cc2:   "Abdómen (flexão). Expira na contração, enrola a coluna. Sem momentum. Polia alta.",
+  hlr:   "Abdómen inferior. Só reps (sem peso). Progride: joelhos → pernas esticadas → com peso. Sem balanço.",
+};
 
 const WORKOUTS = {
   upper1:{name:"Upper 1",type:"upper",day:"Segunda",sub:"Peito · Costas · Ombros · Braços",exercises:[
@@ -963,7 +1027,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.48';
+const APP_VERSION = '1.49';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1824,7 +1888,7 @@ function renderSession() {
     const warmup = ex.warmup ? calcWarmup(ex, currentWorkout) : null;
 
     html += `<div class="ex-card" id="card_${ex.id}"><div class="ex-header">
-      <div class="ex-name">${ex.name}</div>
+      <div class="ex-name-row"><div class="ex-name">${ex.name}</div>${EX_NOTES[ex.id] ? `<button class="ex-info-btn" onclick="showExNote('${ex.id}')" aria-label="Como fazer">!</button>` : ''}</div>
       <div class="ex-ref">${ex.sets}×${ex.reps}${ex.rest ? ' · ' + ex.rest : ''}${ex.pulley ? ' · '+ex.pulley : ''}${lastEx ? `<span class="ex-ref-sep">·</span>último: ${lastEx.sets.map(s=>`${ex.bodyweight ? (s.weight>0?'+'+s.weight+'kg':'PC') : s.weight+'kg'}×${s.reps}`).join(', ')}` : ''}</div>
       ${prog ? `<div class="ex-suggestion ${prog.status}">${prog.label}</div>` : ''}
       ${(ex.plates && suggestedWeight > 0 && platesPerSide(suggestedWeight)) ? `<div class="ex-plates"><span class="ex-warmup-tag">Discos</span> <span class="ex-warmup-text">${suggestedWeight}kg = barra + ${platesPerSide(suggestedWeight)}</span></div>` : ''}
@@ -2985,6 +3049,29 @@ function openMeasureForm(id) {
 function closeMeasureForm() {
   document.getElementById('measure-modal').classList.remove('open');
   _editingMeasureId = null;
+}
+
+// Mostra a nota de execução do exercício (botão "!")
+function showExNote(exId) {
+  const note = EX_NOTES[exId];
+  if (!note) return;
+  // descobrir o nome do exercício a partir do treino ativo
+  let nome = '';
+  for (const k in WORKOUTS) {
+    const ex = WORKOUTS[k].exercises.find(e => e.id === exId);
+    if (ex) { nome = ex.name; break; }
+  }
+  document.getElementById('exnote-title').textContent = nome || 'Como fazer';
+  document.getElementById('exnote-body').textContent = note;
+  document.getElementById('exnote-modal').classList.add('open');
+}
+
+function closeExNote(ev) {
+  if (ev && ev.target && ev.target.id !== 'exnote-modal' && !ev.target.classList.contains('exnote-close')) {
+    // só fecha se clicou no fundo ou no botão fechar
+    if (ev.type === 'click' && ev.target.closest('.exnote-sheet') && !ev.target.classList.contains('exnote-close')) return;
+  }
+  document.getElementById('exnote-modal').classList.remove('open');
 }
 
 async function saveMeasureForm() {
