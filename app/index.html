@@ -103,7 +103,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ex-suggestion.keep{background:rgba(243,156,18,0.1);color:var(--yellow);}
 .ex-suggestion.down{background:rgba(231,76,60,0.1);color:var(--red);}
 .ex-suggestion.max{background:rgba(120,160,255,0.12);color:#8fb0ff;font-size:14px;line-height:1.35;}
-.ex-ref{font-size:12.5px;color:var(--text3);font-family:var(--mono);line-height:1.5;margin-bottom:10px;}
+.ex-ref{font-size:14px;color:var(--text2);font-family:var(--mono);line-height:1.5;margin-bottom:10px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;}
+.ex-ref-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:var(--surface2);color:var(--text3);padding:3px 8px;border-radius:5px;margin-right:8px;}
 .ex-ref-sep{margin:0 7px;opacity:0.5;}
 .ex-prev{font-size:15px;color:var(--text2);font-family:var(--mono);margin-top:6px;}
 .ex-warmup{font-size:15px;font-family:var(--mono);margin-top:10px;color:var(--orange);line-height:1.6;background:rgba(255,159,67,0.07);border:1px solid rgba(255,159,67,0.18);border-radius:9px;padding:10px 12px;}
@@ -113,21 +114,25 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ex-warmup-sets{color:var(--text);font-weight:600;font-size:15px;}
 .ex-plates{font-size:15px;font-family:var(--mono);margin-top:10px;color:var(--text2);line-height:1.5;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;}
 .ex-plates .ex-warmup-tag{background:rgba(159,179,168,0.15);color:var(--text2);}
-.sets-area{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;}
-.set-row{display:grid;grid-template-columns:32px 1fr 1fr;gap:10px;align-items:center;position:relative;transition:opacity 0.15s;}
-.set-row.reps-only{grid-template-columns:32px 1fr;}
-.set-row.done .set-num{color:var(--accent);}
-.set-row.done .set-num::after{content:'✓';display:block;font-size:11px;line-height:1;margin-top:1px;}
-.set-row.done .set-input{border-color:var(--accent);background:rgba(57,255,136,0.06);}
-.set-num{font-size:18px;color:var(--text2);font-family:var(--mono);text-align:center;font-weight:700;}
+.sets-area{padding:0 16px 16px;display:flex;flex-direction:column;gap:9px;}
+.sets-head{display:grid;grid-template-columns:34px 1fr 1fr;gap:11px;align-items:center;padding:0 2px 2px;}
+.sets-head.reps-only{grid-template-columns:34px 1fr;}
+.sets-head-num{}
+.sets-head-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--mono);text-align:center;}
+.set-row{display:grid;grid-template-columns:34px 1fr 1fr;gap:11px;align-items:center;position:relative;transition:opacity 0.15s;}
+.set-row.reps-only{grid-template-columns:34px 1fr;}
+.set-num{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);font-size:15px;color:var(--text2);font-family:var(--mono);font-weight:700;display:flex;align-items:center;justify-content:center;transition:all 0.18s;}
+.set-row.done .set-num{background:var(--accent);border-color:var(--accent);color:#0a0e0c;}
+.set-row.done .set-num::after{content:'';}
 .set-input-wrap{position:relative;}
-.set-input-label{position:absolute;top:50%;left:14px;transform:translateY(-50%);font-size:14px;color:var(--text3);font-family:var(--mono);pointer-events:none;font-weight:600;}
-.set-input{width:100%;background:#232e28;border:1.5px solid #3a4842;border-radius:10px;padding:16px 14px 16px 42px;color:var(--accent);font-family:var(--mono);font-size:22px;font-weight:700;text-align:right;-webkit-appearance:none;transition:all 0.15s;}
-.set-input::placeholder{color:var(--text3);font-weight:500;opacity:0.6;}
-.set-input:focus{outline:none;border-color:var(--accent);background:#283530;box-shadow:0 0 0 3px rgba(57,255,136,0.12);}
-.set-input:not(:placeholder-shown){border-color:#4a5a52;background:#283530;}
+.set-input{width:100%;background:#1a211d;border:1.5px solid #313d37;border-radius:12px;padding:17px 16px;color:var(--accent);font-family:var(--mono);font-size:24px;font-weight:700;text-align:center;-webkit-appearance:none;transition:all 0.15s;}
+.set-input::placeholder{color:var(--text3);font-weight:500;opacity:0.5;}
+.set-input:focus{outline:none;border-color:var(--accent);background:#222e28;box-shadow:0 0 0 3px rgba(57,255,136,0.14);}
+.set-input:not(:placeholder-shown){border-color:#465650;background:#222e28;}
+.set-row.done .set-input{border-color:var(--accent);background:rgba(57,255,136,0.07);}
 /* Peso pré-preenchido (sugestão) fica verde apagado até a série ter reps registadas */
 .w-input{color:#5f8f73;}
+.set-row.done .w-input,.w-input:focus{color:var(--accent);}
 .set-row.done .w-input,.w-input:focus{color:var(--accent);}
 .save-btn{width:100%;padding:22px;background:var(--accent);border:none;border-radius:var(--radius);color:#0a0e0c;font-family:var(--font);font-size:20px;font-weight:800;cursor:pointer;margin-top:12px;transition:all 0.2s;}
 .save-btn:active{transform:scale(0.98);opacity:0.9;}
@@ -697,43 +702,43 @@ const INCREMENTS = {
 };
 const CABLE_FLY_STACK = [9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 64, 68, 73, 77, 82, 86, 91, 95];
 
-// Notas de execução por exercício (mostradas no botão "!" do card).
-// Chave = id do exercício. Texto curto, focado em técnica e segurança.
+// Notas de execução por exercício (botão "!" do card).
+// Estrutura uniforme em todas: Foco muscular · Execução (movimento + amplitude) · Detalhe técnico · Cuidado/polia (se aplicável).
 const EX_NOTES = {
-  elev:  "Esticar os braços completamente em baixo. Peso corporal + lastro. Subir até o queixo passar a barra.",
-  mbp:   "Pausa 1 seg no fundo. Amplitude controlada — atenção ao ombro direito, nunca forçar com dor.",
-  csr:   "Braços estiram completamente no fundo. Aperta as omoplatas no topo. Peito apoiado.",
-  mcf:   "Abre o máximo possível no fundo (alongamento do peito). Porção média. Sem trancar os cotovelos.",
-  clr:   "Cotovelo ligeiramente fletido. Subir até à altura do ombro. Descida lenta, sem balanço.",
-  ctp:   "Cabeça lateral do tríceps. Dobrar os cotovelos completamente no fundo. Cotovelos junto ao corpo. Polia alta.",
-  skc:   "Cabeça longa do tríceps. Halteres ou barra EZ. Descida atrás da cabeça (mais alongamento). Cuidado com o ombro — testa leve primeiro.",
-  bc:    "Braço atrás do corpo — bíceps em alongamento máximo. Polia baixa (canela). Sem balanço do tronco.",
-  rpd1:  "OBRIGATÓRIO — saúde do ombro direito. Puxar à altura da cara, cotovelos altos. Trabalha deltóide posterior + trapézio médio. Polia alta.",
-  bs:    "Descer abaixo do paralelo. Joelhos apontam para os pés. Peito alto, core firme.",
-  bss:   "Por perna. Joelho traseiro quase no chão. Começa pelo lado fraco (direito). Tronco ligeiramente à frente para mais glúteo.",
-  slle1: "Por perna. Extensão completa no topo, segura 1 seg. Descida lenta 2–3 seg.",
-  slc1:  "Esticar totalmente antes de cada rep. Pausa 1 seg no fundo (contração). Sem levantar a anca.",
-  abd1:  "Glúteo médio — estabilidade para a anca e corrida. Tronco ligeiramente à frente. Controla a descida.",
-  mcr:   "Sóleo (joelho dobrado). Pausa 2 seg no fundo — máximo alongamento. Amplitude completa.",
-  cc1:   "Abdómen (flexão). Expira na contração, enrola a coluna. Sem usar momentum. Polia alta.",
-  pal1:  "Abdómen (anti-rotação). Tronco imóvel, resiste à rotação. Estende os braços e segura. Polia média.",
-  ilr:   "Unilateral (disco, +2,5 kg). Braço estira completamente no fundo. Começa pelo direito. Regista um lado.",
-  ism:   "Unilateral (disco, +2,5 kg). Peito superior. Pausa breve no fundo. Atenção ao ombro direito. Regista um lado.",
-  tglp:  "Braços sobem totalmente no topo (alongamento do dorsal). Puxar até ao peito, cotovelos para baixo.",
-  msp:   "Deltóide anterior. Não bloquear os cotovelos no topo. Amplitude controlada — atenção ao ombro direito.",
-  ccf:   "Abre os braços o máximo — o fundo é o mais importante. Polia média (cintura). Junta à frente sem trancar.",
-  ote:   "Cabeça longa do tríceps. Máximo alongamento acima da cabeça. Polia média (anca) para posicionar sem esforço.",
-  dlr:   "Ligeira inclinação do tronco para a frente. Subir até à altura do ombro. Cotovelo ligeiramente fletido.",
-  dic:   "Braço desce completamente — máximo alongamento do bíceps. Banco inclinado. Sem balanço.",
-  rpd2:  "OBRIGATÓRIO — ombro direito. Deltóide posterior + trapézio médio. Aperta as omoplatas. Controla a descida.",
-  rdl:   "O mais importante do dia. Descer até sentir o femoral estirar — não limites a amplitude. Costas direitas, anca para trás.",
-  lp:    "Descer o máximo sem tirar a lombar do banco. Anca: reintroduzir com cuidado. Joelhos alinhados com os pés.",
-  slle2: "Extensão completa no topo. Descida lenta 2–3 seg. Sem balanço.",
-  slc2:  "Esticar totalmente antes de cada rep. Pausa 1 seg no fundo. Sem levantar a anca.",
-  abd2:  "Glúteo médio — 2ª vez na semana, estabilidade anca/corrida. Tronco ligeiramente à frente. Controla a descida.",
-  cr:    "Gastrocnémio (joelho esticado). Pausa 2 seg no fundo — máximo alongamento. Amplitude completa na Smith.",
-  cc2:   "Abdómen (flexão). Expira na contração, enrola a coluna. Sem momentum. Polia alta.",
-  hlr:   "Abdómen inferior. Só reps (sem peso). Progride: joelhos → pernas esticadas → com peso. Sem balanço.",
+  elev:  "Costas e bíceps. Sobe até o queixo passar a barra, desce até esticar os braços por completo. Controla a descida, sem balanço.",
+  mbp:   "Peito e tríceps. Desce com controlo até ao peito, pausa 1 seg, empurra. Amplitude controlada — cuidado com o ombro direito, nunca forçar com dor.",
+  csr:   "Costas e bíceps. Puxa até apertar as omoplatas, desce até esticar os braços por completo. Peito apoiado, sem balanço.",
+  mcf:   "Peito (porção média). Abre o máximo possível na fase negativa, junta à frente com controlo. Sem trancar os cotovelos.",
+  clr:   "Deltóide lateral. Sobe até à altura do ombro, desce devagar. Cotovelo ligeiramente fletido, sem balanço.",
+  ctp:   "Tríceps (cabeça lateral). Estende até dobrar bem os cotovelos no fundo, sobe com controlo. Cotovelos junto ao corpo. Polia alta.",
+  skc:   "Tríceps (cabeça longa). Desce atrás da cabeça para máximo alongamento, estende sem mexer os cotovelos. Halteres ou barra EZ. Cuidado com o ombro — começa leve.",
+  bc:    "Bíceps. Braço atrás do corpo para alongamento máximo, flexiona com controlo. Sem balanço do tronco. Polia baixa (canela).",
+  rpd1:  "Deltóide posterior e trapézio médio. Puxa à altura da cara com os cotovelos altos, controla a volta. Essencial para a saúde do ombro direito. Polia alta.",
+  bs:    "Quadríceps e glúteo. Desce abaixo do paralelo, sobe com força. Joelhos apontam para os pés, peito alto e core firme.",
+  bss:   "Quadríceps e glúteo. Desce até o joelho traseiro quase tocar o chão, sobe com controlo. Tronco ligeiramente à frente. Começa pelo lado direito.",
+  slle1: "Quadríceps. Estende por completo no topo e segura 1 seg, desce devagar (2–3 seg). Uma perna de cada vez. Começa pelo lado direito.",
+  slc1:  "Femoral. Estica totalmente antes de cada repetição, flexiona até à contração e pausa 1 seg. Sem levantar a anca do banco.",
+  abd1:  "Glúteo médio. Abre com controlo, segura na abertura máxima, fecha devagar. Tronco ligeiramente à frente.",
+  mcr:   "Gémeos (sóleo). Desce até ao máximo alongamento e pausa 2 seg, sobe até à ponta. Joelho dobrado, amplitude completa.",
+  cc1:   "Abdómen (flexão). Enrola a coluna trazendo o tronco aos joelhos, expira na contração. Sem usar momentum. Polia alta.",
+  pal1:  "Abdómen (anti-rotação). Estende os braços à frente e resiste à rotação, mantém o tronco imóvel. Controla a volta. Polia média.",
+  ilr:   "Costas e bíceps. Puxa até apertar a omoplata, estica o braço por completo no fundo. Unilateral — começa pelo direito e regista a carga de um lado.",
+  ism:   "Peito superior e ombro. Empurra na diagonal, pausa breve no fundo, controla a volta. Cuidado com o ombro direito. Unilateral — começa pelo direito e regista a carga de um lado.",
+  tglp:  "Costas e bíceps. Deixa os braços subirem por completo no topo (alongamento), puxa até ao peito com os cotovelos para baixo.",
+  msp:   "Deltóide anterior. Empurra acima da cabeça sem bloquear os cotovelos no topo, desce com controlo. Amplitude controlada — cuidado com o ombro direito.",
+  ccf:   "Peito. Abre os braços ao máximo na fase negativa (o fundo é o mais importante), junta à frente sem trancar. Polia média (cintura).",
+  ote:   "Tríceps (cabeça longa). Estende acima da cabeça para máximo alongamento, controla a volta. Polia média (anca) para te posicionares sem esforço.",
+  dlr:   "Deltóide lateral. Sobe até à altura do ombro, desce devagar. Tronco ligeiramente à frente, cotovelo ligeiramente fletido.",
+  dic:   "Bíceps. Deixa o braço descer por completo para máximo alongamento, flexiona com controlo. Banco inclinado, sem balanço.",
+  rpd2:  "Deltóide posterior e trapézio médio. Abre apertando as omoplatas, controla a volta. Essencial para a saúde do ombro direito.",
+  rdl:   "Femoral e glúteo. Desce até sentir o femoral esticar — não limites a amplitude —, sobe empurrando a anca à frente. Costas direitas, anca para trás.",
+  lp:    "Quadríceps. Desce o máximo sem tirar a lombar do banco, empurra sem bloquear os joelhos. Joelhos alinhados com os pés — reintroduz a anca com cuidado.",
+  slle2: "Quadríceps. Estende por completo no topo, desce devagar (2–3 seg). Bilateral, sem balanço.",
+  slc2:  "Femoral. Estica totalmente antes de cada repetição, flexiona até à contração e pausa 1 seg. Sem levantar a anca do banco.",
+  abd2:  "Glúteo médio. Abre com controlo, segura na abertura máxima, fecha devagar. Tronco ligeiramente à frente.",
+  cr:    "Gémeos (gastrocnémio). Desce até ao máximo alongamento e pausa 2 seg, sobe até à ponta. Joelho esticado, amplitude completa na Smith.",
+  cc2:   "Abdómen (flexão). Enrola a coluna trazendo o tronco aos joelhos, expira na contração. Sem usar momentum. Polia alta.",
+  hlr:   "Abdómen inferior. Sobe as pernas com controlo, desce devagar sem balanço. Progride: joelhos fletidos → pernas esticadas → com peso.",
 };
 
 const WORKOUTS = {
@@ -1027,7 +1032,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.49';
+const APP_VERSION = '1.51';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1889,12 +1894,13 @@ function renderSession() {
 
     html += `<div class="ex-card" id="card_${ex.id}"><div class="ex-header">
       <div class="ex-name-row"><div class="ex-name">${ex.name}</div>${EX_NOTES[ex.id] ? `<button class="ex-info-btn" onclick="showExNote('${ex.id}')" aria-label="Como fazer">!</button>` : ''}</div>
-      <div class="ex-ref">${ex.sets}×${ex.reps}${ex.rest ? ' · ' + ex.rest : ''}${ex.pulley ? ' · '+ex.pulley : ''}${lastEx ? `<span class="ex-ref-sep">·</span>último: ${lastEx.sets.map(s=>`${ex.bodyweight ? (s.weight>0?'+'+s.weight+'kg':'PC') : s.weight+'kg'}×${s.reps}`).join(', ')}` : ''}</div>
+      ${lastEx ? `<div class="ex-ref"><span class="ex-ref-tag">Anterior</span>${lastEx.sets.map(s=>`${ex.bodyweight ? (s.weight>0?'+'+s.weight+'kg':'PC') : s.weight+'kg'}×${s.reps}`).join('  ·  ')}</div>` : ''}
       ${prog ? `<div class="ex-suggestion ${prog.status}">${prog.label}</div>` : ''}
       ${(ex.plates && suggestedWeight > 0 && platesPerSide(suggestedWeight)) ? `<div class="ex-plates"><span class="ex-warmup-tag">Discos</span> <span class="ex-warmup-text">${suggestedWeight}kg = barra + ${platesPerSide(suggestedWeight)}</span></div>` : ''}
       ${warmup ? `<div class="ex-warmup"><span class="ex-warmup-tag">Aquecer</span> <span class="ex-warmup-text">${warmup.text}</span></div>` : ''}
       ${ex.bodyweight ? `<div class="ex-ref" style="margin-top:4px">Lastro 0 = só peso corporal. Adiciona lastro quando fizeres 3×${ex.repsMax} com RIR 2+.</div>` : ''}
-    </div><div class="sets-area">`;
+    </div><div class="sets-area">
+    <div class="sets-head ${ex.repsOnly?'reps-only':''}"><span class="sets-head-num"></span><span class="sets-head-lbl">${ex.bodyweight?'Lastro (kg)':'Carga (kg)'}</span>${ex.repsOnly?'':'<span class="sets-head-lbl">Reps</span>'}${ex.repsOnly?'<span class="sets-head-lbl">Reps</span>':''}</div>`;
 
     for (let i = 1; i <= ex.sets; i++) {
       const ls = lastEx && lastEx.sets[i-1];
@@ -1906,18 +1912,18 @@ function renderSession() {
         // Exercício só de reps (ex: Hanging Leg Raise) — sem campo de peso
         html += `<div class="set-row reps-only" id="row_${ex.id}_${i}" data-ex="${ex.id}" data-set="${i}" data-last="${isLast}">
           <div class="set-num">${i}</div>
-          <div class="set-input-wrap"><span class="set-input-label">reps</span>
-            <input class="set-input" type="number" inputmode="numeric" id="r_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" placeholder="${ls?ls.reps:''}">
+          <div class="set-input-wrap">
+            <input class="set-input" type="number" inputmode="numeric" id="r_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" placeholder="${ls?ls.reps:'—'}">
           </div>
         </div>`;
       } else {
         html += `<div class="set-row" id="row_${ex.id}_${i}" data-ex="${ex.id}" data-set="${i}" data-last="${isLast}">
           <div class="set-num">${i}</div>
-          <div class="set-input-wrap"><span class="set-input-label">${ex.bodyweight ? 'lastro' : 'kg'}</span>
-            <input class="set-input w-input" type="number" inputmode="decimal" id="w_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" value="${preWeight}" style="${ex.bodyweight?'padding-left:48px':''}">
+          <div class="set-input-wrap">
+            <input class="set-input w-input" type="number" inputmode="decimal" id="w_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" value="${preWeight}">
           </div>
-          <div class="set-input-wrap"><span class="set-input-label">×</span>
-            <input class="set-input" type="number" inputmode="numeric" id="r_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" placeholder="${ls?ls.reps:''}">
+          <div class="set-input-wrap">
+            <input class="set-input" type="number" inputmode="numeric" id="r_${ex.id}_${i}" oninput="onSetInput('${ex.id}',${i})" placeholder="${ls?ls.reps:'—'}">
           </div>
         </div>`;
       }
@@ -2159,15 +2165,16 @@ function editSession(id) {
   s.exercises.forEach((ex, exIdx) => {
     const valid = ex.sets.filter(st => st.weight > 0 || st.reps > 0);
     if (!valid.length) return;
-    html += `<div class="ex-card"><div class="ex-header"><div class="ex-name" style="font-size:18px">${ex.name}</div></div><div class="sets-area">`;
+    html += `<div class="ex-card"><div class="ex-header"><div class="ex-name" style="font-size:18px">${ex.name}</div></div><div class="sets-area">
+    <div class="sets-head"><span class="sets-head-num"></span><span class="sets-head-lbl">Carga (kg)</span><span class="sets-head-lbl">Reps</span></div>`;
     ex.sets.forEach((st, setIdx) => {
       if (!(st.weight > 0 || st.reps > 0)) return;
       html += `<div class="set-row">
         <div class="set-num">${setIdx+1}</div>
-        <div class="set-input-wrap"><span class="set-input-label">kg</span>
+        <div class="set-input-wrap">
           <input class="set-input" type="number" inputmode="decimal" id="ew_${exIdx}_${setIdx}" value="${st.weight}">
         </div>
-        <div class="set-input-wrap"><span class="set-input-label">×</span>
+        <div class="set-input-wrap">
           <input class="set-input" type="number" inputmode="numeric" id="er_${exIdx}_${setIdx}" value="${st.reps}">
         </div>
       </div>`;
