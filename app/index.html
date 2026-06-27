@@ -98,11 +98,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ex-info-btn{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-size:15px;font-weight:800;font-family:Georgia,serif;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;margin-top:2px;transition:background 0.15s,color 0.15s;}
 .ex-info-btn:active{background:var(--accent);color:#0a0e0c;}
 .ex-meta{font-size:15px;color:var(--text2);font-family:var(--mono);line-height:1.4;}
-.ex-suggestion{font-size:16px;font-weight:700;font-family:var(--mono);margin-bottom:10px;padding:8px 14px;border-radius:8px;display:inline-block;}
-.ex-suggestion.up{background:rgba(57,255,136,0.12);color:var(--accent);}
-.ex-suggestion.keep{background:rgba(243,156,18,0.1);color:var(--yellow);}
-.ex-suggestion.down{background:rgba(231,76,60,0.1);color:var(--red);}
-.ex-suggestion.max{background:rgba(120,160,255,0.12);color:#8fb0ff;font-size:14px;line-height:1.35;}
+.ex-suggestion{display:inline-flex;align-items:center;gap:10px;font-size:16px;font-weight:700;font-family:var(--font);margin-bottom:12px;padding:9px 16px 9px 9px;border-radius:50px;}
+.ex-sug-icon{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.ex-sug-icon svg{width:15px;height:15px;}
+.ex-sug-text{line-height:1.2;}
+.ex-suggestion.up{background:rgba(57,255,136,0.13);color:var(--accent);}
+.ex-suggestion.up .ex-sug-icon{background:var(--accent);color:#0a0e0c;}
+.ex-suggestion.keep{background:rgba(254,202,87,0.12);color:var(--yellow);}
+.ex-suggestion.keep .ex-sug-icon{background:var(--yellow);color:#0a0e0c;}
+.ex-suggestion.down{background:rgba(255,94,87,0.12);color:var(--red);}
+.ex-suggestion.down .ex-sug-icon{background:var(--red);color:#0a0e0c;}
+.ex-suggestion.max{background:rgba(120,160,255,0.13);color:#8fb0ff;font-size:14px;line-height:1.3;border-radius:14px;align-items:flex-start;padding:11px 15px 11px 11px;}
+.ex-suggestion.max .ex-sug-icon{background:#8fb0ff;color:#0a0e0c;}
+.ex-suggestion.max .ex-sug-text{padding-top:3px;}
 .ex-ref{font-size:14px;color:var(--text2);font-family:var(--mono);line-height:1.5;margin-bottom:10px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;}
 .ex-ref-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:var(--surface2);color:var(--text3);padding:3px 8px;border-radius:5px;margin-right:8px;}
 .ex-ref-sep{margin:0 7px;opacity:0.5;}
@@ -145,7 +153,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .prog-item{padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
 .prog-item:last-child{border-bottom:none;}
 .prog-item-name{font-size:13px;font-weight:600;flex:1;}
-.prog-item-badge{font-size:11px;font-family:var(--mono);padding:3px 8px;border-radius:6px;}
+.prog-item-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);font-weight:700;padding:4px 10px 4px 6px;border-radius:50px;}
+.prog-badge-icon{flex-shrink:0;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.prog-badge-icon svg{width:10px;height:10px;}
+.prog-item-badge.up .prog-badge-icon{background:var(--accent);color:#0a0e0c;}
+.prog-item-badge.keep .prog-badge-icon{background:var(--yellow);color:#0a0e0c;}
+.prog-item-badge.down .prog-badge-icon{background:var(--red);color:#0a0e0c;}
+.prog-item-badge.max .prog-badge-icon{background:#8fb0ff;color:#0a0e0c;}
 .prog-item-badge.up{background:rgba(57,255,136,0.12);color:var(--accent);}
 .prog-item-badge.keep{background:rgba(243,156,18,0.1);color:var(--yellow);}
 .prog-item-badge.down{background:rgba(231,76,60,0.1);color:var(--red);}
@@ -862,6 +876,13 @@ const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="34" height="34" fill="curren
 const ICON_PLAY_SM = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:-3px"><path d="M8 5v14l11-7z"/></svg>';
 const ICON_PAUSE_SM = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:-3px"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
 const ICON_CHECK_SM = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+// Ícones da sugestão de progressão (na caixa Aumenta/Mantém/Reduz)
+const PROG_ICON = {
+  up:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="6"/><polyline points="6 12 12 6 18 12"/></svg>',
+  keep: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="18" y2="12"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="18"/><polyline points="6 12 12 18 18 12"/></svg>',
+  max:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+};
 // Inline icons used across the app (sized to text via 1em, inherit color)
 const SVG = {
   fire: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M12 2c1 3-1 4-2 6-1 1.6-2 3.2-2 5a6 6 0 0 0 12 .3c.1-2.6-1.4-4.8-2.7-6.4-.4 1-1.3 1.6-2.1 1.3 1-2.4.3-4.9-1.2-6.2z"/></svg>',
@@ -1043,7 +1064,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.54';
+const APP_VERSION = '1.55';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1329,11 +1350,11 @@ function analyzeProgression(ex, lastExData) {
     if (!repSets.length) return null;
     const allReps = repSets.map(s => s.reps);
     if (allReps.every(r => r >= ex.repsMax)) {
-      return { status: 'up', label: `↑ Sobe reps (já fazes ${ex.repsMax})`, weight: 0 };
+      return { status: 'up', label: `Sobe reps (já fazes ${ex.repsMax})`, weight: 0 };
     } else if (allReps.some(r => r < ex.repsMin)) {
-      return { status: 'keep', label: `→ Foca a técnica`, weight: 0 };
+      return { status: 'keep', label: `Foca a técnica`, weight: 0 };
     } else {
-      return { status: 'keep', label: `→ Sobe reps no intervalo`, weight: 0 };
+      return { status: 'keep', label: `Sobe reps no intervalo`, weight: 0 };
     }
   }
 
@@ -1351,12 +1372,12 @@ function analyzeProgression(ex, lastExData) {
     const idx = CABLE_FLY_STACK.indexOf(weight);
     if (anyBelowMin && idx > 0) {
       const nw = CABLE_FLY_STACK[idx-1];
-      return { status: 'down', label: `↓ Reduz → ${nw}kg`, weight: nw };
+      return { status: 'down', label: `Reduz para ${nw}kg`, weight: nw };
     } else if (allReachedMax && idx >= 0 && idx < CABLE_FLY_STACK.length-1) {
       const nw = CABLE_FLY_STACK[idx+1];
-      return { status: 'up', label: `↑ Aumenta → ${nw}kg`, weight: nw };
+      return { status: 'up', label: `Aumenta para ${nw}kg`, weight: nw };
     } else {
-      return { status: 'keep', label: `→ Mantém ${weight}kg`, weight: weight };
+      return { status: 'keep', label: `Mantém ${weight}kg`, weight: weight };
     }
   }
 
@@ -1364,17 +1385,17 @@ function analyzeProgression(ex, lastExData) {
 
   if (anyBelowMin) {
     const newWeight = Math.max(0, weight - increment);
-    return { status: 'down', label: `↓ Reduz → ${newWeight}kg`, weight: newWeight };
+    return { status: 'down', label: `Reduz para ${newWeight}kg`, weight: newWeight };
   } else if (allReachedMax) {
     const newWeight = weight + increment;
     // Machine has a weight ceiling and we'd exceed it → can't add load.
     // Tell the user to progress via reps / tempo / intensity instead.
     if (ex.maxWeight && newWeight > ex.maxWeight) {
-      return { status: 'max', label: `▲ Máquina no máximo (${ex.maxWeight}kg) — sobe reps ou intensidade`, weight: ex.maxWeight };
+      return { status: 'max', label: `Máquina no máximo (${ex.maxWeight}kg) — sobe reps ou intensidade`, weight: ex.maxWeight };
     }
-    return { status: 'up', label: `↑ Aumenta → ${newWeight}kg`, weight: newWeight };
+    return { status: 'up', label: `Aumenta para ${newWeight}kg`, weight: newWeight };
   } else {
-    return { status: 'keep', label: `→ Mantém ${weight}kg`, weight: weight };
+    return { status: 'keep', label: `Mantém ${weight}kg`, weight: weight };
   }
 }
 
@@ -1919,7 +1940,7 @@ function renderSession() {
     html += `<div class="ex-card" id="card_${ex.id}"><div class="ex-header">
       <div class="ex-name-row"><div class="ex-name">${ex.name}</div>${EX_NOTES[ex.id] ? `<button class="ex-info-btn" onclick="showExNote('${ex.id}')" aria-label="Como fazer">!</button>` : ''}</div>
       ${lastEx ? `<div class="ex-ref"><span class="ex-ref-tag">Anterior</span>${lastEx.sets.map(s=>`${ex.bodyweight ? (s.weight>0?'+'+s.weight+'kg':'PC') : s.weight+'kg'}×${s.reps}`).join('  ·  ')}</div>` : ''}
-      ${prog ? `<div class="ex-suggestion ${prog.status}">${prog.label}</div>` : ''}
+      ${prog ? `<div class="ex-suggestion ${prog.status}"><span class="ex-sug-icon">${PROG_ICON[prog.status]||''}</span><span class="ex-sug-text">${prog.label}</span></div>` : ''}
       ${(ex.plates && suggestedWeight > 0 && platesPerSide(suggestedWeight)) ? `<div class="ex-plates"><span class="ex-warmup-tag">Discos</span> <span class="ex-warmup-text">${suggestedWeight}kg = barra + ${platesPerSide(suggestedWeight)}</span></div>` : ''}
       ${warmup ? `<div class="ex-warmup"><span class="ex-warmup-tag">Aquecer</span> <span class="ex-warmup-text">${warmup.text}</span></div>` : ''}
       ${ex.bodyweight ? `<div class="ex-ref" style="margin-top:4px">Lastro 0 = só peso corporal. Adiciona lastro quando fizeres 3×${ex.repsMax} com RIR 2+.</div>` : ''}
@@ -2131,7 +2152,7 @@ function showProgressionSummary(exData, w) {
 
     html += `<div class="prog-item">
       <div class="prog-item-name">${ex.name}</div>
-      <div class="prog-item-badge ${prog.status}">${prog.label}</div>
+      <div class="prog-item-badge ${prog.status}"><span class="prog-badge-icon">${PROG_ICON[prog.status]||''}</span>${prog.label}</div>
     </div>`;
   });
 
