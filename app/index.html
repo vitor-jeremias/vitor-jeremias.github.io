@@ -813,7 +813,7 @@ const PLANS = {
     {id:"pal1",name:"Pallof Press",          sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
   ],coreRef:["Side Plank — 3×20–30seg/lado"]},
   lower1:{name:"Lower 1",type:"lower",day:"Terça",sub:"Quad · Glúteo · Femoral · Gémeos",exercises:[
-    {id:"bs",  name:"Barbell Squat", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
+    {id:"bs",  name:"Barbell Squat", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,emptyBarFirst:true,rest:"2–3 min",plates:true},
     {id:"bss", name:"Bulgarian Split Squat",         sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"dumbbell",rest:"2–3 min"},
     {id:"slle1",name:"Single-Leg Leg Extension",     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"slc1",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
@@ -856,27 +856,27 @@ const PLANS = {
     name: "Full-Body 3×",
     workouts: {
   fbA:{name:"Full-Body A",type:"upper",warmupType:"fullbody",day:"Segunda",sub:"Corpo inteiro · ênfase quad",exercises:[
-    {id:"fb_squat",name:"Barbell Squat",        sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
+    {id:"fb_squat",name:"Barbell Squat",        sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,emptyBarFirst:true,rest:"2–3 min",plates:true},
+    {id:"fb_abd1", name:"Hip Abduction",        sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"fb_bench",name:"Machine Bench Press",  sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","triceps"],inc:"machine",warmup:true,rest:"2–3 min"},
     {id:"fb_csrow",name:"Chest-Supported Row",  sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
-    {id:"fb_abd1", name:"Hip Abduction",        sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"fb_lat1", name:"Lateral Raise",        sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"fb_push", name:"Cable Triceps Pushdown",sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
   ],coreRef:["Side Plank — 3×20–30seg/lado"]},
   fbB:{name:"Full-Body B",type:"lower",warmupType:"fullbody",day:"Quarta",sub:"Corpo inteiro · ênfase femoral",exercises:[
     {id:"fb_rdl",  name:"Romanian Deadlift",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
+    {id:"fb_calf1",name:"Seated Calf Raise",    sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"fb_pull", name:"Wide Grip Lat Pulldown",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"fb_ohp",  name:"Machine Shoulder Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["ombros"],inc:"machine",rest:"90 seg"},
-    {id:"fb_calf1",name:"Seated Calf Raise",    sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"fb_pallof",name:"Pallof Press",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
     {id:"fb_curl", name:"Dumbbell Incline Curl",sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"dumbbell",rest:"90 seg"},
   ],coreRef:["Back Extension — 3×12–15 (leve, foco glúteo)"]},
   fbC:{name:"Full-Body C",type:"upper",warmupType:"fullbody",day:"Sexta",sub:"Corpo inteiro · misto",exercises:[
     {id:"fb_legpress",name:"Leg Press",         sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
+    {id:"fb_abd2",   name:"Hip Abduction",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"fb_incpress",name:"Iso-Lateral Incline Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["peito","ombros"],inc:"machine",rest:"90 seg"},
     {id:"fb_isorow", name:"Iso-Lateral Row",    sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"fb_calf2",  name:"Standing Calf Raise (Smith)",sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
-    {id:"fb_abd2",   name:"Hip Abduction",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"fb_rpd",    name:"Reverse Pec Deck",   sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"machine",rest:"90 seg"},
   ],coreRef:["Side Plank — 3×20–30seg/lado"]}
     },
@@ -904,24 +904,15 @@ function setActivePlan(planId) {
   activePlanId = id;
   WORKOUTS = PLANS[id].workouts;
   DAYS = PLANS[id].days;
+  WARMUPS = PLAN_WARMUPS[id] || PLAN_WARMUPS[DEFAULT_PLAN];
+  CARDIO_PLANS = PLAN_CARDIO[id] || PLAN_CARDIO[DEFAULT_PLAN];
 }
 
 const MUSCLES={peito:"Peito",costas:"Costas",ombros:"Ombros",biceps:"Bíceps",triceps:"Tríceps",quad:"Quad",femoral:"Femoral",gluteo:"Glúteo",gemeos:"Gémeos",abdomen:"Abdómen"};
 
-const WARMUPS = {
-  fullbody: {
-    title: "Aquecimento Full-Body",
-    color: "var(--upper)",
-    items: [
-      "Bicicleta ou passadeira leve — 3–5 min (geral)",
-      "Rotações de ombro frente/trás — 10 cada sentido",
-      "Band pull-aparts — 15 reps (ombro/costas)",
-      "Leg swings frente/trás — 10 cada perna",
-      "Air squats — 10 reps amplitude total",
-      "Glute bridges no chão — 12 reps (ativação glúteo)",
-      "Séries de aproximação no 1º exercício pesado — 50% e 75%",
-    ]
-  },
+// Aquecimentos por plano — cada plano tem os seus (auto-contido).
+const PLAN_WARMUPS = {
+  upperlower: {
   upper: {
     title: "Aquecimento Upper",
     color: "var(--upper)",
@@ -970,7 +961,37 @@ const WARMUPS = {
       "Aumento progressivo do ritmo",
     ]
   }
+  },
+  fullbody3x: {
+  fullbody: {
+    title: "Aquecimento Full-Body",
+    color: "var(--upper)",
+    items: [
+      "Bicicleta ou passadeira leve — 3–5 min (geral)",
+      "Rotações de ombro frente/trás — 10 cada sentido",
+      "Band pull-aparts — 15 reps (ombro/costas)",
+      "Leg swings frente/trás — 10 cada perna",
+      "Air squats — 10 reps amplitude total",
+      "Glute bridges no chão — 12 reps (ativação glúteo)",
+      "Séries de aproximação no 1º exercício pesado — 50% e 75%",
+    ]
+  },
+  corrida: {
+    title: "Aquecimento Corrida",
+    color: "#E26B0A",
+    items: [
+      "Caminhada rápida — 2–3 min",
+      "Leg swings frente/trás — 10 cada perna",
+      "Leg swings laterais — 10 cada perna",
+      "Lunges com rotação — 5 cada perna",
+      "Skipping baixo (joelhos altos leves) — 30 seg",
+      "Calcanhares aos glúteos — 30 seg",
+      "Corrida progressiva — lento nos primeiros 3–5 min antes do Zone 2",
+    ]
+  }
+  }
 };
+let WARMUPS = PLAN_WARMUPS[DEFAULT_PLAN];
 
 const ICON_PLAY = '<svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
 const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
@@ -1001,7 +1022,9 @@ const SVG = {
   exit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>'
 };
 
-const CARDIO_PLANS = {
+// Planos de cardio por plano — cada plano tem os seus (auto-contido).
+const PLAN_CARDIO = {
+  upperlower: {
   natacao: {
     title: "Natação",
     icon: SVG.swim,
@@ -1022,10 +1045,26 @@ const CARDIO_PLANS = {
       {name:"Fase 1 — Base (sem 1-6)", sets:["Sem 1-2: 8 km","Sem 3: 9 km","Sem 4: 10 km","Sem 5: 11 km","Sem 6: 9 km (recuperação)"]},
       {name:"Fase 2 — Construção (sem 7-14)", sets:["Sem 7-8: 12 km","Sem 9: 13 km","Sem 10: 14 km","Sem 11: 11 km (recup.)","Sem 12: 14 km","Sem 13: 15 km","Sem 14: 12 km (recup.)"]},
       {name:"Fase 3 — Duas corridas (sem 15-22)", sets:["Quarta passa a corrida curta","Sem 15-17: 6-7 km + 15-17 km","Sem 18: recuperação","Sem 19-20: 8 km + 18-19 km","Sem 22: 8 km + 20 km (longão)"]},
-      {name:"Fase 4 — Prova (sem 23-24)", sets:["Sem 23: taper (reduzir)","Sem 24: 🏃 MEIA MARATONA (21 km)"]},
+      {name:"Fase 4 — Prova (sem 23-24)", sets:["Sem 23: taper (reduzir)","Sem 24: MEIA MARATONA (21 km)"]},
     ]
   }
+  },
+  fullbody3x: {
+  corrida: {
+    title: "Corrida",
+    icon: SVG.run,
+    color: "#E26B0A",
+    note: "Terça (fácil) + Sábado (longa ou trail) · Zone 2 · progredir distância, sem prova",
+    phases: [
+      {name:"Estrutura semanal", sets:["Terça: corrida fácil (Zone 2), ~5-6 km","Sábado: corrida longa (progride distância) ou trail","2 corridas/semana, equilíbrio com a força"]},
+      {name:"Progressão (corrida longa de Sábado)", sets:["Começa nos ~10 km (já faz bem)","Sobe ~1 km/semana (regra dos 10%)","Semana leve a cada 4-5 semanas","A fácil de Terça mantém-se estável"]},
+      {name:"Introduzir trail", sets:["Trail entra como variante da longa de Sábado","Começar curto e suave (descidas são novas p/ as pernas)","Progredir o desnível gradualmente","Não meter trail puxado antes do treino de pernas (Segunda)"]},
+      {name:"Gerir força + corrida", sets:["Não correr forte logo após dias de pernas pesadas","Terça leve = pernas frescas p/ os treinos","Pernas sempre pesadas = corrida a mais, cortar"]},
+    ]
+  }
+  }
 };
+let CARDIO_PLANS = PLAN_CARDIO[DEFAULT_PLAN];
 
 // ======================== NUTRITION PLAN (transcrito do PDF da nutricionista) ========================
 const NUTRITION_PLAN = {
@@ -1165,7 +1204,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.68';
+const APP_VERSION = '1.72';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1543,16 +1582,14 @@ function calcWarmup(ex, workoutKey) {
   let w75 = round(workWeight * 0.75);
   const showPlates = !!ex.plates;
   const wp = (w) => { if (!showPlates) return `${w}kg`; const p = platesPerSide(w); return p ? `${w}kg (${p})` : `${w}kg`; };
-  // Squat: empty bar first, then warmup sets
-  if (ex.id === 'bs') {
+  // Exercícios com barra livre: nunca sugerir abaixo da barra vazia (20kg).
+  if (isBarbell) {
     if (w50 < 20) w50 = 20;
     if (w75 < 20) w75 = 20;
-    return { text: `barra vazia × 10  →  ${wp(w50)} × 8  →  ${wp(w75)} × 4`, work: workWeight };
   }
-  // Barbell exercises with a real bar (squat, rdl): don't suggest below empty bar (20kg)
-  if (isBarbell && (ex.id === 'rdl')) {
-    if (w50 < 20) w50 = 20;
-    if (w75 < 20) w75 = 20;
+  // Exercícios que começam com a barra vazia (agachamento e afins): barra vazia → 50% → 75%.
+  if (ex.emptyBarFirst) {
+    return { text: `barra vazia × 10  →  ${wp(w50)} × 8  →  ${wp(w75)} × 4`, work: workWeight };
   }
   return { text: `${wp(w50)} × 10  →  ${wp(w75)} × 6`, work: workWeight };
 }
@@ -1634,7 +1671,7 @@ function renderHome() {
       <div class="hero-label">${hasDraft ? 'Treino a meio' : 'Sessão de hoje'}</div>
       <div class="hero-title">${todayWorkout.name}</div>
       <div class="hero-sub">${todayWorkout.sub}</div>
-      <div class="hero-meta">${exCount} exercícios · ${todayWorkout.type === 'upper' ? 'Tronco' : 'Pernas'}</div>
+      <div class="hero-meta">${exCount} exercícios · ${todayWorkout.warmupType === 'fullbody' ? 'Corpo inteiro' : (todayWorkout.type === 'upper' ? 'Tronco' : 'Pernas')}</div>
       <div class="hero-btn">${SVG.play} ${btnLabel}</div>
     </div>`;
   } else if (todayDay.name === 'Natação') {
@@ -3450,23 +3487,27 @@ function exportData() {
 function importData(event) {
   const file = event.target.files[0]; if(!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = async function(e) {
     try {
       const data = JSON.parse(e.target.result);
       if (!data.sessions||!Array.isArray(data.sessions)) throw new Error('Formato inválido');
       const current = getSessions();
       const choice = current.length > 0 ?
         confirm(`Tens ${current.length} sessões. Substituir pelos dados do backup (${data.sessions.length} sessões)?\n\nOK = Substituir\nCancelar = Combinar`) : true;
+      let toImport;
       if (choice) {
-        saveSessions(data.sessions);
-        showToast(`${data.sessions.length} sessões importadas ✓`);
+        // Substituir: apagar as atuais e gravar as do backup
+        for (const s of current) { await sb.deleteSession(s.id); }
+        toImport = data.sessions;
       } else {
+        // Combinar: só as que ainda não existem
         const existingIds = new Set(current.map(s=>s.id));
-        const newOnes = data.sessions.filter(s=>!existingIds.has(s.id));
-        const combined = [...current,...newOnes].sort((a,b)=>new Date(a.date)-new Date(b.date));
-        saveSessions(combined);
-        showToast(`${newOnes.length} novas sessões combinadas ✓`);
+        toImport = data.sessions.filter(s=>!existingIds.has(s.id));
       }
+      let n = 0;
+      for (const s of toImport) { await sb.saveSession(s); n++; }
+      _sessions = await sb.getSessions();
+      showToast(`${n} sessões importadas ✓`);
       setTimeout(()=>renderDados(), 500);
     } catch(err) { alert('Ficheiro inválido.'); }
   };
