@@ -28,8 +28,8 @@
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100dvh;overflow-x:hidden;}
 .nav{position:sticky;top:0;z-index:100;background:rgba(10,14,12,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top, 0px));display:flex;align-items:center;gap:12px;}
 .nav-title{font-size:18px;font-weight:800;color:var(--text);flex-shrink:0;display:flex;align-items:center;}
-.nav-tabs{display:flex;gap:3px;background:var(--surface);border-radius:10px;padding:4px;flex:1;}
-.nav-tab{flex:1;padding:9px 6px;border-radius:7px;font-family:var(--font);font-size:13px;font-weight:600;border:none;background:none;color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap;text-align:center;}
+.nav-tabs{display:flex;gap:2px;background:var(--surface);border-radius:10px;padding:3px;flex:1;}
+.nav-tab{flex:1;padding:9px 3px;border-radius:7px;font-family:var(--font);font-size:12px;font-weight:600;border:none;background:none;color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap;text-align:center;}
 .nav-tab.active{background:var(--accent);color:#0a0e0c;}
 .view{display:none;padding:20px;padding-bottom:96px;}.view.active{display:block;}
 .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
@@ -610,16 +610,19 @@ input[type="file"]{display:none;}
   </div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showView('home')">Treino</button>
-    <button class="nav-tab" onclick="showView('nutricao')">Nutrição</button>
-    <button class="nav-tab" onclick="showView('stats')">Stats</button>
-    <button class="nav-tab" onclick="showView('historico')">Histórico</button>
+    <button class="nav-tab" id="tab-progresso" onclick="showView('progresso')">Progresso</button>
+    <button class="nav-tab" id="tab-nutricao" onclick="showView('nutricao')">Nutrição</button>
     <button class="nav-tab" onclick="showView('dados')">Conta</button>
   </div>
 </nav>
 <div id="view-home" class="view active"></div>
+<div id="view-progresso" class="view">
+  <div id="progresso-subtabs"></div>
+  <div id="sub-stats"></div>
+  <div id="sub-corpo"></div>
+  <div id="sub-historico"></div>
+</div>
 <div id="view-nutricao" class="view"></div>
-<div id="view-historico" class="view"></div>
-<div id="view-stats" class="view"></div>
 <div id="view-dados" class="view"></div>
 </div>
 <button id="timer-fab" onclick="openTimerModal()" title="Timer">
@@ -730,6 +733,26 @@ const CABLE_FLY_STACK = [9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 64, 68, 
 // Notas de execução por exercício (botão "!" do card).
 // Estrutura uniforme em todas: Foco muscular · Execução (movimento + amplitude) · Detalhe técnico · Cuidado/polia (se aplicável).
 const EX_NOTES = {
+  // ---- Exercícios do plano Full-Body (alunos) ----
+  fb_squat:    "Quadríceps e glúteo. Desce até as coxas ficarem paralelas (ou um pouco abaixo), peito direito, joelhos a acompanhar a ponta dos pés. Sobe com força pelos calcanhares.",
+  fb_bench:    "Peito e tríceps. Desce com controlo até ao peito, pausa 1 seg, empurra. Sem trancar os cotovelos no topo.",
+  fb_csrow:    "Costas e bíceps. Puxa até apertar as omoplatas, estica os braços por completo no fundo. Peito apoiado, sem balanço.",
+  fb_abd1:     "Glúteo médio. Abre as pernas contra a resistência, controla a volta. Inclina ligeiramente o tronco à frente para focar mais o glúteo médio.",
+  fb_lat1:     "Deltóide lateral. Sobe até à altura do ombro, desce devagar. Cotovelo ligeiramente fletido, sem balanço.",
+  fb_push:     "Tríceps. Estende os cotovelos até esticar por completo, controla a volta. Cotovelos junto ao corpo, sem balançar.",
+  fb_rdl:      "Femoral e glúteo. Desce a barra junto às pernas com as costas direitas, sente o alongamento do femoral, sobe apertando o glúteo. Joelhos ligeiramente fletidos, não é agachamento.",
+  fb_pull:     "Costas (largura) e bíceps. Pega larga pronada (palmas à frente). Deixa os braços subirem por completo no topo, puxa até ao peito com os cotovelos para baixo.",
+  fb_ohp:      "Ombros (deltóide anterior). Empurra acima da cabeça até quase esticar, controla a volta até à altura das orelhas. Sem arquear as costas.",
+  fb_calf1:    "Gémeos (sóleo — sentado). Sobe nas pontas dos pés o máximo possível, pausa em cima, desce devagar até ao alongamento total. Amplitude completa.",
+  fb_pallof:   "Core (anti-rotação). De lado para a polia, estende os braços à frente e resiste à rotação do tronco. Mantém a barriga firme. Não deixar o tronco rodar.",
+  fb_curl:     "Bíceps. Banco inclinado, braços atrás do corpo para alongar o bíceps. Sobe com controlo, desce até esticar por completo. Sem balanço.",
+  fb_legpress: "Quadríceps e glúteo. Desce até os joelhos a ~90° (ou um pouco mais, sem a bacia descolar), empurra sem trancar os joelhos no topo. Pés a meio da plataforma.",
+  fb_incpress: "Peito superior e ombro. Os dois braços ao mesmo tempo. Empurra na diagonal, pausa breve no fundo, controla a volta.",
+  fb_isorow:   "Costas e bíceps. Os dois braços ao mesmo tempo. Puxa até apertar as omoplatas, estica os braços por completo no fundo.",
+  fb_calf2:    "Gémeos (gastrocnémio — de pé). Sobe nas pontas dos pés o máximo possível, pausa em cima, desce devagar até ao alongamento total. Amplitude completa.",
+  fb_abd2:     "Glúteo médio. Abre as pernas contra a resistência, controla a volta. Inclina ligeiramente o tronco à frente para focar mais o glúteo médio.",
+  fb_rpd:      "Deltóide posterior e trapézio médio. Abre os braços para trás apertando as omoplatas, controla a volta. Sem usar impulso.",
+  // ---- Exercícios do plano Upper/Lower (treinador) ----
   elev:  "Costas e bíceps. Sobe até o queixo passar a barra, desce até esticar os braços por completo. Controla a descida, sem balanço.",
   mbp:   "Peito e tríceps. Desce com controlo até ao peito, pausa 1 seg, empurra. Amplitude controlada — cuidado com o ombro direito, nunca forçar com dor.",
   csr:   "Costas e bíceps. Puxa até apertar as omoplatas, desce até esticar os braços por completo. Peito apoiado, sem balanço.",
@@ -832,7 +855,7 @@ const PLANS = {
   fullbody3x: {
     name: "Full-Body 3×",
     workouts: {
-  fbA:{name:"Full-Body A",type:"upper",day:"Dia A",sub:"Corpo inteiro · ênfase quad",exercises:[
+  fbA:{name:"Full-Body A",type:"upper",warmupType:"fullbody",day:"Segunda",sub:"Corpo inteiro · ênfase quad",exercises:[
     {id:"fb_squat",name:"Barbell Squat",        sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
     {id:"fb_bench",name:"Machine Bench Press",  sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","triceps"],inc:"machine",warmup:true,rest:"2–3 min"},
     {id:"fb_csrow",name:"Chest-Supported Row",  sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
@@ -840,7 +863,7 @@ const PLANS = {
     {id:"fb_lat1", name:"Lateral Raise",        sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"fb_push", name:"Cable Triceps Pushdown",sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
   ],coreRef:["Side Plank — 3×20–30seg/lado"]},
-  fbB:{name:"Full-Body B",type:"lower",day:"Dia B",sub:"Corpo inteiro · ênfase femoral",exercises:[
+  fbB:{name:"Full-Body B",type:"lower",warmupType:"fullbody",day:"Quarta",sub:"Corpo inteiro · ênfase femoral",exercises:[
     {id:"fb_rdl",  name:"Romanian Deadlift",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
     {id:"fb_pull", name:"Wide Grip Lat Pulldown",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"fb_ohp",  name:"Machine Shoulder Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["ombros"],inc:"machine",rest:"90 seg"},
@@ -848,23 +871,23 @@ const PLANS = {
     {id:"fb_pallof",name:"Pallof Press",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
     {id:"fb_curl", name:"Dumbbell Incline Curl",sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"dumbbell",rest:"90 seg"},
   ],coreRef:["Back Extension — 3×12–15 (leve, foco glúteo)"]},
-  fbC:{name:"Full-Body C",type:"upper",day:"Dia C",sub:"Corpo inteiro · misto",exercises:[
+  fbC:{name:"Full-Body C",type:"upper",warmupType:"fullbody",day:"Sexta",sub:"Corpo inteiro · misto",exercises:[
     {id:"fb_legpress",name:"Leg Press",         sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
-    {id:"fb_incpress",name:"Iso-Lateral Incline Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["peito","ombros"],inc:"dumbbell",rest:"90 seg"},
-    {id:"fb_isorow", name:"Iso-Lateral Row",    sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"dumbbell",rest:"90 seg"},
+    {id:"fb_incpress",name:"Iso-Lateral Incline Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["peito","ombros"],inc:"machine",rest:"90 seg"},
+    {id:"fb_isorow", name:"Iso-Lateral Row",    sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"fb_calf2",  name:"Standing Calf Raise (Smith)",sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"fb_abd2",   name:"Hip Abduction",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"fb_rpd",    name:"Reverse Pec Deck",   sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"machine",rest:"90 seg"},
   ],coreRef:["Side Plank — 3×20–30seg/lado"]}
     },
     days: [
-      {key:"fbA",label:"Dia A"},
-      {key:null,label:"—",name:"Corrida / Descanso",type:"cardio",sub:"Corrida ou recuperação"},
-      {key:"fbB",label:"Dia B"},
-      {key:null,label:"—",name:"Corrida / Descanso",type:"cardio",sub:"Corrida ou recuperação"},
-      {key:"fbC",label:"Dia C"},
-      {key:null,label:"—",name:"Corrida / Descanso",type:"cardio",sub:"Corrida ou recuperação"},
-      {key:null,label:"—",name:"Descanso",type:"rest",sub:"Recuperação"},
+      {key:"fbA",label:"Seg"},
+      {key:null,label:"Ter",name:"Corrida",type:"cardio",sub:"Fácil · Zone 2"},
+      {key:"fbB",label:"Qua"},
+      {key:null,label:"Qui",name:"Descanso",type:"rest",sub:"Recuperação"},
+      {key:"fbC",label:"Sex"},
+      {key:null,label:"Sáb",name:"Corrida longa",type:"cardio",sub:"Distância · ou trail"},
+      {key:null,label:"Dom",name:"Descanso",type:"rest",sub:"Recuperação"},
     ]
   }
 };
@@ -886,6 +909,19 @@ function setActivePlan(planId) {
 const MUSCLES={peito:"Peito",costas:"Costas",ombros:"Ombros",biceps:"Bíceps",triceps:"Tríceps",quad:"Quad",femoral:"Femoral",gluteo:"Glúteo",gemeos:"Gémeos",abdomen:"Abdómen"};
 
 const WARMUPS = {
+  fullbody: {
+    title: "Aquecimento Full-Body",
+    color: "var(--upper)",
+    items: [
+      "Bicicleta ou passadeira leve — 3–5 min (geral)",
+      "Rotações de ombro frente/trás — 10 cada sentido",
+      "Band pull-aparts — 15 reps (ombro/costas)",
+      "Leg swings frente/trás — 10 cada perna",
+      "Air squats — 10 reps amplitude total",
+      "Glute bridges no chão — 12 reps (ativação glúteo)",
+      "Séries de aproximação no 1º exercício pesado — 50% e 75%",
+    ]
+  },
   upper: {
     title: "Aquecimento Upper",
     color: "var(--upper)",
@@ -1129,7 +1165,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.61';
+const APP_VERSION = '1.68';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1400,7 +1436,12 @@ function buildMigrationRecords() {
   return recs;
 }
 
+// UID da conta do Vítor (treinador). Os dados históricos do InBody só pertencem
+// a esta conta — não devem ser injetados nas contas de alunos.
+const OWNER_USER_ID = '79a56d8c-a7db-48fa-9b1d-4e3b1f73db7f';
+
 async function migrateMeasurementsIfEmpty() {
+  if (authUserId !== OWNER_USER_ID) return; // só o dono recebe os dados InBody migrados
   if (getMeasurements().length > 0) return;
   const recs = buildMigrationRecords();
   for (const r of recs) { await sb.saveMeasurement(r); }
@@ -1527,12 +1568,14 @@ async function showView(v) {
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
-  document.querySelectorAll('.nav-tab')[['home','nutricao','stats','historico','dados'].indexOf(v)].classList.add('active');
+  // marcar a tab ativa pelo botão que chama esta view (robusto a ordem/visibilidade)
+  const tabIdx = ['home','progresso','nutricao','dados'].indexOf(v);
+  const tabBtn = document.querySelectorAll('.nav-tab')[tabIdx];
+  if (tabBtn) tabBtn.classList.add('active');
   await loadSessions();
   if(v==='home')renderHome();
+  if(v==='progresso'){ if(_measurements===null) await loadMeasurements(); renderProgresso(); }
   if(v==='nutricao'){ if(_measurements===null) await loadMeasurements(); renderNutricao(); }
-  if(v==='historico')renderHistorico();
-  if(v==='stats')renderStats();
   if(v==='dados'){ _profileEditing = false; await loadProfile(); renderDados(); }
 }
 
@@ -1988,10 +2031,10 @@ function renderSession() {
   <div id="timer-control" style="display:flex;justify-content:flex-end;margin-bottom:16px">
     <button id="timer-btn" onclick="toggleTimer()" class="timer-start-btn">${ICON_PLAY_SM}<span>Iniciar</span></button>
   </div>
-  <div class="day-card ${w.type}" onclick="showWarmup('${w.type}', '${currentWorkout}')" style="margin-bottom:16px">
+  <div class="day-card ${w.type}" onclick="showWarmup('${w.warmupType||w.type}', '${currentWorkout}')" style="margin-bottom:16px">
     <div class="day-label">Antes de começar</div>
     <div class="day-name">Ver aquecimento</div>
-    <div class="day-sub">${w.type==='upper'?'Ombro · peito · costas':'Anca · pernas · core'}</div>
+    <div class="day-sub">${w.warmupType==='fullbody'?'Corpo inteiro · ativação':(w.type==='upper'?'Ombro · peito · costas':'Anca · pernas · core')}</div>
   </div>`;
 
   if (last) {
@@ -2230,7 +2273,7 @@ function showProgressionSummary(exData, w) {
 
 // ======================== HISTÓRICO ========================
 function renderHistorico() {
-  const container = document.getElementById('view-historico');
+  const container = document.getElementById('sub-historico');
   const sessions = [...getSessions()].reverse();
   if (!sessions.length) { container.innerHTML = `<div class="history-empty"><p style="font-size:17px;font-weight:700;color:var(--text2);margin-bottom:6px">Ainda nada por aqui.</p><p>O primeiro treino que guardares começa a tua história. Still becoming<span style="color:var(--accent)">.</span></p></div>`; return; }
 
@@ -2265,7 +2308,7 @@ function editSession(id) {
   const s = getSessions().find(x => x.id === id);
   if (!s) return;
   const w = WORKOUTS[s.workoutKey];
-  const container = document.getElementById('view-historico');
+  const container = document.getElementById('sub-historico');
   let html = `<button class="back-btn" onclick="renderHistorico()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Voltar
   </button>
@@ -2416,7 +2459,7 @@ function svgLine(data) {
 }
 
 function renderStats() {
-  const container = document.getElementById('view-stats');
+  const container = document.getElementById('sub-stats');
   const sessions = getSessions();
 
   if (!sessions.length) {
@@ -2823,6 +2866,50 @@ function calcPRs(sessions, allEx) {
 // ======================== NUTRIÇÃO ========================
 let _nutriTab = 'meals'; // sub-aba ativa dentro da Nutrição
 
+// ======================== CORPO (aba principal) ========================
+// As medições/composição corporal são uma aba própria, disponível para todos
+// os utilizadores (treinador e alunos). Reaproveita o HTML das medições.
+// ======================== PROGRESSO (aba principal com sub-abas) ========================
+// Agrupa Desempenho (stats), Corpo (medições) e Histórico — tudo o que é "ver evolução".
+let _progressoTab = 'stats';
+
+function renderProgresso() {
+  // sub-abas
+  const tabs = [['stats','Desempenho'],['corpo','Corpo'],['historico','Histórico']];
+  let subtabs = `<div class="nutri-subtabs">`;
+  tabs.forEach(([key,label]) => {
+    subtabs += `<button class="nutri-subtab${_progressoTab===key?' active':''}" onclick="setProgressoTab('${key}')">${label}</button>`;
+  });
+  subtabs += `</div>`;
+  document.getElementById('progresso-subtabs').innerHTML = subtabs;
+
+  // mostrar só a sub-view ativa
+  document.getElementById('sub-stats').style.display = (_progressoTab==='stats') ? '' : 'none';
+  document.getElementById('sub-corpo').style.display = (_progressoTab==='corpo') ? '' : 'none';
+  document.getElementById('sub-historico').style.display = (_progressoTab==='historico') ? '' : 'none';
+
+  // renderizar a ativa
+  if (_progressoTab==='stats') renderStats();
+  else if (_progressoTab==='corpo') renderCorpo();
+  else if (_progressoTab==='historico') renderHistorico();
+}
+
+function setProgressoTab(tab) {
+  _progressoTab = tab;
+  renderProgresso();
+}
+
+function renderCorpo() {
+  const container = document.getElementById('sub-corpo');
+  let html = `<div class="nutri-header">
+    <p class="section-title" style="margin-bottom:4px">Corpo</p>
+    <div class="nutri-sub">Peso · composição · medições</div>
+  </div><div class="nutri-content">`;
+  html += nutriMeasuresHTML(NUTRITION_PLAN);
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
 function renderNutricao() {
   const container = document.getElementById('view-nutricao');
   const p = NUTRITION_PLAN;
@@ -2858,8 +2945,8 @@ function renderNutricao() {
     </div>`;
   }
 
-  // ----- Sub-abas -----
-  const tabs = [['meals','Refeições'],['fruit','Fruta'],['rules','Regras'],['measures','Corpo']];
+  // ----- Sub-abas (Corpo saiu para aba principal própria) -----
+  const tabs = [['meals','Refeições'],['fruit','Fruta'],['rules','Regras']];
   html += `<div class="nutri-subtabs">`;
   tabs.forEach(([key, label]) => {
     html += `<button class="nutri-subtab${_nutriTab===key?' active':''}" onclick="setNutriTab('${key}')">${label}</button>`;
@@ -2869,7 +2956,7 @@ function renderNutricao() {
   if (_nutriTab === 'meals') html += nutriMealsHTML(p);
   else if (_nutriTab === 'fruit') html += nutriFruitHTML(p);
   else if (_nutriTab === 'rules') html += nutriRulesHTML(p);
-  else if (_nutriTab === 'measures') html += nutriMeasuresHTML(p);
+  else if (_nutriTab === 'measures') html += nutriMealsHTML(p); // fallback: 'measures' já não é sub-aba
 
   html += `</div>`;
   container.innerHTML = html;
@@ -3494,7 +3581,15 @@ async function startApp() {
   await loadMeasurements();
   await migrateMeasurementsIfEmpty();
   await syncPending();
+  applyTabVisibility();
   renderHome();
+}
+
+// A aba Nutrição só faz sentido para o treinador (plano individual próprio).
+// Os alunos veem Treino + Corpo + Stats + Histórico + Conta.
+function applyTabVisibility() {
+  const nutriTab = document.getElementById('tab-nutricao');
+  if (nutriTab) nutriTab.style.display = (authUserId === OWNER_USER_ID) ? '' : 'none';
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
