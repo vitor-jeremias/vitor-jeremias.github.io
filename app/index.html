@@ -747,12 +747,12 @@ const EX_NOTES = {
   mcr:   "Gémeos (sóleo). Desce até ao máximo alongamento e pausa 2 seg, sobe até à ponta. Joelho dobrado, amplitude completa.",
   cc1:   "Abdómen (flexão). Enrola a coluna trazendo o tronco aos joelhos, expira na contração. Sem usar momentum. Polia alta.",
   pal1:  "Abdómen (anti-rotação). Estende os braços à frente e resiste à rotação, mantém o tronco imóvel. Controla a volta. Polia média.",
-  ilr:   "Costas e bíceps. Puxa até apertar a omoplata, estica o braço por completo no fundo. Unilateral — começa pelo direito e regista a carga de um lado.",
-  ism:   "Peito superior e ombro. Empurra na diagonal, pausa breve no fundo, controla a volta. Cuidado com o ombro direito. Unilateral — começa pelo direito e regista a carga de um lado.",
-  tglp:  "Costas e bíceps. Deixa os braços subirem por completo no topo (alongamento), puxa até ao peito com os cotovelos para baixo.",
+  ilr:   "Costas e bíceps. Puxa até apertar as omoplatas, estica os braços por completo no fundo. Os dois braços ao mesmo tempo — regista a carga de um lado.",
+  ism:   "Peito superior e ombro. Empurra na diagonal, pausa breve no fundo, controla a volta. Os dois braços ao mesmo tempo — regista a carga de um lado. Amplitude controlada no ombro direito.",
+  tglp:  "Costas (largura) e bíceps. Pega larga pronada (palmas à frente). Deixa os braços subirem por completo no topo (alongamento), puxa até ao peito com os cotovelos para baixo. Constrói a largura das costas, a par das Pull-Ups.",
   msp:   "Deltóide anterior. Empurra acima da cabeça sem bloquear os cotovelos no topo, desce com controlo. Amplitude controlada — cuidado com o ombro direito.",
   ccf:   "Peito. Abre os braços ao máximo na fase negativa (o fundo é o mais importante), junta à frente sem trancar. Polia média (cintura).",
-  ote:   "Tríceps (cabeça longa). Estende acima da cabeça para máximo alongamento, controla a volta. Polia média (anca) para te posicionares sem esforço.",
+  ote:   "Tríceps (cabeça longa). Um braço de cada vez, segurando só a ponta do cabo (sem corda). Estende acima da cabeça para máximo alongamento, leva a mão bem atrás da cabeça, controla a volta. Polia média (anca) para te posicionares sem esforço.",
   dlr:   "Deltóide lateral. Sobe até à altura do ombro, desce devagar. Tronco ligeiramente à frente, cotovelo ligeiramente fletido.",
   dic:   "Bíceps. Deixa o braço descer por completo para máximo alongamento, flexiona com controlo. Banco inclinado, sem balanço.",
   rpd2:  "Deltóide posterior e trapézio médio. Abre apertando as omoplatas, controla a volta. Essencial para a saúde do ombro direito.",
@@ -766,7 +766,17 @@ const EX_NOTES = {
   hlr:   "Abdómen inferior. Sobe as pernas com controlo, desce devagar sem balanço. Progride: joelhos fletidos → pernas esticadas → com peso.",
 };
 
-const WORKOUTS = {
+// ======================== PLANOS ========================
+// A app suporta múltiplos planos (modelo treinador-aluno). Cada plano tem os
+// seus treinos (workouts) e a sua estrutura semanal (days). O plano ativo é
+// escolhido em runtime conforme o utilizador (campo plan_id no perfil).
+// WORKOUTS e DAYS abaixo são variáveis "vivas" que apontam para o plano ativo,
+// para que todo o código existente que as lê continue a funcionar sem mudanças.
+
+const PLANS = {
+  upperlower: {
+    name: "Upper / Lower",
+    workouts: {
   upper1:{name:"Upper 1",type:"upper",day:"Segunda",sub:"Peito · Costas · Ombros · Braços",exercises:[
     {id:"elev",name:"Pull-Ups",            sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"bodyweight",bodyweight:true,rest:"2–3 min"},
     {id:"mbp", name:"Machine Bench Press",           sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","triceps"],inc:"machine",warmup:true,rest:"2–3 min"},
@@ -777,7 +787,8 @@ const WORKOUTS = {
     {id:"skc", name:"Skull Crusher",                 sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"dumbbell",rest:"90 seg"},
     {id:"bc",  name:"Bayesian Curl",                 sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"cable",rest:"90 seg",pulley:"Polia baixa (canela)"},
     {id:"rpd1",name:"Face Pull",                     sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
-  ]},
+    {id:"pal1",name:"Pallof Press",          sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
+  ],coreRef:["Side Plank — 3×20–30seg/lado"]},
   lower1:{name:"Lower 1",type:"lower",day:"Terça",sub:"Quad · Glúteo · Femoral · Gémeos",exercises:[
     {id:"bs",  name:"Barbell Squat", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
     {id:"bss", name:"Bulgarian Split Squat",         sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"dumbbell",rest:"2–3 min"},
@@ -786,19 +797,19 @@ const WORKOUTS = {
     {id:"abd1",name:"Hip Abduction",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"mcr", name:"Seated Calf Raise",        sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"cc1", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
-    {id:"pal1",name:"Pallof Press",          sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
-  ],coreRef:["Side Plank — 3×20–30seg/lado","Back Extension — 3×12–15 (leve, foco glúteo)"]},
+  ],coreRef:["Back Extension — 3×12–15 (leve, foco glúteo)"]},
   upper2:{name:"Upper 2",type:"upper",day:"Quinta",sub:"Costas · Peito · Ombros · Braços",exercises:[
     {id:"ilr", name:"Iso-Lateral Row",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"dumbbell",warmup:true,rest:"2–3 min"},
     {id:"ism", name:"Iso-Lateral Incline Press",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","ombros"],inc:"dumbbell",warmup:true,rest:"2–3 min"},
-    {id:"tglp",name:"Triangle Grip Lat Pulldown",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
+    {id:"tglp",name:"Wide Grip Lat Pulldown",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"msp", name:"Machine Shoulder Press",        sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"ccf", name:"Cable Chest Fly",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"cable_fly",rest:"90 seg",pulley:"Polia média (cintura)"},
     {id:"ote", name:"Overhead Triceps Extension",  sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable_fly",rest:"90 seg",pulley:"Polia média (anca)"},
     {id:"dlr", name:"Shoulder Trainer Lateral",    sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"dic", name:"Dumbbell Incline Curl",         sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"dumbbell",rest:"90 seg"},
     {id:"rpd2",name:"Reverse Pec Deck",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"machine",rest:"90 seg"},
-  ]},
+    {id:"hlr", name:"Hanging Leg Raise",     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"bodyweight",rest:"60 seg",repsOnly:true},
+  ],coreRef:["Side Plank — 3×20–30seg/lado"]},
   lower2:{name:"Lower 2",type:"lower",day:"Sexta",sub:"Femoral · Quad · Gémeos · Abdómen",exercises:[
     {id:"rdl", name:"Romanian Deadlift",       sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
     {id:"lp",  name:"Leg Press",                     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
@@ -807,17 +818,70 @@ const WORKOUTS = {
     {id:"abd2",name:"Hip Abduction",                 sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"cr",  name:"Standing Calf Raise (Smith)", sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"cc2", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
-    {id:"hlr", name:"Hanging Leg Raise",     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"bodyweight",rest:"60 seg",repsOnly:true},
-  ],coreRef:["Side Plank — 3×20–30seg/lado","Back Extension — 3×12–15 (leve, foco glúteo)"]}
+  ],coreRef:["Back Extension — 3×12–15 (leve, foco glúteo)"]}
+    },
+    days: [
+      {key:"upper1",label:"Seg"},{key:"lower1",label:"Ter"},
+      {key:null,label:"Qua",name:"Natação",type:"cardio",sub:"Endurance"},
+      {key:"upper2",label:"Qui"},{key:"lower2",label:"Sex"},
+      {key:null,label:"Sáb",name:"Corrida",type:"cardio",sub:"Zone 2"},
+      {key:null,label:"Dom",name:"Descanso",type:"rest",sub:"Recuperação"},
+    ]
+  },
+
+  fullbody3x: {
+    name: "Full-Body 3×",
+    workouts: {
+  fbA:{name:"Full-Body A",type:"upper",day:"Dia A",sub:"Corpo inteiro · ênfase quad",exercises:[
+    {id:"fb_squat",name:"Barbell Squat",        sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
+    {id:"fb_bench",name:"Machine Bench Press",  sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","triceps"],inc:"machine",warmup:true,rest:"2–3 min"},
+    {id:"fb_csrow",name:"Chest-Supported Row",  sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
+    {id:"fb_abd1", name:"Hip Abduction",        sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
+    {id:"fb_lat1", name:"Lateral Raise",        sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
+    {id:"fb_push", name:"Cable Triceps Pushdown",sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
+  ],coreRef:["Side Plank — 3×20–30seg/lado"]},
+  fbB:{name:"Full-Body B",type:"lower",day:"Dia B",sub:"Corpo inteiro · ênfase femoral",exercises:[
+    {id:"fb_rdl",  name:"Romanian Deadlift",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
+    {id:"fb_pull", name:"Wide Grip Lat Pulldown",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
+    {id:"fb_ohp",  name:"Machine Shoulder Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["ombros"],inc:"machine",rest:"90 seg"},
+    {id:"fb_calf1",name:"Seated Calf Raise",    sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
+    {id:"fb_pallof",name:"Pallof Press",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
+    {id:"fb_curl", name:"Dumbbell Incline Curl",sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"dumbbell",rest:"90 seg"},
+  ],coreRef:["Back Extension — 3×12–15 (leve, foco glúteo)"]},
+  fbC:{name:"Full-Body C",type:"upper",day:"Dia C",sub:"Corpo inteiro · misto",exercises:[
+    {id:"fb_legpress",name:"Leg Press",         sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
+    {id:"fb_incpress",name:"Iso-Lateral Incline Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["peito","ombros"],inc:"dumbbell",rest:"90 seg"},
+    {id:"fb_isorow", name:"Iso-Lateral Row",    sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"dumbbell",rest:"90 seg"},
+    {id:"fb_calf2",  name:"Standing Calf Raise (Smith)",sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
+    {id:"fb_abd2",   name:"Hip Abduction",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
+    {id:"fb_rpd",    name:"Reverse Pec Deck",   sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"machine",rest:"90 seg"},
+  ],coreRef:["Side Plank — 3×20–30seg/lado"]}
+    },
+    days: [
+      {key:"fbA",label:"Dia A"},
+      {key:null,label:"—",name:"Corrida / Descanso",type:"cardio",sub:"Corrida ou recuperação"},
+      {key:"fbB",label:"Dia B"},
+      {key:null,label:"—",name:"Corrida / Descanso",type:"cardio",sub:"Corrida ou recuperação"},
+      {key:"fbC",label:"Dia C"},
+      {key:null,label:"—",name:"Corrida / Descanso",type:"cardio",sub:"Corrida ou recuperação"},
+      {key:null,label:"—",name:"Descanso",type:"rest",sub:"Recuperação"},
+    ]
+  }
 };
 
-const DAYS = [
-  {key:"upper1",label:"Seg"},{key:"lower1",label:"Ter"},
-  {key:null,label:"Qua",name:"Natação",type:"cardio",sub:"Endurance"},
-  {key:"upper2",label:"Qui"},{key:"lower2",label:"Sex"},
-  {key:null,label:"Sáb",name:"Corrida",type:"cardio",sub:"Zone 2"},
-  {key:null,label:"Dom",name:"Descanso",type:"rest",sub:"Recuperação"},
-];
+// Plano ativo — apontam para o plano do utilizador. Por defeito, o plano do treinador.
+const DEFAULT_PLAN = 'upperlower';
+let activePlanId = DEFAULT_PLAN;
+let WORKOUTS = PLANS[DEFAULT_PLAN].workouts;
+let DAYS = PLANS[DEFAULT_PLAN].days;
+
+// Define o plano ativo (chamado após carregar o perfil do utilizador).
+function setActivePlan(planId) {
+  const id = (planId && PLANS[planId]) ? planId : DEFAULT_PLAN;
+  activePlanId = id;
+  WORKOUTS = PLANS[id].workouts;
+  DAYS = PLANS[id].days;
+}
 
 const MUSCLES={peito:"Peito",costas:"Costas",ombros:"Ombros",biceps:"Bíceps",triceps:"Tríceps",quad:"Quad",femoral:"Femoral",gluteo:"Glúteo",gemeos:"Gémeos",abdomen:"Abdómen"};
 
@@ -843,7 +907,8 @@ const WARMUPS = {
       "Leg swings laterais — 10 cada perna",
       "Air squats — 10 reps amplitude total",
       "Lunges com rotação — 5 cada perna",
-      "Glute bridges no chão — 15 reps lentas (último)",
+      "Glute bridges no chão — 15 reps lentas (ativação glúteo máximo)",
+      "Abdução deitado de lado — 12 cada lado (ativação glúteo médio — anca/joelho)",
     ]
   },
   corrida: {
@@ -1064,7 +1129,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.55';
+const APP_VERSION = '1.61';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1280,6 +1345,8 @@ let _profile = null;
 
 async function loadProfile() {
   _profile = await sb.getProfile();
+  // Define o plano do utilizador (campo plan_id no perfil). Sem plan_id → plano por defeito (treinador).
+  setActivePlan(_profile && _profile.plan_id ? _profile.plan_id : DEFAULT_PLAN);
   return _profile;
 }
 function getProfile() { return _profile; }
