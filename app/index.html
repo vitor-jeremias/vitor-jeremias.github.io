@@ -379,16 +379,25 @@ input[type="file"]{display:none;}
 .meas-row-actions button{background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;}
 .meas-row-actions .meas-del{color:var(--red);border-color:rgba(255,94,87,0.3);}
 .measure-modal{position:fixed;inset:0;z-index:1500;background:rgba(10,14,12,0.96);backdrop-filter:blur(8px);display:none;overflow-y:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 18px calc(40px + env(safe-area-inset-bottom,0px));}
-.exnote-modal{position:fixed;inset:0;z-index:1600;background:rgba(0,0,0,0.5);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center;}
+.exnote-modal{position:fixed;inset:0;z-index:1600;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;}
 .exnote-modal.open{display:flex;}
-.exnote-sheet{background:var(--surface);width:100%;max-width:520px;border-radius:20px 20px 0 0;border:1px solid var(--border);border-bottom:none;padding:10px 22px calc(22px + env(safe-area-inset-bottom,0px));animation:exnoteUp 0.22s ease;}
+.exnote-sheet{background:linear-gradient(180deg,#161d19,#11161300),var(--surface);width:100%;max-width:520px;border-radius:24px 24px 0 0;border:1px solid var(--border);border-bottom:none;padding:10px 24px calc(24px + env(safe-area-inset-bottom,0px));animation:exnoteUp 0.26s cubic-bezier(0.22,1,0.36,1);box-shadow:0 -8px 40px rgba(0,0,0,0.4);}
 @keyframes exnoteUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-.exnote-grip{width:40px;height:4px;border-radius:2px;background:var(--border);margin:4px auto 16px;}
-.exnote-head{display:flex;align-items:center;gap:11px;margin-bottom:14px;}
-.exnote-badge{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#0a0e0c;font-size:18px;font-weight:800;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;}
-.exnote-title{font-size:19px;font-weight:800;color:var(--text);line-height:1.2;}
-.exnote-body{font-size:16px;line-height:1.55;color:var(--text2);margin-bottom:20px;}
-.exnote-close{width:100%;padding:14px;border-radius:12px;border:none;background:var(--surface2);color:var(--text);font-size:16px;font-weight:700;cursor:pointer;}
+.exnote-grip{width:38px;height:4px;border-radius:2px;background:var(--border);margin:4px auto 18px;}
+.exnote-head{display:flex;align-items:center;gap:11px;margin-bottom:18px;}
+.exnote-head-text{flex:1;min-width:0;}
+.exnote-muscle{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);font-family:var(--mono);margin-bottom:5px;}
+.exnote-title{font-size:22px;font-weight:800;color:var(--text);line-height:1.15;letter-spacing:-0.3px;}
+.exnote-body{margin-bottom:22px;}
+.exnote-step{display:flex;gap:13px;align-items:flex-start;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.exnote-step:last-child{border-bottom:none;}
+.exnote-step-dot{flex-shrink:0;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:8px;}
+.exnote-step-text{font-size:16px;line-height:1.5;color:var(--text);}
+.exnote-care{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:13px 15px;background:rgba(255,159,67,0.09);border:1px solid rgba(255,159,67,0.22);border-radius:12px;}
+.exnote-care-icon{flex-shrink:0;width:22px;height:22px;margin-top:1px;}
+.exnote-care-text{font-size:15px;line-height:1.5;color:#ffb877;font-weight:500;}
+.exnote-close{width:100%;padding:15px;border-radius:13px;border:none;background:var(--surface2);color:var(--text);font-size:16px;font-weight:700;cursor:pointer;transition:background 0.15s;}
+.exnote-close:active{background:var(--border);}
 .measure-modal.open{display:block;}
 .measure-modal-inner{max-width:520px;margin:0 auto;}
 .measure-modal-head{display:flex;align-items:center;gap:12px;position:sticky;top:calc(env(safe-area-inset-top,0px));background:rgba(10,14,12,0.96);padding:8px 0 14px;z-index:2;}
@@ -681,8 +690,10 @@ input[type="file"]{display:none;}
   <div class="exnote-sheet" onclick="event.stopPropagation()">
     <div class="exnote-grip"></div>
     <div class="exnote-head">
-      <span class="exnote-badge">!</span>
-      <div id="exnote-title" class="exnote-title">Exercício</div>
+      <div class="exnote-head-text">
+        <div id="exnote-muscle" class="exnote-muscle"></div>
+        <div id="exnote-title" class="exnote-title">Exercício</div>
+      </div>
     </div>
     <div id="exnote-body" class="exnote-body"></div>
     <button class="exnote-close" onclick="closeExNote()">Fechar</button>
@@ -1032,7 +1043,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.51';
+const APP_VERSION = '1.54';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1662,6 +1673,15 @@ function getTimerSeconds() {
   return total;
 }
 
+// Arranca o cronómetro automaticamente no 1º registo de série, se ainda não foi
+// iniciado (nem está pausado com tempo acumulado). Reutiliza toggleTimer para
+// manter um único caminho de arranque (mesmo estado visual do botão).
+function autoStartTimerIfNeeded() {
+  if (timerStart) return;        // já a correr
+  if (timerElapsed > 0) return;  // pausado a meio — não mexer (foi opção do utilizador)
+  toggleTimer();                 // arranca do zero
+}
+
 function startWorkout(key) {
   currentWorkout = key;
   _autoRestFired = {};
@@ -1709,6 +1729,10 @@ function onSetInput(exId, setNum) {
   const filled = isFinite(rv) && rv > 0;
   row.classList.toggle('done', filled);
   updateExerciseDone(exId);
+
+  // Arranque automático do cronómetro: a 1ª série registada (reps válidas) marca o
+  // início real do treino. Só arranca se nunca foi iniciado nem tem tempo acumulado.
+  if (filled) autoStartTimerIfNeeded();
 
   // Auto-rest after completing a set that is NOT the last one.
   // Debounced: waits ~1.2s after you stop typing, so writing "10" (1 then 0)
@@ -3062,14 +3086,32 @@ function closeMeasureForm() {
 function showExNote(exId) {
   const note = EX_NOTES[exId];
   if (!note) return;
-  // descobrir o nome do exercício a partir do treino ativo
+  // nome do exercício
   let nome = '';
   for (const k in WORKOUTS) {
     const ex = WORKOUTS[k].exercises.find(e => e.id === exId);
     if (ex) { nome = ex.name; break; }
   }
+  // Parsing: a nota tem o formato "Músculo. Frase. Frase. ..."
+  // 1ª frase = músculo (etiqueta) · frases com termos de cuidado = caixa laranja · resto = passos.
+  const parts = note.split('. ').map(s => s.trim()).filter(Boolean).map(s => s.replace(/\.$/, ''));
+  const muscle = parts.length ? parts[0] : '';
+  const rest = parts.slice(1);
+  const careRe = /(cuidado|atenção|essencial para a saúde|não forçar|com cuidado)/i;
+  const steps = [], cares = [];
+  rest.forEach(p => { (careRe.test(p) ? cares : steps).push(p); });
+
+  document.getElementById('exnote-muscle').textContent = muscle;
   document.getElementById('exnote-title').textContent = nome || 'Como fazer';
-  document.getElementById('exnote-body').textContent = note;
+
+  let bodyHtml = '';
+  steps.forEach(s => {
+    bodyHtml += `<div class="exnote-step"><span class="exnote-step-dot"></span><span class="exnote-step-text">${s}.</span></div>`;
+  });
+  cares.forEach(c => {
+    bodyHtml += `<div class="exnote-care"><svg class="exnote-care-icon" viewBox="0 0 24 24" fill="none" stroke="#ffb877" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="exnote-care-text">${c}.</span></div>`;
+  });
+  document.getElementById('exnote-body').innerHTML = bodyHtml;
   document.getElementById('exnote-modal').classList.add('open');
 }
 
