@@ -603,6 +603,25 @@ input[type="file"]{display:none;}
   </div>
   <div class="splash-tag">STILL BECOMING<span style="color:#39FF88;font-weight:800">.</span></div>
 </div>
+<div id="onboarding-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:2200;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:calc(40px + env(safe-area-inset-top,0px)) 24px calc(40px + env(safe-area-inset-bottom,0px))">
+  <div style="width:100%;max-width:380px;position:relative;z-index:1">
+    <div style="text-align:center;margin-bottom:28px">
+      <svg width="48" viewBox="0 0 200 177" style="margin-bottom:16px" xmlns="http://www.w3.org/2000/svg"><path d="M 66.9,157.1 L 33.6,156.8 L 41.4,146.7 L 72.9,109.1 L 20.2,49.7 L 20.0,48.8 L 57.4,48.5 L 58.4,49.0 L 87.0,82.6 L 91.6,87.1 L 130.7,40.5 L 124.5,31.1 L 124.6,29.9 L 179.9,20.0 L 180.0,20.9 L 169.3,33.9 L 66.9,157.1 Z" fill="#39FF88"/></svg>
+      <div style="font-size:26px;font-weight:800;color:var(--text);letter-spacing:-0.5px">Bem-vindo à UNFYN</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:8px;line-height:1.4">Vamos só preparar o teu perfil. Leva um minuto.</div>
+    </div>
+    <div class="profile-form">
+      <div class="profile-row"><label>Nome</label><input id="ob-nome" type="text" placeholder="O teu nome"></div>
+      <div class="profile-row"><label>Nascimento</label><input id="ob-dob" type="date"></div>
+      <div class="profile-row"><label>Altura (cm)</label><input id="ob-altura" type="number" inputmode="numeric" placeholder="opcional"></div>
+      <div class="profile-row"><label>Peso (kg)</label><input id="ob-peso" type="number" inputmode="decimal" placeholder="opcional"></div>
+      <div class="profile-row"><label>Condicionantes</label><textarea id="ob-lesoes" placeholder="opcional — ex: ombro direito"></textarea></div>
+    </div>
+    <div id="ob-error" style="color:var(--red);font-size:13px;margin:4px 0 12px;min-height:18px;text-align:center"></div>
+    <button id="ob-btn" class="login-submit" onclick="finishOnboarding()">Começar</button>
+    <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:14px;line-height:1.4">Só o nome é necessário. O resto podes preencher depois, na aba Conta ou Corpo.</div>
+  </div>
+</div>
 <div id="app-wrap" style="display:none">
 <nav class="nav">
   <div class="nav-title" style="display:flex;align-items:center;gap:9px">
@@ -1210,7 +1229,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.79';
+const APP_VERSION = '1.81';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1459,7 +1478,10 @@ function ageFromDOB(dob) {
   return age;
 }
 // Peso corporal atual (para volume real das pull-ups). null se não definido.
+// Usa a medição mais recente da aba Corpo; se não houver, o peso do perfil.
 function bodyWeight() {
+  const recent = latestWeight();
+  if (recent != null && recent > 0) return Number(recent);
   const p = getProfile();
   return (p && p.peso > 0) ? Number(p.peso) : null;
 }
@@ -1472,6 +1494,14 @@ async function loadMeasurements() {
   return _measurements;
 }
 function getMeasurements() { return _measurements || []; }
+
+// Peso mais recente registado na aba Corpo (medições). É a fonte de verdade do peso.
+function latestWeight() {
+  const ms = getMeasurements().filter(m => m.peso != null && isFinite(m.peso));
+  if (!ms.length) return null;
+  ms.sort((a, b) => new Date(b.data) - new Date(a.data));
+  return ms[0].peso;
+}
 
 // Migração única: converte as 6 avaliações InBody do código para registos individuais.
 // Corre só se a tabela estiver vazia (não duplica).
@@ -3467,7 +3497,9 @@ function profileSectionHTML() {
   const metaBits = [];
   if (idade != null) metaBits.push(`${idade} anos`);
   if (p.altura) metaBits.push(`${p.altura} cm`);
-  if (p.peso) metaBits.push(`${p.peso} kg`);
+  // O peso vem da medição mais recente (aba Corpo); o p.peso manual é só fallback.
+  const pesoAtual = latestWeight() != null ? latestWeight() : p.peso;
+  if (pesoAtual) metaBits.push(`${pesoAtual} kg`);
   const lesoes = p.lesoes ? String(p.lesoes).replace(/</g,'&lt;') : '';
   return `
     <div class="profile-head">
@@ -3698,7 +3730,50 @@ async function startApp() {
   // Resetar sub-abas para o estado inicial e abrir sempre no Treino.
   _progressoTab = 'stats';
   _nutriTab = 'meals';
+  // Primeiro arranque sem perfil → onboarding antes de entrar na app.
+  const p = getProfile();
+  const hasProfile = !!(p && (p.nome || p.data_nascimento || p.altura || p.peso || p.lesoes));
+  if (!hasProfile) {
+    showOnboarding();
+    return;
+  }
   showView('home');
+}
+
+function showOnboarding() {
+  hideSplash();
+  document.getElementById('app-wrap').style.display = 'none';
+  document.getElementById('onboarding-screen').style.display = 'flex';
+}
+
+function hideOnboarding() {
+  document.getElementById('onboarding-screen').style.display = 'none';
+  document.getElementById('app-wrap').style.display = 'block';
+}
+
+async function finishOnboarding() {
+  const nome = document.getElementById('ob-nome').value.trim();
+  const errEl = document.getElementById('ob-error');
+  const btn = document.getElementById('ob-btn');
+  if (!nome) { errEl.textContent = 'Escreve pelo menos o teu nome.'; return; }
+  errEl.textContent = '';
+  const p = {
+    nome,
+    data_nascimento: document.getElementById('ob-dob').value || null,
+    altura: parseInt(document.getElementById('ob-altura').value, 10) || null,
+    peso: parseFloat(document.getElementById('ob-peso').value) || null,
+    lesoes: document.getElementById('ob-lesoes').value.trim() || null
+  };
+  btn.textContent = 'A guardar...'; btn.disabled = true;
+  const ok = await sb.saveProfile(p);
+  btn.textContent = 'Começar'; btn.disabled = false;
+  if (ok) {
+    _profile = { ...(_profile||{}), ...p };
+    hideOnboarding();
+    showView('home');
+  } else {
+    errEl.textContent = 'Não foi possível guardar. Tenta novamente.';
+  }
 }
 
 // A aba Nutrição só faz sentido para o treinador (plano individual próprio).
