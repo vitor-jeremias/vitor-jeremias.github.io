@@ -1024,7 +1024,8 @@ const SVG = {
   upload: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M5 20h14v-2H5v2zM5 9h4v6h6V9h4l-7-7-7 7z"/></svg>',
   trash: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>',
   edit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>',
-  exit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>'
+  exit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>'
 };
 
 // Planos de cardio por plano — cada plano tem os seus (auto-contido).
@@ -1209,7 +1210,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.78';
+const APP_VERSION = '1.79';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1276,6 +1277,22 @@ async function refreshToken() {
 
 function authHeaders() {
   return { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${authToken}` };
+}
+
+// Altera a password do utilizador autenticado (Supabase: PUT /auth/v1/user).
+async function changePassword(newPassword) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      method: 'PUT',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: newPassword })
+    });
+    const data = await res.json();
+    if (res.ok && data.id) return { ok: true };
+    return { ok: false, error: data.error_description || data.msg || data.error || 'Não foi possível alterar a senha' };
+  } catch(e) {
+    return { ok: false, error: 'Erro de ligação. Tenta novamente.' };
+  }
 }
 
 const sb = {
@@ -3407,6 +3424,11 @@ function renderDados() {
         <span class="tool-row-text"><span class="tool-row-name">Importar backup</span><span class="tool-row-desc">Restaurar de um ficheiro</span></span>
         <span class="tool-row-chev">›</span>
       </button>
+      <button class="tool-row" onclick="showChangePassword()">
+        <span class="tool-row-icon">${SVG.lock || '🔒'}</span>
+        <span class="tool-row-text"><span class="tool-row-name">Alterar senha</span><span class="tool-row-desc">Define uma senha só tua</span></span>
+        <span class="tool-row-chev">›</span>
+      </button>
       <button class="tool-row" onclick="logout()">
         <span class="tool-row-icon">${SVG.exit || '⎋'}</span>
         <span class="tool-row-text"><span class="tool-row-name">Terminar sessão</span><span class="tool-row-desc">Sair neste dispositivo</span></span>
@@ -3605,6 +3627,46 @@ async function doLogin() {
     const t0 = Date.now();
     await startApp();
     setTimeout(hideSplash, Math.max(0, 1000 - (Date.now() - t0)));
+  } else {
+    errEl.textContent = result.error;
+  }
+}
+
+// ----- Alterar senha -----
+function showChangePassword() {
+  const container = document.getElementById('view-dados');
+  container.innerHTML = `
+    <button class="back-btn" onclick="renderDados()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Voltar
+    </button>
+    <div class="session-header">
+      <div class="session-day" style="color:var(--accent)">Conta</div>
+      <div class="session-title">Alterar senha</div>
+    </div>
+    <div class="dados-tip" style="margin-bottom:18px">
+      Define uma senha só tua, que mais ninguém saiba. Mínimo 6 caracteres.
+    </div>
+    <input id="cp-new" type="password" autocomplete="new-password" placeholder="Nova senha" style="width:100%;padding:16px;margin-bottom:12px;border:1px solid var(--border);border-radius:12px;font-family:var(--font);font-size:16px;background:var(--surface);color:var(--text);-webkit-appearance:none">
+    <input id="cp-confirm" type="password" autocomplete="new-password" placeholder="Confirmar nova senha" style="width:100%;padding:16px;margin-bottom:8px;border:1px solid var(--border);border-radius:12px;font-family:var(--font);font-size:16px;background:var(--surface);color:var(--text);-webkit-appearance:none">
+    <div id="cp-error" style="color:var(--red);font-size:13px;margin-bottom:12px;min-height:18px"></div>
+    <button id="cp-btn" class="save-btn" onclick="doChangePassword()">Guardar nova senha</button>`;
+}
+
+async function doChangePassword() {
+  const newPw = document.getElementById('cp-new').value;
+  const confirmPw = document.getElementById('cp-confirm').value;
+  const errEl = document.getElementById('cp-error');
+  const btn = document.getElementById('cp-btn');
+  errEl.textContent = '';
+  if (!newPw || !confirmPw) { errEl.textContent = 'Preenche os dois campos.'; return; }
+  if (newPw.length < 6) { errEl.textContent = 'A senha tem de ter pelo menos 6 caracteres.'; return; }
+  if (newPw !== confirmPw) { errEl.textContent = 'As senhas não coincidem.'; return; }
+  btn.textContent = 'A guardar...'; btn.disabled = true;
+  const result = await changePassword(newPw);
+  btn.textContent = 'Guardar nova senha'; btn.disabled = false;
+  if (result.ok) {
+    renderDados();
+    showToast('Senha alterada ✓');
   } else {
     errEl.textContent = result.error;
   }
