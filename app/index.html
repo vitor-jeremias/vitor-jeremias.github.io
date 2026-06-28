@@ -658,7 +658,6 @@ input[type="file"]{display:none;}
         <button onclick="setSimpleTime(120)">2min</button>
         <button onclick="setSimpleTime(180)">3min</button>
       </div>
-      <div style="font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:12px;line-height:1.5">Core 30–45s · Isolamentos 90s · Compostos 2–3min</div>
     </div>
     <div id="timer-interval-config" class="timer-config" style="display:none">
       <div class="timer-int-row"><span>Prep</span><div class="timer-stepper"><button data-step="prep" data-delta="-5">−</button><span class="timer-step-val"><span id="int-prep">10</span>s</span><button data-step="prep" data-delta="5">+</button></div></div>
@@ -752,6 +751,9 @@ const EX_NOTES = {
   fb_calf2:    "Gémeos (gastrocnémio — de pé). Sobe nas pontas dos pés o máximo possível, pausa em cima, desce devagar até ao alongamento total. Amplitude completa.",
   fb_abd2:     "Glúteo médio. Abre as pernas contra a resistência, controla a volta. Inclina ligeiramente o tronco à frente para focar mais o glúteo médio.",
   fb_rpd:      "Deltóide posterior e trapézio médio. Abre os braços para trás apertando as omoplatas, controla a volta. Sem usar impulso.",
+  fb_fly:      "Peito (porção média). Abre o máximo possível na fase negativa para alongar o peito, junta à frente com controlo. Sem trancar os cotovelos.",
+  fb_legcurl:  "Femoral (flexão do joelho). Puxa os calcanhares em direção aos glúteos o máximo possível, controla a descida até esticar. Não levantar a anca do banco.",
+  fb_ote:      "Tríceps (cabeça longa). Braços acima da cabeça, estende os cotovelos por completo, controla a volta sentindo o alongamento atrás. Cotovelos apontados em frente, sem os abrir.",
   // ---- Exercícios do plano Upper/Lower (treinador) ----
   elev:  "Costas e bíceps. Sobe até o queixo passar a barra, desce até esticar os braços por completo. Controla a descida, sem balanço.",
   mbp:   "Peito e tríceps. Desce com controlo até ao peito, pausa 1 seg, empurra. Amplitude controlada — cuidado com o ombro direito, nunca forçar com dor.",
@@ -845,9 +847,9 @@ const PLANS = {
     },
     days: [
       {key:"upper1",label:"Seg"},{key:"lower1",label:"Ter"},
-      {key:null,label:"Qua",name:"Natação",type:"cardio",sub:"Endurance"},
+      {key:null,label:"Qua",name:"Natação",type:"cardio",cardio:"natacao",sub:"Endurance"},
       {key:"upper2",label:"Qui"},{key:"lower2",label:"Sex"},
-      {key:null,label:"Sáb",name:"Corrida",type:"cardio",sub:"Zone 2"},
+      {key:null,label:"Sáb",name:"Corrida",type:"cardio",cardio:"corrida",sub:"Zone 2"},
       {key:null,label:"Dom",name:"Descanso",type:"rest",sub:"Recuperação"},
     ]
   },
@@ -859,12 +861,14 @@ const PLANS = {
     {id:"fb_squat",name:"Barbell Squat",        sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,emptyBarFirst:true,rest:"2–3 min",plates:true},
     {id:"fb_abd1", name:"Hip Abduction",        sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"fb_bench",name:"Machine Bench Press",  sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","triceps"],inc:"machine",warmup:true,rest:"2–3 min"},
+    {id:"fb_fly",  name:"Machine Chest Fly",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"machine",rest:"90 seg"},
     {id:"fb_csrow",name:"Chest-Supported Row",  sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"fb_lat1", name:"Lateral Raise",        sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"fb_push", name:"Cable Triceps Pushdown",sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
   ],coreRef:["Side Plank — 3×20–30seg/lado"]},
   fbB:{name:"Full-Body B",type:"lower",warmupType:"fullbody",day:"Quarta",sub:"Corpo inteiro · ênfase femoral",exercises:[
     {id:"fb_rdl",  name:"Romanian Deadlift",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
+    {id:"fb_legcurl",name:"Seated Leg Curl",   sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
     {id:"fb_calf1",name:"Seated Calf Raise",    sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"fb_pull", name:"Wide Grip Lat Pulldown",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"fb_ohp",  name:"Machine Shoulder Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["ombros"],inc:"machine",rest:"90 seg"},
@@ -878,15 +882,16 @@ const PLANS = {
     {id:"fb_isorow", name:"Iso-Lateral Row",    sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"fb_calf2",  name:"Standing Calf Raise (Smith)",sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"fb_rpd",    name:"Reverse Pec Deck",   sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"machine",rest:"90 seg"},
+    {id:"fb_ote",    name:"Overhead Triceps Extension",sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia baixa (canela)"},
   ],coreRef:["Side Plank — 3×20–30seg/lado"]}
     },
     days: [
       {key:"fbA",label:"Seg"},
-      {key:null,label:"Ter",name:"Corrida",type:"cardio",sub:"Fácil · Zone 2"},
+      {key:null,label:"Ter",name:"Corrida",type:"cardio",cardio:"corrida",sub:"Fácil · Zone 2"},
       {key:"fbB",label:"Qua"},
       {key:null,label:"Qui",name:"Descanso",type:"rest",sub:"Recuperação"},
       {key:"fbC",label:"Sex"},
-      {key:null,label:"Sáb",name:"Corrida longa",type:"cardio",sub:"Distância · ou trail"},
+      {key:null,label:"Sáb",name:"Corrida longa",type:"cardio",cardio:"corrida",sub:"Distância · ou trail"},
       {key:null,label:"Dom",name:"Descanso",type:"rest",sub:"Recuperação"},
     ]
   }
@@ -1204,7 +1209,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.72';
+const APP_VERSION = '1.77';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1611,8 +1616,8 @@ async function showView(v) {
   if (tabBtn) tabBtn.classList.add('active');
   await loadSessions();
   if(v==='home')renderHome();
-  if(v==='progresso'){ if(_measurements===null) await loadMeasurements(); renderProgresso(); }
-  if(v==='nutricao'){ if(_measurements===null) await loadMeasurements(); renderNutricao(); }
+  if(v==='progresso'){ _progressoTab = 'stats'; if(_measurements===null) await loadMeasurements(); renderProgresso(); }
+  if(v==='nutricao'){ _nutriTab = 'meals'; if(_measurements===null) await loadMeasurements(); renderNutricao(); }
   if(v==='dados'){ _profileEditing = false; await loadProfile(); renderDados(); }
 }
 
@@ -1674,18 +1679,12 @@ function renderHome() {
       <div class="hero-meta">${exCount} exercícios · ${todayWorkout.warmupType === 'fullbody' ? 'Corpo inteiro' : (todayWorkout.type === 'upper' ? 'Tronco' : 'Pernas')}</div>
       <div class="hero-btn">${SVG.play} ${btnLabel}</div>
     </div>`;
-  } else if (todayDay.name === 'Natação') {
-    html += `<div class="hero-card cardio" onclick="showCardio('natacao')">
+  } else if (todayDay.cardio) {
+    const cp = CARDIO_PLANS[todayDay.cardio];
+    html += `<div class="hero-card cardio" onclick="showCardio('${todayDay.cardio}')">
       <div class="hero-label">Sessão de hoje</div>
-      <div class="hero-title">Natação</div>
-      <div class="hero-sub">Endurance · técnica</div>
-      <div class="hero-btn">${SVG.play} Ver plano</div>
-    </div>`;
-  } else if (todayDay.name === 'Corrida') {
-    html += `<div class="hero-card cardio" onclick="showCardio('corrida')">
-      <div class="hero-label">Sessão de hoje</div>
-      <div class="hero-title">Corrida</div>
-      <div class="hero-sub">Zone 2 · base aeróbica</div>
+      <div class="hero-title">${todayDay.name}</div>
+      <div class="hero-sub">${todayDay.sub}</div>
       <div class="hero-btn">${SVG.play} Ver plano</div>
     </div>`;
   } else {
@@ -1707,8 +1706,7 @@ function renderHome() {
     const hasSessions = d.key && sessions.some(s=>s.workoutKey===d.key);
     let onclick = '';
     if (d.key) onclick = `startWorkout('${d.key}')`;
-    else if (name === 'Natação') onclick = `showCardio('natacao')`;
-    else if (name === 'Corrida') onclick = `showCardio('corrida')`;
+    else if (d.cardio) onclick = `showCardio('${d.cardio}')`;
     html += `<div class="day-card ${type}${isToday?' today':''}" onclick="${onclick}" style="${!onclick?'cursor:default':''}">
       <div class="day-label">${d.label}${isToday?' · hoje':''}</div>
       <div class="day-name">${name}</div>
@@ -2042,7 +2040,7 @@ function showCardio(type) {
     });
     html += `</div></div>`;
   });
-  html += `<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px;font-family:var(--mono)">Regista os detalhes no Garmin · aqui consultas o plano</div>`;
+  html += `<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px;font-family:var(--mono)">Regista os detalhes no relógio · aqui consultas o plano</div>`;
   container.innerHTML = html;
 }
 
@@ -2235,7 +2233,10 @@ async function syncPending() {
 
 // Conta treinos de musculação na semana atual (Seg-Dom) e devolve {done, frase}
 function weekProgressMessage(sessions) {
-  const LIFT_KEYS = ['upper1','lower1','upper2','lower2'];
+  // Chaves de treino e total/semana derivados do plano ATIVO (não hardcoded).
+  const LIFT_KEYS = DAYS.filter(d => d.key).map(d => d.key);
+  const uniqueKeys = [...new Set(LIFT_KEYS)];
+  const total = uniqueKeys.length; // nº de treinos de musculação por semana neste plano
   const now = new Date();
   const day = now.getDay(); // 0=Dom
   const diffToMon = (day === 0 ? 6 : day - 1);
@@ -2244,29 +2245,38 @@ function weekProgressMessage(sessions) {
   monday.setHours(0,0,0,0);
 
   const done = sessions.filter(s => {
-    if (!LIFT_KEYS.includes(s.workoutKey)) return false;
+    if (!uniqueKeys.includes(s.workoutKey)) return false;
     return new Date(s.date) >= monday;
   }).length;
 
-  const FRASES = {
-    1: ["Boa abertura. Faltam 3 para fechar a semana.",
-        "Primeiro da semana feito. O resto constrói-se a partir daqui.",
-        "Começaste. Agora é manter o ritmo — faltam 3."],
-    2: ["A meio caminho. Mais 2 e a semana está feita.",
-        "Dois na conta. A semana está a ganhar forma.",
-        "Metade feita. Continua a empurrar."],
-    3: ["Quase lá. Falta um treino para a semana completa.",
-        "Três feitos. Só falta fechar.",
-        "Mais um e a semana fica redonda."],
-    4: ["Semana completa. Foi tudo.",
-        "Quatro de quatro. Semana fechada como deve ser.",
-        "Está feito. Semana cheia."],
-  };
-  const lvl = Math.min(done, 4);
-  if (lvl < 1) return null;
-  const opts = FRASES[lvl];
-  const frase = opts[Math.floor(Math.random()*opts.length)];
-  return { done, total: 4, frase, complete: done >= 4 };
+  if (done < 1 || total < 1) return null;
+
+  const restantes = Math.max(0, total - done);
+  const complete = done >= total;
+  let frase;
+  if (complete) {
+    const fechadas = [
+      "Semana completa. Foi tudo.",
+      "Semana fechada como deve ser.",
+      "Está feito. Semana cheia.",
+    ];
+    frase = fechadas[Math.floor(Math.random()*fechadas.length)];
+  } else if (restantes === 1) {
+    const quase = [
+      "Quase lá. Falta um treino para a semana completa.",
+      "Só falta fechar.",
+      "Mais um e a semana fica redonda.",
+    ];
+    frase = quase[Math.floor(Math.random()*quase.length)];
+  } else {
+    const meio = [
+      `Bom ritmo. Faltam ${restantes} para fechar a semana.`,
+      `${done} na conta. A semana está a ganhar forma.`,
+      `Continua a empurrar — faltam ${restantes}.`,
+    ];
+    frase = meio[Math.floor(Math.random()*meio.length)];
+  }
+  return { done, total, frase, complete };
 }
 
 function showProgressionSummary(exData, w) {
@@ -2304,7 +2314,7 @@ function showProgressionSummary(exData, w) {
   });
 
   html += `</div>
-    <button class="save-btn" onclick="renderHome()">Terminar</button>`;
+    <button class="save-btn" onclick="showView('home')">Terminar</button>`;
   container.innerHTML = html;
 }
 
@@ -3623,7 +3633,10 @@ async function startApp() {
   await migrateMeasurementsIfEmpty();
   await syncPending();
   applyTabVisibility();
-  renderHome();
+  // Resetar sub-abas para o estado inicial e abrir sempre no Treino.
+  _progressoTab = 'stats';
+  _nutriTab = 'meals';
+  showView('home');
 }
 
 // A aba Nutrição só faz sentido para o treinador (plano individual próprio).
