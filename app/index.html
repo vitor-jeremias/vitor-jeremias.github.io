@@ -437,7 +437,8 @@ input[type="file"]{display:none;}
 .login-field{width:100%;padding:20px 18px;margin-bottom:14px;border:1px solid var(--border);border-radius:14px;font-family:var(--font);font-size:16px;background:rgba(28,36,32,0.6);color:var(--text);-webkit-appearance:none;transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;backdrop-filter:blur(8px);}
 .login-field::placeholder{color:var(--text3);}
 .login-field:focus{outline:none;border-color:var(--accent);background:rgba(28,36,32,0.9);box-shadow:0 0 0 3px rgba(57,255,136,0.12);}
-.login-submit{width:100%;padding:22px;margin-top:6px;background:var(--accent);border:none;border-radius:14px;color:#0a0e0c;font-family:var(--font);font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 6px 28px rgba(57,255,136,0.4);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:1px;text-transform:uppercase;}
+.login-submit{width:100%;padding:22px;margin-top:6px;background:var(--accent);border:none;border-radius:14px;color:#0a0e0c;font-family:var(--font);font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 6px 28px rgba(57,255,136,0.4);transition:transform 0.15s,box-shadow 0.2s,opacity 0.2s;letter-spacing:1px;text-transform:uppercase;}
+.login-submit:disabled{background:var(--surface2);color:var(--text3);box-shadow:none;cursor:not-allowed;}
 .login-submit:active{transform:scale(0.98);box-shadow:0 3px 14px rgba(57,255,136,0.3);}
 .login-quote{text-align:center;margin-top:30px;font-family:var(--mono);font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);min-height:18px;opacity:0;animation:loginQuoteIn 0.8s ease 0.3s forwards;padding-left:2.5px;}
 @keyframes loginQuoteIn{to{opacity:1;}}
@@ -607,21 +608,30 @@ input[type="file"]{display:none;}
   <div class="splash-tag">STILL BECOMING<span style="color:#39FF88;font-weight:800">.</span></div>
 </div>
 <div id="onboarding-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:2200;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:calc(40px + env(safe-area-inset-top,0px)) 24px calc(40px + env(safe-area-inset-bottom,0px))">
+  <button onclick="onboardingLogout()" style="position:absolute;top:calc(16px + env(safe-area-inset-top,0px));right:18px;background:none;border:none;color:var(--text3);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;padding:8px;z-index:2">Sair</button>
   <div style="width:100%;max-width:380px;position:relative;z-index:1">
-    <div style="text-align:center;margin-bottom:34px;padding-top:12px">
+    <div style="text-align:center;margin-bottom:26px;padding-top:12px">
       <svg width="60" viewBox="0 0 200 177" style="margin-bottom:22px" xmlns="http://www.w3.org/2000/svg"><path d="M 66.9,157.1 L 33.6,156.8 L 41.4,146.7 L 72.9,109.1 L 20.2,49.7 L 20.0,48.8 L 57.4,48.5 L 58.4,49.0 L 87.0,82.6 L 91.6,87.1 L 130.7,40.5 L 124.5,31.1 L 124.6,29.9 L 179.9,20.0 L 180.0,20.9 L 169.3,33.9 L 66.9,157.1 Z" fill="#39FF88"/></svg>
       <div style="font-size:13px;font-weight:700;letter-spacing:3px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;margin-bottom:14px">Still becoming<span style="color:var(--accent)">.</span></div>
       <div style="font-size:27px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.15">Vamos preparar<br>o teu perfil</div>
-      <div style="font-size:14px;color:var(--text2);margin-top:10px;line-height:1.45">Leva um minuto. Só o nome é preciso —<br>o resto podes deixar para depois.</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:10px;line-height:1.45">Leva um minuto.</div>
+    </div>
+    <div style="text-align:center;margin-bottom:22px">
+      <div class="profile-avatar-wrap" style="margin:0 auto" onclick="document.getElementById('ob-avatar-file').click()">
+        <div id="ob-avatar" class="profile-avatar">?</div>
+        <div class="profile-avatar-cam"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg></div>
+      </div>
+      <input type="file" id="ob-avatar-file" accept="image/*" style="display:none" onchange="onboardingAvatar(event)">
+      <div style="font-size:12px;color:var(--text3);margin-top:10px">Foto (opcional)</div>
     </div>
     <div class="profile-form">
-      <div class="profile-row"><label>Nome</label><input id="ob-nome" type="text" placeholder="O teu nome" autocomplete="name"></div>
+      <div class="profile-row"><label>Nome <span style="color:var(--accent)">*</span></label><input id="ob-nome" type="text" placeholder="O teu nome" autocomplete="name" oninput="updateOnboardingBtn()"></div>
       <div class="profile-row"><label>Nascimento</label><input id="ob-dob" type="date"></div>
       <div class="profile-row"><label>Altura (cm)</label><input id="ob-altura" type="number" inputmode="numeric" placeholder="opcional"></div>
-      <div class="profile-row"><label>Peso (kg)</label><input id="ob-peso" type="number" inputmode="decimal" placeholder="opcional"></div>
+      <div class="profile-row"><label>Peso (kg)</label><input id="ob-peso" type="number" inputmode="decimal" placeholder="ex: 80 — recomendado"></div>
     </div>
     <div id="ob-error" style="color:var(--red);font-size:13px;margin:4px 0 12px;min-height:18px;text-align:center"></div>
-    <button id="ob-btn" class="login-submit" onclick="finishOnboarding()">Continuar</button>
+    <button id="ob-btn" class="login-submit" onclick="finishOnboarding()" disabled>Continuar</button>
     <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:16px;line-height:1.4">Podes preencher ou alterar tudo depois,<br>na aba Conta ou Corpo.</div>
   </div>
 </div>
@@ -1233,7 +1243,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.85';
+const APP_VERSION = '1.87';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -3815,15 +3825,55 @@ async function startApp() {
   showView('home');
 }
 
+let _onboardingAvatarBlob = null;
+
 function showOnboarding() {
   hideSplash();
+  _onboardingAvatarBlob = null;
   document.getElementById('app-wrap').style.display = 'none';
   document.getElementById('onboarding-screen').style.display = 'flex';
+  updateOnboardingBtn();
 }
 
 function hideOnboarding() {
   document.getElementById('onboarding-screen').style.display = 'none';
   document.getElementById('app-wrap').style.display = 'block';
+}
+
+// Sair do onboarding (conta errada): termina a sessão e volta ao login.
+async function onboardingLogout() {
+  if (!confirm('Sair e voltar ao login?')) return;
+  _onboardingAvatarBlob = null;
+  document.getElementById('onboarding-screen').style.display = 'none';
+  clearAuth();
+  _sessions = null;
+  _profile = null;
+  showLogin();
+}
+
+// Botão "Continuar" só fica ativo quando há nome preenchido.
+function updateOnboardingBtn() {
+  const nome = (document.getElementById('ob-nome').value || '').trim();
+  const btn = document.getElementById('ob-btn');
+  if (btn) btn.disabled = !nome;
+}
+
+// Foto escolhida no onboarding: comprime e mostra já no círculo (envia só no fim).
+async function onboardingAvatar(event) {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showToast('Escolhe uma imagem'); return; }
+  try {
+    _onboardingAvatarBlob = await compressImage(file, 400);
+    const url = URL.createObjectURL(_onboardingAvatarBlob);
+    const av = document.getElementById('ob-avatar');
+    if (av) {
+      av.classList.add('has-photo');
+      av.style.backgroundImage = `url('${url}')`;
+      av.textContent = '';
+    }
+  } catch(e) { showToast('Não foi possível ler a imagem'); }
 }
 
 async function finishOnboarding() {
@@ -3840,14 +3890,23 @@ async function finishOnboarding() {
   };
   btn.textContent = 'A guardar...'; btn.disabled = true;
   const ok = await sb.saveProfile(p);
-  btn.textContent = 'Continuar'; btn.disabled = false;
-  if (ok) {
-    _profile = { ...(_profile||{}), ...p };
-    hideOnboarding();
-    showView('home');
-  } else {
+  if (!ok) {
+    btn.textContent = 'Continuar'; btn.disabled = false;
     errEl.textContent = 'Não foi possível guardar. Tenta novamente.';
+    return;
   }
+  _profile = { ...(_profile||{}), ...p };
+  // Se escolheu foto, envia-a agora (não bloqueia a entrada se falhar).
+  if (_onboardingAvatarBlob) {
+    const url = await sb.uploadAvatar(_onboardingAvatarBlob);
+    if (url && await sb.saveAvatarUrl(url)) {
+      _profile = { ...(_profile||{}), foto_url: url };
+    }
+    _onboardingAvatarBlob = null;
+  }
+  btn.textContent = 'Continuar'; btn.disabled = false;
+  hideOnboarding();
+  showView('home');
 }
 
 // A aba Nutrição só faz sentido para o treinador (plano individual próprio).
