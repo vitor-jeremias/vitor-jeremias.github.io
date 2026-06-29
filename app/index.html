@@ -351,6 +351,11 @@ input[type="file"]{display:none;}
 .profile-head{background:linear-gradient(160deg,#1d2823,#141a17 70%);border:1px solid var(--border);border-radius:22px;padding:44px 24px 38px;margin-bottom:24px;position:relative;overflow:hidden;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.3);}
 .profile-head::before{content:'';position:absolute;top:-70px;left:50%;transform:translateX(-50%);width:280px;height:200px;background:radial-gradient(ellipse,rgba(57,255,136,0.18),transparent 70%);pointer-events:none;}
 .profile-avatar{width:92px;height:92px;border-radius:50%;background:var(--accent);color:#0a0e0c;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:800;font-family:var(--font);margin:0 auto 20px;position:relative;z-index:1;box-shadow:0 6px 24px rgba(57,255,136,0.4);}
+.profile-avatar-wrap{position:relative;width:92px;height:92px;margin:0 auto 20px;cursor:pointer;z-index:1;}
+.profile-avatar-wrap .profile-avatar{margin:0;}
+.profile-avatar.has-photo{background-size:cover;background-position:center;background-repeat:no-repeat;color:transparent;}
+.profile-avatar-cam{position:absolute;bottom:-2px;right:-2px;width:30px;height:30px;border-radius:50%;background:var(--surface2);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:15px;z-index:2;}
+.profile-avatar-cam svg{width:15px;height:15px;}
 .profile-name{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.1;position:relative;z-index:1;}
 .profile-meta{font-size:14px;color:var(--text2);font-family:var(--mono);margin-top:10px;position:relative;z-index:1;letter-spacing:0.5px;}
 .profile-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 16px;margin-bottom:14px;}
@@ -364,8 +369,6 @@ input[type="file"]{display:none;}
 .profile-save:active{transform:scale(0.99);}
 .profile-edit-btn{position:absolute;top:16px;right:16px;z-index:2;width:40px;height:40px;border-radius:12px;background:rgba(28,36,32,0.7);border:1px solid var(--border);color:var(--text2);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);}
 .profile-edit-btn:active{transform:scale(0.95);}
-.profile-lesoes{margin:18px auto 0;max-width:300px;padding-top:16px;border-top:1px solid var(--border);font-size:14px;color:var(--text2);line-height:1.5;position:relative;z-index:1;}
-.profile-lesoes-lbl{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);margin-bottom:5px;}
 .profile-actions{display:flex;gap:10px;margin-bottom:26px;}
 .profile-actions .profile-save{margin-bottom:0;flex:1;}
 .profile-cancel{padding:16px 22px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text2);font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;}
@@ -605,21 +608,21 @@ input[type="file"]{display:none;}
 </div>
 <div id="onboarding-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:2200;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:calc(40px + env(safe-area-inset-top,0px)) 24px calc(40px + env(safe-area-inset-bottom,0px))">
   <div style="width:100%;max-width:380px;position:relative;z-index:1">
-    <div style="text-align:center;margin-bottom:28px">
-      <svg width="48" viewBox="0 0 200 177" style="margin-bottom:16px" xmlns="http://www.w3.org/2000/svg"><path d="M 66.9,157.1 L 33.6,156.8 L 41.4,146.7 L 72.9,109.1 L 20.2,49.7 L 20.0,48.8 L 57.4,48.5 L 58.4,49.0 L 87.0,82.6 L 91.6,87.1 L 130.7,40.5 L 124.5,31.1 L 124.6,29.9 L 179.9,20.0 L 180.0,20.9 L 169.3,33.9 L 66.9,157.1 Z" fill="#39FF88"/></svg>
-      <div style="font-size:26px;font-weight:800;color:var(--text);letter-spacing:-0.5px">Bem-vindo à UNFYN</div>
-      <div style="font-size:14px;color:var(--text2);margin-top:8px;line-height:1.4">Vamos só preparar o teu perfil. Leva um minuto.</div>
+    <div style="text-align:center;margin-bottom:34px;padding-top:12px">
+      <svg width="60" viewBox="0 0 200 177" style="margin-bottom:22px" xmlns="http://www.w3.org/2000/svg"><path d="M 66.9,157.1 L 33.6,156.8 L 41.4,146.7 L 72.9,109.1 L 20.2,49.7 L 20.0,48.8 L 57.4,48.5 L 58.4,49.0 L 87.0,82.6 L 91.6,87.1 L 130.7,40.5 L 124.5,31.1 L 124.6,29.9 L 179.9,20.0 L 180.0,20.9 L 169.3,33.9 L 66.9,157.1 Z" fill="#39FF88"/></svg>
+      <div style="font-size:13px;font-weight:700;letter-spacing:3px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;margin-bottom:14px">Still becoming<span style="color:var(--accent)">.</span></div>
+      <div style="font-size:27px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.15">Vamos preparar<br>o teu perfil</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:10px;line-height:1.45">Leva um minuto. Só o nome é preciso —<br>o resto podes deixar para depois.</div>
     </div>
     <div class="profile-form">
-      <div class="profile-row"><label>Nome</label><input id="ob-nome" type="text" placeholder="O teu nome"></div>
+      <div class="profile-row"><label>Nome</label><input id="ob-nome" type="text" placeholder="O teu nome" autocomplete="name"></div>
       <div class="profile-row"><label>Nascimento</label><input id="ob-dob" type="date"></div>
       <div class="profile-row"><label>Altura (cm)</label><input id="ob-altura" type="number" inputmode="numeric" placeholder="opcional"></div>
       <div class="profile-row"><label>Peso (kg)</label><input id="ob-peso" type="number" inputmode="decimal" placeholder="opcional"></div>
-      <div class="profile-row"><label>Condicionantes</label><textarea id="ob-lesoes" placeholder="opcional — ex: ombro direito"></textarea></div>
     </div>
     <div id="ob-error" style="color:var(--red);font-size:13px;margin:4px 0 12px;min-height:18px;text-align:center"></div>
-    <button id="ob-btn" class="login-submit" onclick="finishOnboarding()">Começar</button>
-    <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:14px;line-height:1.4">Só o nome é necessário. O resto podes preencher depois, na aba Conta ou Corpo.</div>
+    <button id="ob-btn" class="login-submit" onclick="finishOnboarding()">Continuar</button>
+    <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:16px;line-height:1.4">Podes preencher ou alterar tudo depois,<br>na aba Conta ou Corpo.</div>
   </div>
 </div>
 <div id="app-wrap" style="display:none">
@@ -1044,7 +1047,8 @@ const SVG = {
   trash: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-2px"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>',
   edit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>',
   exit: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>',
-  lock: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>'
+  lock: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>'
 };
 
 // Planos de cardio por plano — cada plano tem os seus (auto-contido).
@@ -1229,7 +1233,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.81';
+const APP_VERSION = '1.85';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1392,7 +1396,7 @@ const sb = {
     } catch(e) { return null; }
   },
   async saveProfile(p) {
-    const body = JSON.stringify({ user_id: authUserId, nome: p.nome, data_nascimento: p.data_nascimento, altura: p.altura, peso: p.peso, lesoes: p.lesoes, updated_at: new Date().toISOString() });
+    const body = JSON.stringify({ user_id: authUserId, nome: p.nome, data_nascimento: p.data_nascimento, altura: p.altura, peso: p.peso, updated_at: new Date().toISOString() });
     try {
       const res = await fetch(`${SUPABASE_URL}/rest/v1/profile?on_conflict=user_id`, {
         method: 'POST',
@@ -1401,6 +1405,32 @@ const sb = {
       });
       return res.ok;
     } catch(e) { return false; }
+  },
+  // Guarda apenas o foto_url no perfil (sem tocar nos outros campos).
+  async saveAvatarUrl(url) {
+    const body = JSON.stringify({ foto_url: url, updated_at: new Date().toISOString() });
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/profile?user_id=eq.${authUserId}`, {
+        method: 'PATCH',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body
+      });
+      return res.ok;
+    } catch(e) { return false; }
+  },
+  // Envia uma foto (Blob) para o bucket 'avatars' e devolve o URL público.
+  async uploadAvatar(blob) {
+    const path = `${authUserId}/avatar.jpg`;
+    try {
+      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/avatars/${path}`, {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'image/jpeg', 'x-upsert': 'true' },
+        body: blob
+      });
+      if (!res.ok) return null;
+      // URL público + cache-buster para forçar refresh após nova foto
+      return `${SUPABASE_URL}/storage/v1/object/public/avatars/${path}?t=${Date.now()}`;
+    } catch(e) { return null; }
   },
   async getMeasurements() {
     try {
@@ -3475,7 +3505,7 @@ function profileSectionHTML() {
   const nome = p.nome || '';
   const idade = ageFromDOB(p.data_nascimento);
   const inicial = (nome.trim()[0] || 'U').toUpperCase();
-  const hasProfile = !!(p.nome || p.data_nascimento || p.altura || p.peso || p.lesoes);
+  const hasProfile = !!(p.nome || p.data_nascimento || p.altura || p.peso);
 
   // Modo edição: quando o utilizador toca em Editar, ou quando ainda não há perfil
   if (_profileEditing || !hasProfile) {
@@ -3485,7 +3515,6 @@ function profileSectionHTML() {
       <div class="profile-row"><label>Nascimento</label><input id="pf-dob" type="date" value="${p.data_nascimento || ''}"></div>
       <div class="profile-row"><label>Altura (cm)</label><input id="pf-altura" type="number" inputmode="numeric" value="${p.altura || ''}" placeholder="—"></div>
       <div class="profile-row"><label>Peso (kg)</label><input id="pf-peso" type="number" inputmode="decimal" value="${p.peso || ''}" placeholder="—"></div>
-      <div class="profile-row"><label>Condicionantes</label><textarea id="pf-lesoes" placeholder="Ex: ombro direito, anca...">${(p.lesoes || '').replace(/</g,'&lt;')}</textarea></div>
     </div>
     <div class="profile-actions">
       <button class="profile-save" onclick="saveProfileForm()">Guardar perfil</button>
@@ -3500,27 +3529,73 @@ function profileSectionHTML() {
   // O peso vem da medição mais recente (aba Corpo); o p.peso manual é só fallback.
   const pesoAtual = latestWeight() != null ? latestWeight() : p.peso;
   if (pesoAtual) metaBits.push(`${pesoAtual} kg`);
-  const lesoes = p.lesoes ? String(p.lesoes).replace(/</g,'&lt;') : '';
   return `
     <div class="profile-head">
       <button class="profile-edit-btn" onclick="startProfileEdit()" aria-label="Editar perfil">${SVG.edit || 'Editar'}</button>
-      <div class="profile-avatar">${inicial}</div>
+      <div class="profile-avatar-wrap" onclick="document.getElementById('avatar-file').click()">
+        ${p.foto_url
+          ? `<div class="profile-avatar has-photo" style="background-image:url('${p.foto_url}')"></div>`
+          : `<div class="profile-avatar">${inicial}</div>`}
+        <div class="profile-avatar-cam">${SVG.camera || '📷'}</div>
+      </div>
+      <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="uploadAvatar(event)">
       <div class="profile-name">${nome || '—'}</div>
       ${metaBits.length ? `<div class="profile-meta">${metaBits.join('  ·  ')}</div>` : ''}
-      ${lesoes ? `<div class="profile-lesoes"><span class="profile-lesoes-lbl">Condicionantes</span> ${lesoes}</div>` : ''}
     </div>`;
 }
 
 function startProfileEdit() { _profileEditing = true; renderDados(); }
 function cancelProfileEdit() { _profileEditing = false; renderDados(); }
 
+// Lê a foto escolhida, comprime para um quadrado, envia ao Storage e guarda o URL.
+async function uploadAvatar(event) {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showToast('Escolhe uma imagem'); return; }
+  showToast('A processar foto...');
+  let blob;
+  try {
+    blob = await compressImage(file, 400);
+  } catch(e) { showToast('Não foi possível ler a imagem'); return; }
+  showToast('A enviar...');
+  const url = await sb.uploadAvatar(blob);
+  if (!url) { showToast('Erro ao enviar a foto'); return; }
+  const ok = await sb.saveAvatarUrl(url);
+  if (!ok) { showToast('Erro ao guardar'); return; }
+  _profile = { ...(_profile||{}), foto_url: url };
+  renderDados();
+  showToast('Foto atualizada ✓');
+}
+
+// Comprime/recorta uma imagem para um quadrado de 'size' px, devolve um Blob JPEG.
+function compressImage(file, size) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = e => { img.src = e.target.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const min = Math.min(img.width, img.height);
+      const sx = (img.width - min) / 2;
+      const sy = (img.height - min) / 2;
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob falhou')), 'image/jpeg', 0.85);
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 async function saveProfileForm() {
   const p = {
     nome: document.getElementById('pf-nome').value.trim(),
     data_nascimento: document.getElementById('pf-dob').value || null,
     altura: parseInt(document.getElementById('pf-altura').value, 10) || null,
-    peso: parseFloat(document.getElementById('pf-peso').value) || null,
-    lesoes: document.getElementById('pf-lesoes').value.trim() || null
+    peso: parseFloat(document.getElementById('pf-peso').value) || null
   };
   showToast('A guardar...');
   const ok = await sb.saveProfile(p);
@@ -3732,7 +3807,7 @@ async function startApp() {
   _nutriTab = 'meals';
   // Primeiro arranque sem perfil → onboarding antes de entrar na app.
   const p = getProfile();
-  const hasProfile = !!(p && (p.nome || p.data_nascimento || p.altura || p.peso || p.lesoes));
+  const hasProfile = !!(p && (p.nome || p.data_nascimento || p.altura || p.peso));
   if (!hasProfile) {
     showOnboarding();
     return;
@@ -3761,12 +3836,11 @@ async function finishOnboarding() {
     nome,
     data_nascimento: document.getElementById('ob-dob').value || null,
     altura: parseInt(document.getElementById('ob-altura').value, 10) || null,
-    peso: parseFloat(document.getElementById('ob-peso').value) || null,
-    lesoes: document.getElementById('ob-lesoes').value.trim() || null
+    peso: parseFloat(document.getElementById('ob-peso').value) || null
   };
   btn.textContent = 'A guardar...'; btn.disabled = true;
   const ok = await sb.saveProfile(p);
-  btn.textContent = 'Começar'; btn.disabled = false;
+  btn.textContent = 'Continuar'; btn.disabled = false;
   if (ok) {
     _profile = { ...(_profile||{}), ...p };
     hideOnboarding();
