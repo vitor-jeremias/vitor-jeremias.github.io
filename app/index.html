@@ -112,11 +112,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ex-suggestion.max .ex-sug-icon{background:#8fb0ff;color:#0a0e0c;}
 .ex-suggestion.max .ex-sug-text{padding-top:3px;}
 .ex-ref{font-size:14px;color:var(--text2);font-family:var(--mono);line-height:1.5;margin-bottom:10px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;}
+.ex-target{font-size:15px;color:var(--text);font-family:var(--mono);font-weight:600;margin-bottom:12px;letter-spacing:0.3px;}
+.ex-target .ex-target-rest{color:var(--text3);font-weight:500;}
 .ex-ref-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:var(--surface2);color:var(--text3);padding:3px 8px;border-radius:5px;margin-right:8px;}
 .ex-ref-sep{margin:0 7px;opacity:0.5;}
 .ex-prev{font-size:15px;color:var(--text2);font-family:var(--mono);margin-top:6px;}
 .ex-warmup{font-size:15px;font-family:var(--mono);margin-top:10px;color:var(--orange);line-height:1.6;background:rgba(255,159,67,0.07);border:1px solid rgba(255,159,67,0.18);border-radius:9px;padding:10px 12px;}
 .ex-warmup-text{font-weight:600;}
+.ex-warmup-note{font-weight:500;opacity:0.7;font-size:13px;}
 .ex-warmup-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:rgba(255,159,67,0.18);padding:3px 8px;border-radius:5px;margin-right:8px;}
 .ex-warmup-title{font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;opacity:0.8;}
 .ex-warmup-sets{color:var(--text);font-weight:600;font-size:15px;}
@@ -356,6 +359,8 @@ input[type="file"]{display:none;}
 .profile-avatar.has-photo{background-size:cover;background-position:center;background-repeat:no-repeat;color:transparent;}
 .profile-avatar-cam{position:absolute;bottom:-2px;right:-2px;width:30px;height:30px;border-radius:50%;background:var(--surface2);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:15px;z-index:2;}
 .profile-avatar-cam svg{width:15px;height:15px;}
+.profile-avatar-del{position:absolute;top:-2px;right:-2px;width:26px;height:26px;border-radius:50%;background:var(--red);border:2px solid var(--bg);color:#fff;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;z-index:3;}
+.profile-avatar-del:active{transform:scale(0.92);}
 .profile-name{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.1;position:relative;z-index:1;}
 .profile-meta{font-size:14px;color:var(--text2);font-family:var(--mono);margin-top:10px;position:relative;z-index:1;letter-spacing:0.5px;}
 .profile-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 16px;margin-bottom:14px;}
@@ -575,6 +580,12 @@ input[type="file"]{display:none;}
 .timer-int-presets{display:flex;gap:8px;justify-content:center;margin-top:16px;}
 .timer-int-presets button{flex:1;background:rgba(57,255,136,0.1);border:1px solid var(--accent);color:var(--accent);font-family:var(--font);font-size:13px;font-weight:700;padding:10px;border-radius:10px;cursor:pointer;}
 .timer-controls{display:flex;gap:12px;align-items:center;}
+/* Modo descanso: sem pausar nem reiniciar — o descanso corre até ao fim. Só dá para saltar. */
+.timer-modal.auto-rest .timer-big-btn,
+.timer-modal.auto-rest .timer-reset-btn{display:none;}
+.timer-modal.auto-rest #timer-rest-skip{display:flex;}
+#timer-rest-skip{display:none;width:100%;max-width:340px;margin:0 auto;padding:15px;background:var(--surface2);border:1px solid var(--border);border-radius:13px;color:var(--text2);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:8px;}
+#timer-rest-skip:active{transform:scale(0.98);}
 .timer-big-btn{flex:1;padding:18px;background:var(--accent);border:none;border-radius:14px;color:#0a0e0c;font-family:var(--font);font-size:19px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .timer-big-btn svg{display:block;}
 .timer-reset-btn{width:60px;padding:20px 0;background:var(--surface2);border:1px solid var(--border);border-radius:14px;color:var(--text);font-size:22px;cursor:pointer;}
@@ -699,6 +710,7 @@ input[type="file"]{display:none;}
       <button id="timer-start-btn" class="timer-big-btn" onclick="toggleBigTimer()" aria-label="Iniciar"><svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
       <button class="timer-reset-btn" onclick="resetBigTimer()" aria-label="Reiniciar cronómetro">↺</button>
     </div>
+    <button id="timer-rest-skip" onclick="skipRest()"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>Saltar descanso</button>
     <div id="timer-skip-row">
       <button class="timer-skip-btn" onclick="advanceBigTimerPhase(-1)" aria-label="Intervalo anterior"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
       <button class="timer-skip-btn" onclick="advanceBigTimerPhase(1)" aria-label="Próximo intervalo"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
@@ -764,8 +776,11 @@ const CABLE_FLY_STACK = [9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 64, 68, 
 const EX_NOTES = {
   // ---- Exercícios do plano Full-Body (alunos) ----
   fb_squat:    "Quadríceps e glúteo. Desce até as coxas ficarem paralelas (ou um pouco abaixo), peito direito, joelhos a acompanhar a ponta dos pés. Sobe com força pelos calcanhares.",
+  fb_pullup:   "Costas e bíceps. Sobe até o queixo passar a barra, desce até esticar os braços por completo. Controla a descida, sem balanço. Usa elástico para assistência se precisares de chegar às reps.",
+  fb_cablefly: "Peito. Polia média (cintura). Junta as mãos à frente do peito num arco amplo, sente o alongamento ao abrir. Tensão constante — não deixes os pesos baterem.",
+  fb_legext:   "Quadríceps. Estende as pernas até quase esticar, aperta o quadríceps no topo, desce controlado. Não batas os pesos.",
   fb_bench:    "Peito e tríceps. Desce com controlo até ao peito, pausa 1 seg, empurra. Sem trancar os cotovelos no topo.",
-  fb_csrow:    "Costas e bíceps. Puxa até apertar as omoplatas, estica os braços por completo no fundo. Peito apoiado, sem balanço.",
+  fb_csrow:    "Costas e bíceps. Usa a pega neutra (mãos paralelas) — permite mais carga e amplitude. Puxa até apertar as omoplatas, estica os braços por completo no fundo. Peito apoiado, sem balanço.",
   fb_abd1:     "Glúteo médio. Abre as pernas contra a resistência, controla a volta. Inclina ligeiramente o tronco à frente para focar mais o glúteo médio.",
   fb_lat1:     "Deltóide lateral. Sobe até à altura do ombro, desce devagar. Cotovelo ligeiramente fletido, sem balanço.",
   fb_push:     "Tríceps. Estende os cotovelos até esticar por completo, controla a volta. Cotovelos junto ao corpo, sem balançar.",
@@ -787,7 +802,7 @@ const EX_NOTES = {
   // ---- Exercícios do plano Upper/Lower (treinador) ----
   elev:  "Costas e bíceps. Sobe até o queixo passar a barra, desce até esticar os braços por completo. Controla a descida, sem balanço.",
   mbp:   "Peito e tríceps. Desce com controlo até ao peito, pausa 1 seg, empurra. Amplitude controlada — cuidado com o ombro direito, nunca forçar com dor.",
-  csr:   "Costas e bíceps. Puxa até apertar as omoplatas, desce até esticar os braços por completo. Peito apoiado, sem balanço.",
+  csr:   "Costas e bíceps. Usa a pega neutra (mãos paralelas) — permite mais carga e amplitude. Puxa até apertar as omoplatas, desce até esticar os braços por completo. Peito apoiado, sem balanço.",
   mcf:   "Peito (porção média). Abre o máximo possível na fase negativa, junta à frente com controlo. Sem trancar os cotovelos.",
   clr:   "Deltóide lateral. Sobe até à altura do ombro, desce devagar. Cotovelo ligeiramente fletido, sem balanço.",
   ctp:   "Tríceps (cabeça lateral). Estende até dobrar bem os cotovelos no fundo, sobe com controlo. Cotovelos junto ao corpo. Polia alta.",
@@ -837,9 +852,9 @@ const PLANS = {
     {id:"mbp", name:"Machine Bench Press",           sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","triceps"],inc:"machine",warmup:true,rest:"2–3 min"},
     {id:"csr", name:"Chest-Supported Row",           sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"machine",warmup:true,rest:"2–3 min"},
     {id:"mcf", name:"Machine Chest Fly",             sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"machine",rest:"90 seg"},
-    {id:"clr", name:"Shoulder Trainer Lateral",    sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
-    {id:"ctp", name:"Cable Triceps Pushdown",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
+    {id:"clr", name:"Lateral Raise",    sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"skc", name:"Skull Crusher",                 sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"dumbbell",rest:"90 seg"},
+    {id:"ctp", name:"Cable Triceps Pushdown",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
     {id:"bc",  name:"Bayesian Curl",                 sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"cable",rest:"90 seg",pulley:"Polia baixa (canela)"},
     {id:"rpd1",name:"Face Pull",                     sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
     {id:"pal1",name:"Pallof Press",          sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
@@ -860,7 +875,7 @@ const PLANS = {
     {id:"msp", name:"Machine Shoulder Press",        sets:2,reps:"10–15",repsMin:10,repsMax:15,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"ccf", name:"Cable Chest Fly",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"cable_fly",rest:"90 seg",pulley:"Polia média (cintura)"},
     {id:"ote", name:"Overhead Triceps Extension",  sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable_fly",rest:"90 seg",pulley:"Polia média (anca)"},
-    {id:"dlr", name:"Shoulder Trainer Lateral",    sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
+    {id:"dlr", name:"Lateral Raise",    sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"dic", name:"Dumbbell Incline Curl",         sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"dumbbell",rest:"90 seg"},
     {id:"rpd2",name:"Reverse Pec Deck",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"machine",rest:"90 seg"},
     {id:"hlr", name:"Hanging Leg Raise",     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"bodyweight",rest:"60 seg",repsOnly:true},
@@ -888,32 +903,35 @@ const PLANS = {
     name: "Full-Body 3×",
     workouts: {
   fbA:{name:"Full-Body A",type:"upper",warmupType:"fullbody",day:"Segunda",sub:"Corpo inteiro · ênfase quad",exercises:[
+    {id:"fb_pullup",name:"Pull-Ups",            sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["costas","biceps"],inc:"bodyweight",bodyweight:true,rest:"2–3 min"},
     {id:"fb_squat",name:"Barbell Squat",        sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,emptyBarFirst:true,rest:"2–3 min",plates:true},
     {id:"fb_abd1", name:"Hip Abduction",        sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
     {id:"fb_bench",name:"Machine Bench Press",  sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["peito","triceps"],inc:"machine",warmup:true,rest:"2–3 min"},
-    {id:"fb_fly",  name:"Machine Chest Fly",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"machine",rest:"90 seg"},
     {id:"fb_csrow",name:"Chest-Supported Row",  sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
+    {id:"fb_fly",  name:"Machine Chest Fly",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"machine",rest:"90 seg"},
     {id:"fb_lat1", name:"Lateral Raise",        sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"fb_push", name:"Cable Triceps Pushdown",sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
-  ],coreRef:["Side Plank — 3×20–30seg/lado"]},
+  ],coreRef:["Plank — 3×30–45seg","Side Plank — 3×20–30seg/lado"],finisher:"5–10 min de remo (cardio de corpo inteiro, ritmo moderado)"},
   fbB:{name:"Full-Body B",type:"lower",warmupType:"fullbody",day:"Quarta",sub:"Corpo inteiro · ênfase femoral",exercises:[
     {id:"fb_rdl",  name:"Romanian Deadlift",    sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["femoral","gluteo"],inc:"barbell_10",warmup:true,rest:"2–3 min",plates:true},
     {id:"fb_legcurl",name:"Seated Leg Curl",   sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
     {id:"fb_calf1",name:"Seated Calf Raise",    sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
+    {id:"fb_cablefly",name:"Cable Chest Fly",   sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"cable_fly",rest:"90 seg",pulley:"Polia média (cintura)"},
     {id:"fb_pull", name:"Wide Grip Lat Pulldown",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
     {id:"fb_ohp",  name:"Machine Shoulder Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["ombros"],inc:"machine",rest:"90 seg"},
-    {id:"fb_pallof",name:"Pallof Press",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
     {id:"fb_curl", name:"Dumbbell Incline Curl",sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"dumbbell",rest:"90 seg"},
-  ],coreRef:["Back Extension — 3×12–15 (leve, foco glúteo)"]},
+    {id:"fb_pallof",name:"Pallof Press",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
+  ],coreRef:["Plank — 3×30–45seg","Side Plank — 3×20–30seg/lado","Back Extension — 3×12–15 (leve, foco glúteo)"],finisher:"5–10 min de remo (cardio de corpo inteiro, ritmo moderado)"},
   fbC:{name:"Full-Body C",type:"upper",warmupType:"fullbody",day:"Sexta",sub:"Corpo inteiro · misto",exercises:[
     {id:"fb_legpress",name:"Leg Press",         sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"barbell_10",warmup:true,rest:"2–3 min"},
     {id:"fb_abd2",   name:"Hip Abduction",      sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
-    {id:"fb_incpress",name:"Iso-Lateral Incline Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["peito","ombros"],inc:"machine",rest:"90 seg"},
+    {id:"fb_legext", name:"Leg Extension",      sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"fb_isorow", name:"Iso-Lateral Row",    sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["costas","biceps"],inc:"machine",rest:"90 seg"},
+    {id:"fb_incpress",name:"Iso-Lateral Incline Press",sets:3,reps:"8–12",repsMin:8,repsMax:12,muscles:["peito","ombros"],inc:"machine",rest:"90 seg"},
     {id:"fb_calf2",  name:"Standing Calf Raise (Smith)",sets:3,reps:"12–20",repsMin:12,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"fb_rpd",    name:"Reverse Pec Deck",   sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"machine",rest:"90 seg"},
     {id:"fb_ote",    name:"Overhead Triceps Extension",sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia baixa (canela)"},
-  ],coreRef:["Side Plank — 3×20–30seg/lado"]}
+  ],coreRef:["Plank — 3×30–45seg","Side Plank — 3×20–30seg/lado"],finisher:"5–10 min de remo (cardio de corpo inteiro, ritmo moderado)"}
     },
     days: [
       {key:"fbA",label:"Seg"},
@@ -956,7 +974,7 @@ const PLAN_WARMUPS = {
       "Arm circles progressivos — 10 cada braço",
       "Band pull-aparts — 15 reps",
       "Wall slides — 10 reps (mobilidade escapular)",
-      "Flexões a 50% — 10 reps lentas",
+      "Flexões — 10 reps lentas",
       "Face pull com elástico — 15 reps ★ OBRIGATÓRIO (ombro direito)",
     ]
   },
@@ -1005,10 +1023,10 @@ const PLAN_WARMUPS = {
       "Bicicleta ou passadeira leve — 3–5 min (geral)",
       "Rotações de ombro frente/trás — 10 cada sentido",
       "Band pull-aparts — 15 reps (ombro/costas)",
+      "Flexões — 10 reps lentas (ativação peito/tríceps)",
       "Leg swings frente/trás — 10 cada perna",
       "Air squats — 10 reps amplitude total",
       "Glute bridges no chão — 12 reps (ativação glúteo)",
-      "Séries de aproximação no 1º exercício pesado — 50% e 75%",
     ]
   },
   corrida: {
@@ -1241,7 +1259,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.2';
+const APP_VERSION = '2.12';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1961,7 +1979,10 @@ function updateExerciseDone(exId) {
   let allDone = true;
   for (let i = 1; i <= ex.sets; i++) {
     const rv = parseInt(document.getElementById(`r_${exId}_${i}`)?.value, 10);
-    if (!(isFinite(rv) && rv > 0)) { allDone = false; break; }
+    const wEl = document.getElementById(`w_${exId}_${i}`);
+    const wv = parseFloat(wEl?.value);
+    const wOk = ex.bodyweight ? (wEl && wEl.value !== '') : (isFinite(wv) && wv > 0);
+    if (!(wOk && isFinite(rv) && rv > 0)) { allDone = false; break; }
   }
   const card = document.getElementById(`card_${exId}`);
   if (card) card.classList.toggle('ex-done', allDone);
@@ -1975,11 +1996,26 @@ function onSetInput(exId, setNum) {
   const rEl = document.getElementById(`r_${exId}_${setNum}`);
   const wv = parseFloat(wEl?.value);
   const rv = parseInt(rEl?.value, 10);
+  const wDef = WORKOUTS[currentWorkout];
+  const exDef = wDef && wDef.exercises.find(e => e.id === exId);
 
-  // a set counts as done once it has valid REPS (weight may be pre-filled, so reps is the real signal)
-  const filled = isFinite(rv) && rv > 0;
+  // Uma série só conta como completa quando tem CARGA e REPS válidas.
+  // (Com histórico, a carga vem pré-preenchida; sem histórico, é preciso preencher ambas —
+  // assim o descanso não arranca cedo demais para quem começa do zero.)
+  const isBodyweight = exDef && exDef.bodyweight;  // peso corporal: lastro pode ser 0
+  const weightOk = isBodyweight ? (wEl && wEl.value !== '') : (isFinite(wv) && wv > 0);
+  const filled = weightOk && isFinite(rv) && rv > 0;
   row.classList.toggle('done', filled);
   updateExerciseDone(exId);
+
+  // Se a série deixou de estar completa (apagaste um campo), limpa a marca de descanso
+  // e cancela qualquer arranque pendente — assim, ao reescrever, o descanso volta a poder arrancar.
+  // (Só se não houver já um descanso a correr, para não permitir um duplo arranque por cima.)
+  if (!filled && !bt.running) {
+    const fk = exId + '_' + setNum;
+    if (_autoRestFired[fk]) delete _autoRestFired[fk];
+    if (_autoRestTimeout) { clearTimeout(_autoRestTimeout); _autoRestTimeout = null; }
+  }
 
   // Arranque automático do cronómetro: a 1ª série registada (reps válidas) marca o
   // início real do treino. Só arranca se nunca foi iniciado nem tem tempo acumulado.
@@ -1997,9 +2033,12 @@ function onSetInput(exId, setNum) {
       if (rs > 0) {
         if (_autoRestTimeout) clearTimeout(_autoRestTimeout);
         _autoRestTimeout = setTimeout(() => {
-          // re-check: still valid reps, still not already running
+          // re-check: série ainda completa (carga + reps) e cronómetro parado
           const rNow = parseInt(document.getElementById(`r_${exId}_${setNum}`)?.value, 10);
-          if (isFinite(rNow) && rNow > 0 && !_autoRestFired[fireKey] && !bt.running) {
+          const wElNow = document.getElementById(`w_${exId}_${setNum}`);
+          const wNow = parseFloat(wElNow?.value);
+          const wOkNow = exDef && exDef.bodyweight ? (wElNow && wElNow.value !== '') : (isFinite(wNow) && wNow > 0);
+          if (wOkNow && isFinite(rNow) && rNow > 0 && !_autoRestFired[fireKey] && !bt.running) {
             _autoRestFired[fireKey] = true;
             const wE = document.getElementById(`w_${exId}_${setNum}`);
             const rE = document.getElementById(`r_${exId}_${setNum}`);
@@ -2169,10 +2208,11 @@ function renderSession() {
 
     html += `<div class="ex-card" id="card_${ex.id}"><div class="ex-header">
       <div class="ex-name-row"><div class="ex-name">${ex.name}</div>${EX_NOTES[ex.id] ? `<button class="ex-info-btn" onclick="showExNote('${ex.id}')" aria-label="Como fazer">!</button>` : ''}</div>
+      <div class="ex-target">${ex.sets} séries · ${ex.reps} reps${ex.rest ? ` <span class="ex-target-rest">· ${ex.rest}</span>` : ''}</div>
       ${lastEx ? `<div class="ex-ref"><span class="ex-ref-tag">Anterior</span>${lastEx.sets.map(s=>`${ex.bodyweight ? (s.weight>0?'+'+s.weight+'kg':'PC') : s.weight+'kg'}×${s.reps}`).join('  ·  ')}</div>` : ''}
       ${prog ? `<div class="ex-suggestion ${prog.status}"><span class="ex-sug-icon">${PROG_ICON[prog.status]||''}</span><span class="ex-sug-text">${prog.label}</span></div>` : ''}
       ${(ex.plates && suggestedWeight > 0 && platesPerSide(suggestedWeight)) ? `<div class="ex-plates"><span class="ex-warmup-tag">Discos</span> <span class="ex-warmup-text">${suggestedWeight}kg = barra + ${platesPerSide(suggestedWeight)}</span></div>` : ''}
-      ${warmup ? `<div class="ex-warmup"><span class="ex-warmup-tag">Aquecer</span> <span class="ex-warmup-text">${warmup.text}</span></div>` : ''}
+      ${warmup ? `<div class="ex-warmup"><span class="ex-warmup-tag">Aquecer</span> <span class="ex-warmup-text">${warmup.text}</span> <span class="ex-warmup-note">· descanso curto</span></div>` : ''}
       ${ex.bodyweight ? `<div class="ex-ref" style="margin-top:4px">Lastro 0 = só peso corporal. Adiciona lastro quando fizeres 3×${ex.repsMax} com RIR 2+.</div>` : ''}
     </div><div class="sets-area">
     <div class="sets-head ${ex.repsOnly?'reps-only':''}"><span class="sets-head-num"></span><span class="sets-head-lbl">${ex.bodyweight?'Lastro (kg)':'Carga (kg)'}</span>${ex.repsOnly?'':'<span class="sets-head-lbl">Reps</span>'}${ex.repsOnly?'<span class="sets-head-lbl">Reps</span>':''}</div>`;
@@ -2215,6 +2255,15 @@ function renderSession() {
       html += `<div style="font-size:14px;color:var(--text);padding:7px 0;${i<w.coreRef.length-1?'border-bottom:1px solid var(--border)':''}">${item}</div>`;
     });
     html += `</div></div>`;
+  }
+
+  if (w.finisher) {
+    html += `<div class="ex-card" style="background:var(--surface2)"><div class="ex-header">
+      <div class="ex-name" style="font-size:15px">Finisher · cardio</div>
+      <div class="ex-meta">Opcional — no fim do treino</div>
+    </div><div style="padding:4px 16px 14px">
+      <div style="font-size:14px;color:var(--text);padding:7px 0">${w.finisher}</div>
+    </div></div>`;
   }
 
   html += `<button class="save-btn" onclick="saveSession()">${SVG.save} Guardar Sessão</button>`;
@@ -3545,6 +3594,7 @@ function profileSectionHTML() {
           ? `<div class="profile-avatar has-photo" style="background-image:url('${p.foto_url}')"></div>`
           : `<div class="profile-avatar">${inicial}</div>`}
         <div class="profile-avatar-cam">${SVG.camera || '📷'}</div>
+        ${p.foto_url ? `<button class="profile-avatar-del" onclick="event.stopPropagation();removeAvatar()" aria-label="Remover foto">✕</button>` : ''}
       </div>
       <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="uploadAvatar(event)">
       <div class="profile-name">${nome || '—'}</div>
@@ -3574,6 +3624,17 @@ async function uploadAvatar(event) {
   _profile = { ...(_profile||{}), foto_url: url };
   renderDados();
   showToast('Foto atualizada ✓');
+}
+
+// Remove a foto de perfil: volta a mostrar a inicial do nome.
+async function removeAvatar() {
+  if (!confirm('Remover a foto de perfil?')) return;
+  showToast('A remover...');
+  const ok = await sb.saveAvatarUrl(null);
+  if (!ok) { showToast('Erro ao remover'); return; }
+  _profile = { ...(_profile||{}), foto_url: null };
+  renderDados();
+  showToast('Foto removida');
 }
 
 // Comprime/recorta uma imagem para um quadrado de 'size' px, devolve um Blob JPEG.
@@ -3966,7 +4027,9 @@ let bt = {
 function openTimerModal() {
   bt.autoRest = false;
   clearRestDoneState();
-  document.getElementById('timer-modal').classList.add('open');
+  const m = document.getElementById('timer-modal');
+  m.classList.add('open');
+  m.classList.remove('auto-rest');   // cronómetro manual mantém o pausar
   resetBigTimer();
 }
 
@@ -3984,13 +4047,27 @@ function parseRestSeconds(txt) {
   return 60;
 }
 
+// Saltar o descanso: decisão consciente de avançar (o descanso não se pausa).
+function skipRest() {
+  stopBigTimer();
+  bt.autoRest = false;
+  const m = document.getElementById('timer-modal');
+  m.classList.remove('open');
+  m.classList.remove('running');
+  m.classList.remove('auto-rest');
+  hideMiniTimer();
+  clearRestDoneState();
+}
+
 // Open timer in countdown mode pre-set to the given seconds and start immediately
 function startRest(seconds) {
   bt.autoRest = true;
   hideRestDoneAlert();
   clearRestDoneState();
   hideMiniTimer();
-  document.getElementById('timer-modal').classList.add('open');
+  const modal = document.getElementById('timer-modal');
+  modal.classList.add('open');
+  modal.classList.add('auto-rest');   // modo descanso: sem pausar (corre até ao fim)
   setTimerMode('simple');
   bt.simpleTime = seconds;
   bt.remaining = seconds;
@@ -4005,6 +4082,7 @@ function closeTimerModal() {
   const m = document.getElementById('timer-modal');
   m.classList.remove('open');
   m.classList.remove('running');
+  m.classList.remove('auto-rest');
   hideMiniTimer();
 }
 
