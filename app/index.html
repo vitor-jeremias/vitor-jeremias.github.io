@@ -359,10 +359,10 @@ input[type="file"]{display:none;}
 .profile-name{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.1;position:relative;z-index:1;}
 .profile-meta{font-size:14px;color:var(--text2);font-family:var(--mono);margin-top:10px;position:relative;z-index:1;letter-spacing:0.5px;}
 .profile-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 16px;margin-bottom:14px;}
-.profile-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);}
+.profile-row{display:flex;flex-direction:column;align-items:stretch;gap:7px;padding:11px 0;border-bottom:1px solid var(--border);}
 .profile-row:last-child{border-bottom:none;}
-.profile-row label{font-size:13px;color:var(--text2);font-weight:600;width:118px;flex-shrink:0;}
-.profile-row input,.profile-row textarea{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;color:var(--text);font-family:var(--font);font-size:15px;-webkit-appearance:none;}
+.profile-row label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:0.3px;}
+.profile-row input,.profile-row textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:13px 14px;color:var(--text);font-family:var(--font);font-size:16px;-webkit-appearance:none;}
 .profile-row input:focus,.profile-row textarea:focus{outline:none;border-color:var(--accent);}
 .profile-row textarea{resize:vertical;min-height:42px;line-height:1.4;}
 .profile-save{width:100%;padding:16px;background:var(--accent);border:none;border-radius:12px;color:#0a0e0c;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;margin-bottom:26px;box-shadow:0 4px 14px rgba(57,255,136,0.22);}
@@ -424,7 +424,7 @@ input[type="file"]{display:none;}
 .measure-form-body{}
 .meas-form-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 16px;margin-bottom:14px;}
 .meas-form-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-family:var(--mono);padding:12px 0 4px;}
-.profile-row select{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;color:var(--text);font-family:var(--font);font-size:15px;-webkit-appearance:none;}
+.profile-row select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:13px 14px;color:var(--text);font-family:var(--font);font-size:16px;-webkit-appearance:none;}
 .profile-row select:focus{outline:none;border-color:var(--accent);}
 
 /* ===== Login screen ===== */
@@ -626,13 +626,12 @@ input[type="file"]{display:none;}
     </div>
     <div class="profile-form">
       <div class="profile-row"><label>Nome <span style="color:var(--accent)">*</span></label><input id="ob-nome" type="text" placeholder="O teu nome" autocomplete="name" oninput="updateOnboardingBtn()"></div>
-      <div class="profile-row"><label>Nascimento</label><input id="ob-dob" type="date"></div>
+      <div class="profile-row"><label>Data de nascimento</label><input id="ob-dob" type="date"></div>
       <div class="profile-row"><label>Altura (cm)</label><input id="ob-altura" type="number" inputmode="numeric" placeholder="opcional"></div>
-      <div class="profile-row"><label>Peso (kg)</label><input id="ob-peso" type="number" inputmode="decimal" placeholder="ex: 80 — recomendado"></div>
+      <div class="profile-row"><label>Peso (kg)</label><input id="ob-peso" type="number" inputmode="decimal" placeholder="ex: 80"></div>
     </div>
     <div id="ob-error" style="color:var(--red);font-size:13px;margin:4px 0 12px;min-height:18px;text-align:center"></div>
     <button id="ob-btn" class="login-submit" onclick="finishOnboarding()" disabled>Continuar</button>
-    <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:16px;line-height:1.4">Podes preencher ou alterar tudo depois,<br>na aba Conta ou Corpo.</div>
   </div>
 </div>
 <div id="app-wrap" style="display:none">
@@ -1243,7 +1242,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.0';
+const APP_VERSION = '2.1';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
