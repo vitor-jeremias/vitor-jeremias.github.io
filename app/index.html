@@ -350,6 +350,19 @@ input[type="file"]{display:none;}
 .sl-dot.high{background:#ff9f43;}
 .mm-legend-grad{display:inline-block;width:80px;height:10px;border-radius:5px;background:linear-gradient(90deg,#2a342e,#39FF88);}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#0a0e0c;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;z-index:999;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;box-shadow:0 4px 12px rgba(57,255,136,0.3);}
+/* ===== Modal de confirmação UNFYN ===== */
+.confirm-modal{position:fixed;inset:0;z-index:2500;background:rgba(5,8,7,0.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:28px;opacity:0;transition:opacity 0.18s ease;}
+.confirm-modal.open{display:flex;opacity:1;}
+.confirm-box{width:100%;max-width:340px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px 22px 20px;box-shadow:0 12px 40px rgba(0,0,0,0.5);transform:scale(0.94);transition:transform 0.2s cubic-bezier(0.34,1.4,0.64,1);}
+.confirm-modal.open .confirm-box{transform:scale(1);}
+.confirm-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-0.2px;}
+.confirm-msg{font-size:14px;color:var(--text2);line-height:1.5;margin-bottom:22px;}
+.confirm-actions{display:flex;flex-direction:column;gap:9px;}
+.confirm-btn{width:100%;padding:14px;border-radius:11px;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;border:none;transition:transform 0.12s,opacity 0.12s;}
+.confirm-btn:active{transform:scale(0.98);}
+.confirm-btn.primary{background:var(--accent);color:#0a0e0c;}
+.confirm-btn.danger{background:var(--red);color:#fff;}
+.confirm-btn.ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
 /* ===== Perfil ===== */
 .profile-head{background:linear-gradient(160deg,#1d2823,#141a17 70%);border:1px solid var(--border);border-radius:22px;padding:44px 24px 38px;margin-bottom:24px;position:relative;overflow:hidden;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.3);}
 .profile-head::before{content:'';position:absolute;top:-70px;left:50%;transform:translateX(-50%);width:280px;height:200px;background:radial-gradient(ellipse,rgba(57,255,136,0.18),transparent 70%);pointer-events:none;}
@@ -583,9 +596,11 @@ input[type="file"]{display:none;}
 /* Modo descanso: sem pausar nem reiniciar — o descanso corre até ao fim. Só dá para saltar. */
 .timer-modal.auto-rest .timer-big-btn,
 .timer-modal.auto-rest .timer-reset-btn{display:none;}
-.timer-modal.auto-rest #timer-rest-skip{display:flex;}
-#timer-rest-skip{display:none;width:100%;max-width:340px;margin:0 auto;padding:15px;background:var(--surface2);border:1px solid var(--border);border-radius:13px;color:var(--text2);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:8px;}
-#timer-rest-skip:active{transform:scale(0.98);}
+.timer-modal.auto-rest #timer-rest-skip{display:block;}
+#timer-rest-skip{display:none;width:auto;margin:18px auto 0;padding:6px 12px;background:none;border:none;color:var(--text3);font-family:var(--font);font-size:12px;font-weight:500;letter-spacing:0.3px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;opacity:0.55;}
+#timer-rest-skip:active{opacity:0.85;}
+.timer-modal.running.phase-work #timer-rest-skip,
+.timer-modal.running.phase-rest #timer-rest-skip{color:rgba(10,14,12,0.55);}
 .timer-big-btn{flex:1;padding:18px;background:var(--accent);border:none;border-radius:14px;color:#0a0e0c;font-family:var(--font);font-size:19px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .timer-big-btn svg{display:block;}
 .timer-reset-btn{width:60px;padding:20px 0;background:var(--surface2);border:1px solid var(--border);border-radius:14px;color:var(--text);font-size:22px;cursor:pointer;}
@@ -679,7 +694,7 @@ input[type="file"]{display:none;}
     </div>
   </div>
   <div class="timer-modal-inner">
-    <button class="timer-close" onclick="closeTimerModal()" aria-label="Fechar cronómetro">✕</button>
+    <button id="timer-close-btn" class="timer-close" onclick="closeTimerModal()" aria-label="Fechar cronómetro">✕</button>
     <div id="timer-total" class="timer-total"></div>
     <div class="timer-mode-switch">
       <button id="tm-stopwatch" class="timer-mode-btn active" onclick="setTimerMode('stopwatch')">Cronómetro</button>
@@ -710,7 +725,7 @@ input[type="file"]{display:none;}
       <button id="timer-start-btn" class="timer-big-btn" onclick="toggleBigTimer()" aria-label="Iniciar"><svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
       <button class="timer-reset-btn" onclick="resetBigTimer()" aria-label="Reiniciar cronómetro">↺</button>
     </div>
-    <button id="timer-rest-skip" onclick="skipRest()"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>Saltar descanso</button>
+    <button id="timer-rest-skip" onclick="skipRest()">saltar descanso</button>
     <div id="timer-skip-row">
       <button class="timer-skip-btn" onclick="advanceBigTimerPhase(-1)" aria-label="Intervalo anterior"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
       <button class="timer-skip-btn" onclick="advanceBigTimerPhase(1)" aria-label="Próximo intervalo"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
@@ -726,6 +741,13 @@ input[type="file"]{display:none;}
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div id="confirm-modal" class="confirm-modal">
+  <div class="confirm-box">
+    <div id="confirm-title" class="confirm-title"></div>
+    <div id="confirm-msg" class="confirm-msg"></div>
+    <div id="confirm-actions" class="confirm-actions"></div>
+  </div>
+</div>
 <div id="timer-mini" class="timer-mini" onclick="reopenTimer()">
   <div class="timer-mini-left">
     <span id="timer-mini-icon" class="timer-mini-icon"></span>
@@ -1259,7 +1281,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.12';
+const APP_VERSION = '2.15';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2272,8 +2294,8 @@ function renderSession() {
   loadDraft();
 }
 
-function discardWorkout() {
-  if (!confirm('Descartar este treino? Os dados que registaste não serão guardados.')) return;
+async function discardWorkout() {
+  if (!await confirmModal({title:'Descartar treino?', message:'Os dados que registaste não serão guardados.', confirmLabel:'Descartar', danger:true})) return;
   // clear rest/timeout, draft, timer state
   if (_autoRestTimeout) { clearTimeout(_autoRestTimeout); _autoRestTimeout = null; }
   _autoRestFired = {};
@@ -2552,7 +2574,7 @@ async function saveEditedSession(id) {
 
 function toggleLog(el) { el.nextElementSibling.classList.toggle('open'); }
 async function deleteSession(id) {
-  if (!confirm('Eliminar esta sessão?')) return;
+  if (!await confirmModal({title:'Eliminar sessão?', message:'Esta sessão será removida em definitivo.', confirmLabel:'Eliminar', danger:true})) return;
   await removeSession(id);
   renderHistorico(); showToast('Sessão eliminada');
 }
@@ -3503,7 +3525,7 @@ async function saveMeasureForm() {
 }
 
 async function deleteMeasure(id) {
-  if (!confirm('Apagar esta avaliação?')) return;
+  if (!await confirmModal({title:'Apagar avaliação?', message:'Esta medição será removida em definitivo.', confirmLabel:'Apagar', danger:true})) return;
   showToast('A apagar...');
   const ok = await sb.deleteMeasurement(id);
   if (ok) {
@@ -3628,7 +3650,7 @@ async function uploadAvatar(event) {
 
 // Remove a foto de perfil: volta a mostrar a inicial do nome.
 async function removeAvatar() {
-  if (!confirm('Remover a foto de perfil?')) return;
+  if (!await confirmModal({title:'Remover foto?', message:'Voltas a ver a inicial do teu nome.', confirmLabel:'Remover', danger:true})) return;
   showToast('A remover...');
   const ok = await sb.saveAvatarUrl(null);
   if (!ok) { showToast('Erro ao remover'); return; }
@@ -3700,10 +3722,21 @@ function importData(event) {
       const data = JSON.parse(e.target.result);
       if (!data.sessions||!Array.isArray(data.sessions)) throw new Error('Formato inválido');
       const current = getSessions();
-      const choice = current.length > 0 ?
-        confirm(`Tens ${current.length} sessões. Substituir pelos dados do backup (${data.sessions.length} sessões)?\n\nOK = Substituir\nCancelar = Combinar`) : true;
+      let mode = 'replace';
+      if (current.length > 0) {
+        mode = await choiceModal({
+          title: 'Importar backup',
+          message: `Tens ${current.length} ${current.length===1?'sessão':'sessões'} guardada${current.length===1?'':'s'}. O backup tem ${data.sessions.length}. O que queres fazer?`,
+          choices: [
+            { label: 'Substituir tudo', value: 'replace', style: 'danger' },
+            { label: 'Combinar (juntar novas)', value: 'merge', style: 'primary' },
+            { label: 'Cancelar', value: null, style: 'ghost' },
+          ]
+        });
+        if (!mode) { event.target.value=''; return; }  // cancelado
+      }
       let toImport;
-      if (choice) {
+      if (mode === 'replace') {
         // Substituir: apagar as atuais e gravar as do backup
         for (const s of current) { await sb.deleteSession(s.id); }
         toImport = data.sessions;
@@ -3717,7 +3750,7 @@ function importData(event) {
       _sessions = await sb.getSessions();
       showToast(`${n} sessões importadas ✓`);
       setTimeout(()=>renderDados(), 500);
-    } catch(err) { alert('Ficheiro inválido.'); }
+    } catch(err) { showToast('Ficheiro inválido'); }
   };
   reader.readAsText(file);
   event.target.value = '';
@@ -3726,8 +3759,8 @@ function importData(event) {
 // NOTA: função desativada na UI (removida das Ferramentas por ser app pessoal de 1 user).
 // Mantida para reativar se a app for para multi-utilizador (apagar conta/dados — RGPD).
 async function clearAllData() {
-  if (!confirm('Tens a certeza? Esta ação não pode ser desfeita.\nFizeste backup?')) return;
-  if (!confirm('Última confirmação — apagar mesmo tudo?')) return;
+  if (!await confirmModal({title:'Apagar todos os dados?', message:'Esta ação não pode ser desfeita. Fizeste backup primeiro?', confirmLabel:'Sim, continuar', danger:true})) return;
+  if (!await confirmModal({title:'Última confirmação', message:'Apagar mesmo tudo, em definitivo?', confirmLabel:'Apagar tudo', danger:true})) return;
   const sessions = getSessions();
   for (const s of sessions) { await sb.deleteSession(s.id); }
   _sessions = [];
@@ -3759,6 +3792,62 @@ function calcVolume(s){
 function formatDate(iso){return new Date(iso).toLocaleDateString('pt-PT',{weekday:'short',day:'numeric',month:'short',year:'numeric'});}
 function formatDateShort(iso){const d=new Date(iso);return`${d.getDate()}/${d.getMonth()+1}`;}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// Modal de confirmação UNFYN (substitui confirm() nativo). Devolve uma Promise<boolean>.
+// opts: { title, message, confirmLabel, cancelLabel, danger }
+function confirmModal(opts) {
+  return new Promise(resolve => {
+    const modal = document.getElementById('confirm-modal');
+    const titleEl = document.getElementById('confirm-title');
+    const msgEl = document.getElementById('confirm-msg');
+    const actions = document.getElementById('confirm-actions');
+    titleEl.textContent = opts.title || 'Confirmar';
+    msgEl.textContent = opts.message || '';
+    msgEl.style.display = opts.message ? 'block' : 'none';
+    actions.innerHTML = '';
+    const close = (val) => {
+      modal.classList.remove('open');
+      resolve(val);
+    };
+    const confirmBtn = document.createElement('button');
+    confirmBtn.className = 'confirm-btn ' + (opts.danger ? 'danger' : 'primary');
+    confirmBtn.textContent = opts.confirmLabel || 'Confirmar';
+    confirmBtn.onclick = () => close(true);
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'confirm-btn ghost';
+    cancelBtn.textContent = opts.cancelLabel || 'Cancelar';
+    cancelBtn.onclick = () => close(false);
+    actions.appendChild(confirmBtn);
+    actions.appendChild(cancelBtn);
+    // tocar fora = cancelar
+    modal.onclick = (e) => { if (e.target === modal) close(false); };
+    modal.classList.add('open');
+  });
+}
+
+// Modal de 3 opções (ex: Substituir / Combinar / Cancelar). Devolve a string da escolha ou null.
+function choiceModal(opts) {
+  return new Promise(resolve => {
+    const modal = document.getElementById('confirm-modal');
+    const titleEl = document.getElementById('confirm-title');
+    const msgEl = document.getElementById('confirm-msg');
+    const actions = document.getElementById('confirm-actions');
+    titleEl.textContent = opts.title || 'Escolhe';
+    msgEl.textContent = opts.message || '';
+    msgEl.style.display = opts.message ? 'block' : 'none';
+    actions.innerHTML = '';
+    const close = (val) => { modal.classList.remove('open'); resolve(val); };
+    (opts.choices || []).forEach(ch => {
+      const b = document.createElement('button');
+      b.className = 'confirm-btn ' + (ch.style || 'primary');
+      b.textContent = ch.label;
+      b.onclick = () => close(ch.value);
+      actions.appendChild(b);
+    });
+    modal.onclick = (e) => { if (e.target === modal) close(null); };
+    modal.classList.add('open');
+  });
+}
 
 const LOGIN_QUOTES = [
   'Um pouco mais forte que ontem',
@@ -3849,7 +3938,7 @@ async function doChangePassword() {
 }
 
 async function logout() {
-  if (!confirm('Terminar sessão?')) return;
+  if (!await confirmModal({title:'Terminar sessão?', message:'Vais voltar ao ecrã de entrada.', confirmLabel:'Terminar sessão'})) return;
   clearAuth();
   _sessions = null;
   showLogin();
@@ -3901,7 +3990,7 @@ function hideOnboarding() {
 
 // Sair do onboarding (conta errada): termina a sessão e volta ao login.
 async function onboardingLogout() {
-  if (!confirm('Sair e voltar ao login?')) return;
+  if (!await confirmModal({title:'Sair?', message:'Voltas ao ecrã de entrada.', confirmLabel:'Sair'})) return;
   _onboardingAvatarBlob = null;
   document.getElementById('onboarding-screen').style.display = 'none';
   clearAuth();
@@ -4031,6 +4120,7 @@ function openTimerModal() {
   m.classList.add('open');
   m.classList.remove('auto-rest');   // cronómetro manual mantém o pausar
   resetBigTimer();
+  updateTimerCloseBtn();
 }
 
 // Parse rest text like "2–3 min", "90 seg" into seconds (uses the upper bound)
@@ -4096,6 +4186,20 @@ function minimizeTimer() {
   updateMiniTimer();
 }
 
+// Ícone do botão superior do cronómetro: minimizar (quando corre) ou fechar (parado).
+const ICON_MINIMIZE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+function updateTimerCloseBtn() {
+  const btn = document.getElementById('timer-close-btn');
+  if (!btn) return;
+  if (bt.running) {
+    btn.innerHTML = ICON_MINIMIZE;
+    btn.setAttribute('aria-label', 'Minimizar cronómetro');
+  } else {
+    btn.textContent = '✕';
+    btn.setAttribute('aria-label', 'Fechar cronómetro');
+  }
+}
+
 function reopenTimer() {
   const mini = document.getElementById('timer-mini');
   if (mini && mini.classList.contains('done')) { hideRestDoneAlert(); return; }
@@ -4103,6 +4207,7 @@ function reopenTimer() {
   m.classList.add('open');
   hideMiniTimer();
   renderBigTimer();
+  updateTimerCloseBtn();
 }
 
 // ===== Water lock (prevents accidental taps from sweat/water) =====
@@ -4617,6 +4722,7 @@ function startBigTimer() {
   requestWakeLock();                                   // keep screen awake
   document.getElementById('timer-modal').classList.add('running');  // fullscreen big number
   document.getElementById('timer-start-btn').innerHTML = ICON_PAUSE;
+  updateTimerCloseBtn();
   bt.interval = setInterval(tickBigTimer, 1000);
 }
 
@@ -4633,6 +4739,7 @@ function stopBigTimer() {
   if (modal) modal.classList.remove('running','phase-prep','phase-work','phase-rest');
   const btn = document.getElementById('timer-start-btn');
   if (btn) btn.innerHTML = ICON_PLAY;
+  updateTimerCloseBtn();
 }
 
 function toggleBigTimer() {
