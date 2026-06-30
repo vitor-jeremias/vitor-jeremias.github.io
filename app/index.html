@@ -539,7 +539,7 @@ input[type="file"]{display:none;}
 .timer-modal.running.phase-rest .timer-skip-btn,
 .timer-modal.running.phase-prep .timer-skip-btn{background:rgba(10,14,12,0.2);color:#0a0e0c;border-color:transparent;}
 .timer-modal-inner{width:100%;max-width:380px;text-align:center;position:relative;}
-.timer-close{position:absolute;top:-8px;right:0;background:var(--surface2);border:none;color:var(--text2);width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;z-index:10;}
+.timer-close{position:fixed;top:16px;right:16px;background:var(--surface2);border:none;color:var(--text2);width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;z-index:20;display:flex;align-items:center;justify-content:center;}
 .timer-mode-switch{display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin:48px auto 32px;max-width:340px;width:100%;}
 .timer-mode-btn{flex:1;padding:11px 4px;border:none;background:none;color:var(--text2);font-family:var(--font);font-size:13px;font-weight:700;border-radius:8px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .timer-mode-btn.active{background:var(--accent);color:#0a0e0c;}
@@ -1281,7 +1281,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.15';
+const APP_VERSION = '2.16';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
