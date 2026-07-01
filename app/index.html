@@ -539,7 +539,7 @@ input[type="file"]{display:none;}
 .timer-modal.running.phase-rest .timer-skip-btn,
 .timer-modal.running.phase-prep .timer-skip-btn{background:rgba(10,14,12,0.2);color:#0a0e0c;border-color:transparent;}
 .timer-modal-inner{width:100%;max-width:380px;text-align:center;position:relative;}
-.timer-close{position:fixed;top:16px;right:16px;background:var(--surface2);border:none;color:var(--text2);width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;z-index:20;display:flex;align-items:center;justify-content:center;}
+.timer-close{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 14px);right:calc(env(safe-area-inset-right, 0px) + 16px);background:var(--surface2);border:none;color:var(--text2);width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;z-index:20;display:flex;align-items:center;justify-content:center;}
 .timer-mode-switch{display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin:48px auto 32px;max-width:340px;width:100%;}
 .timer-mode-btn{flex:1;padding:11px 4px;border:none;background:none;color:var(--text2);font-family:var(--font);font-size:13px;font-weight:700;border-radius:8px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .timer-mode-btn.active{background:var(--accent);color:#0a0e0c;}
@@ -833,6 +833,7 @@ const EX_NOTES = {
   rpd1:  "Deltóide posterior e trapézio médio. Puxa à altura da cara com os cotovelos altos, controla a volta. Essencial para a saúde do ombro direito. Polia alta.",
   bs:    "Quadríceps e glúteo. Desce abaixo do paralelo, sobe com força. Joelhos apontam para os pés, peito alto e core firme.",
   bss:   "Quadríceps e glúteo. Desce até o joelho traseiro quase tocar o chão, sobe com controlo. Tronco ligeiramente à frente. Começa pelo lado direito.",
+  bss_smith: "Quadríceps e glúteo. Na Smith: barra apoiada nas costas, pé da frente bem posicionado. Desce até o joelho traseiro quase tocar o chão, sobe com controlo. Começa pelo lado direito. Regista o total na barra (barra vazia = 40kg).",
   slle1: "Quadríceps. Estende por completo no topo e segura 1 seg, desce devagar (2–3 seg). Uma perna de cada vez. Começa pelo lado direito.",
   slc1:  "Femoral. Estica totalmente antes de cada repetição, flexiona até à contração e pausa 1 seg. Sem levantar a anca do banco.",
   abd1:  "Glúteo médio. Abre com controlo, segura na abertura máxima, fecha devagar. Tronco ligeiramente à frente.",
@@ -883,11 +884,11 @@ const PLANS = {
   ],coreRef:["Side Plank — 3×20–30seg/lado"]},
   lower1:{name:"Lower 1",type:"lower",day:"Terça",sub:"Quad · Glúteo · Femoral · Gémeos",exercises:[
     {id:"bs",  name:"Barbell Squat", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"barbell_10",warmup:true,emptyBarFirst:true,rest:"2–3 min",plates:true},
-    {id:"bss", name:"Bulgarian Split Squat",         sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"dumbbell",rest:"2–3 min"},
+    {id:"bss_smith", name:"Bulgarian Split Squat (Smith)", sets:3,reps:"6–10",repsMin:6,repsMax:10,muscles:["quad","gluteo"],inc:"machine",rest:"2–3 min"},
+    {id:"cr",  name:"Standing Calf Raise (Smith)", sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"slle1",name:"Single-Leg Leg Extension",     sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg"},
     {id:"slc1",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
     {id:"abd1",name:"Hip Abduction",              sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
-    {id:"mcr", name:"Seated Calf Raise",        sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"cc1", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
   ],coreRef:["Back Extension — 3×12–15 (leve, foco glúteo)"]},
   upper2:{name:"Upper 2",type:"upper",day:"Quinta",sub:"Costas · Peito · Ombros · Braços",exercises:[
@@ -908,7 +909,7 @@ const PLANS = {
     {id:"slle2",name:"Leg Extension (bilateral)",    sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["quad"],inc:"machine",rest:"90 seg",maxWeight:100},
     {id:"slc2",name:"Seated Leg Curl",               sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["femoral"],inc:"machine",rest:"90 seg"},
     {id:"abd2",name:"Hip Abduction",                 sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gluteo"],inc:"machine",rest:"90 seg"},
-    {id:"cr",  name:"Standing Calf Raise (Smith)", sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
+    {id:"mcr", name:"Seated Calf Raise",        sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["gemeos"],inc:"machine",rest:"90 seg"},
     {id:"cc2", name:"Cable Crunch",          sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["abdomen"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
   ],coreRef:["Back Extension — 3×12–15 (leve, foco glúteo)"]}
     },
@@ -1281,7 +1282,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.16';
+const APP_VERSION = '2.20';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2044,8 +2045,8 @@ function onSetInput(exId, setNum) {
   if (filled) autoStartTimerIfNeeded();
 
   // Auto-rest after completing a set that is NOT the last one.
-  // Debounced: waits ~1.2s after you stop typing, so writing "10" (1 then 0)
-  // doesn't fire the rest on the first digit. Only fires if no timer is running.
+  // Debounced: waits ~2s after you stop typing, so ajustar a carga ou escrever as reps
+  // (1 depois 0) não dispara o descanso a meio. Só arranca se nenhum cronómetro estiver a correr.
   if (filled && row.dataset.last !== '1') {
     const fireKey = exId + '_' + setNum;
     const w = WORKOUTS[currentWorkout];
@@ -2068,7 +2069,7 @@ function onSetInput(exId, setNum) {
             if (rE) rE.blur();
             startRest(rs);
           }
-        }, 1200);
+        }, 2000);
       }
     } else if (filled) {
       // mark as "handled" so it won't retro-trigger later when the timer stops
