@@ -309,6 +309,13 @@ input[type="file"]{display:none;}
 .nutri-table .nutri-last{color:var(--text);font-weight:700;}
 .nutri-table td.down{color:var(--accent);}
 .nutri-table td.up{color:var(--orange);}
+.nutri-table .meas-delta{font-weight:700;font-family:var(--mono);font-size:12px;}
+.nutri-table .meas-delta.good{color:var(--accent);}
+.nutri-table .meas-delta.bad{color:var(--red);}
+.nutri-table .meas-delta.flat{color:var(--text3);}
+.nutri-table th.meas-delta-h{color:var(--text2);}
+.meas-showall{margin-top:10px;width:100%;padding:9px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;}
+.meas-showall:active{opacity:0.7;}
 /* InBody */
 .ib-head{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(145deg,#1a2420,#141a17);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;}
 .ib-head-title{font-size:18px;font-weight:800;color:var(--text);}
@@ -326,7 +333,11 @@ input[type="file"]{display:none;}
 .ib-spark-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
 .ib-spark-name{font-size:14px;font-weight:600;color:var(--text);}
 .ib-spark-now{font-size:15px;font-weight:700;color:var(--text);font-family:var(--mono);}
-.ib-spark-diff{font-size:12px;color:var(--accent);margin-left:4px;}
+.ib-spark-diff{font-size:12px;margin-left:4px;color:var(--accent);}
+.ib-spark-diff.good{color:var(--accent);}
+.ib-spark-diff.bad{color:var(--red);}
+.ib-spark-diff.flat{color:var(--text3);}
+.ib-spark-total{font-size:10px;color:var(--text3);font-family:var(--mono);margin-left:6px;font-weight:500;}
 .ib-spark-svg{width:100%;height:64px;display:block;}
 .ib-spark-labels{display:flex;justify-content:space-between;margin-top:4px;}
 .ib-spark-labels span{font-size:10px;color:var(--text3);font-family:var(--mono);}
@@ -1282,7 +1293,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.21';
+const APP_VERSION = '1.0';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2026,7 +2037,8 @@ function onSetInput(exId, setNum) {
   // (Com histórico, a carga vem pré-preenchida; sem histórico, é preciso preencher ambas —
   // assim o descanso não arranca cedo demais para quem começa do zero.)
   const isBodyweight = exDef && exDef.bodyweight;  // peso corporal: lastro pode ser 0
-  const weightOk = isBodyweight ? (wEl && wEl.value !== '') : (isFinite(wv) && wv > 0);
+  const isRepsOnly = exDef && exDef.repsOnly;      // só reps: não há campo de peso a validar
+  const weightOk = isRepsOnly ? true : (isBodyweight ? (wEl && wEl.value !== '') : (isFinite(wv) && wv > 0));
   const filled = weightOk && isFinite(rv) && rv > 0;
   row.classList.toggle('done', filled);
   updateExerciseDone(exId);
@@ -2060,7 +2072,7 @@ function onSetInput(exId, setNum) {
           const rNow = parseInt(document.getElementById(`r_${exId}_${setNum}`)?.value, 10);
           const wElNow = document.getElementById(`w_${exId}_${setNum}`);
           const wNow = parseFloat(wElNow?.value);
-          const wOkNow = exDef && exDef.bodyweight ? (wElNow && wElNow.value !== '') : (isFinite(wNow) && wNow > 0);
+          const wOkNow = (exDef && exDef.repsOnly) ? true : (exDef && exDef.bodyweight ? (wElNow && wElNow.value !== '') : (isFinite(wNow) && wNow > 0));
           if (wOkNow && isFinite(rNow) && rNow > 0 && !_autoRestFired[fireKey] && !bt.running) {
             _autoRestFired[fireKey] = true;
             const wE = document.getElementById(`w_${exId}_${setNum}`);
@@ -3266,7 +3278,7 @@ function nutriMeasuresHTML(p) {
   html += `<div class="ib-section-title">Evolução</div>`;
   [['peso','Peso','kg'],['gordura','% Gordura','%'],['musculo','Massa Muscular','kg']].forEach(([k,name,unit]) => {
     const vals = recs.map(r => r[k]);
-    if (vals.some(v => v != null)) html += ibSparklineFromRecs(name, unit, vals, labels);
+    if (vals.some(v => v != null)) html += ibSparklineFromRecs(name, unit, vals, labels, k);
   });
 
   // Segmentos do último registo (se existirem)
@@ -3288,8 +3300,8 @@ function nutriMeasuresHTML(p) {
   html += `<div class="ib-section-title">Perímetros & Pregas</div>`;
   const perDefs = [['p_braco','Braço'],['p_coxa','Coxa'],['p_gemeo','M. Gémeo'],['p_ombros','Ombros'],['p_peito','Peito'],['p_cintura','Cintura'],['p_abdominal','Abdominal'],['p_anca','Anca']];
   const pregDefs = [['pr_bicipital','Bicipital'],['pr_tricipital','Tricipital'],['pr_subscapular','Subscapular'],['pr_ilieocristal','Ilieocristal'],['pr_abdominal','Abdominal'],['pr_supraespinal','Supraespinal'],['pr_crural','Crural'],['pr_geminal','Geminal']];
-  html += measureTableFromRecs('Perímetros (cm)', perDefs, recs, labels);
-  html += measureTableFromRecs('Pregas (mm)', pregDefs, recs, labels);
+  html += measureTableFromRecs('Perímetros (cm)', perDefs, recs, labels, { expanded: _measExpanded['Perímetros (cm)'] });
+  html += measureTableFromRecs('Pregas (mm)', pregDefs, recs, labels, { expanded: _measExpanded['Pregas (mm)'] });
 
   // Lista de avaliações (editar/apagar)
   html += `<div class="ib-section-title">Avaliações registadas</div><div class="nutri-card" style="padding:6px 16px">`;
@@ -3347,35 +3359,80 @@ function mLabelFull(iso) {
   return d.toLocaleDateString('pt-PT', { day:'numeric', month:'short', year:'numeric' });
 }
 
-function ibSparklineFromRecs(name, unit, vals, labels) {
+function ibSparklineFromRecs(name, unit, vals, labels, key) {
   // Filtra pares (valor, label) onde há valor
   const pairs = vals.map((v,i)=>[v,labels[i]]).filter(p=>p[0]!=null);
   if (pairs.length < 2) {
     const only = pairs.length ? `${String(pairs[0][0]).replace('.',',')}${unit}` : '—';
     return `<div class="ib-spark"><div class="ib-spark-head"><span class="ib-spark-name">${name}</span><span class="ib-spark-now">${only}</span></div><div style="font-size:11px;color:var(--text3);font-family:var(--mono)">Precisa de 2+ avaliações para o gráfico.</div></div>`;
   }
-  return ibSparkline({ name, unit, vals: pairs.map(p=>p[0]) }, pairs.map(p=>p[1]));
+  return ibSparkline({ name, unit, key, vals: pairs.map(p=>p[0]) }, pairs.map(p=>p[1]));
 }
 
-function measureTableFromRecs(title, defs, recs, labels) {
+// Medidas onde DESCER é bom (gordura subcutânea / cintura). As pregas são todas assim.
+const MEAS_LOWER_BETTER = new Set(['p_cintura','p_abdominal']);
+
+function measureTableFromRecs(title, defs, recs, labels, opts) {
+  opts = opts || {};
+  const isPregas = /prega/i.test(title);
   // Mantém só as linhas que têm algum valor em qualquer avaliação
-  const rows = defs.map(([k,name]) => [name, recs.map(r=>r[k])]).filter(([n,vals]) => vals.some(v=>v!=null));
+  let rows = defs.map(([k,name]) => [k, name, recs.map(r=>r[k])]).filter(([k,n,vals]) => vals.some(v=>v!=null));
   if (!rows.length) return '';
-  // Para as pregas, recortar colunas vazias no início (avaliações sem pregas)
-  let html = `<div class="nutri-card" style="overflow-x:auto"><div class="nutri-rules-title" style="padding:0 0 10px">${title}</div>
+
+  // Quantas colunas mostrar: por defeito as últimas 4; 'ver tudo' mostra todas.
+  const MAX_COLS = 4;
+  const total = labels.length;
+  const showAll = !!opts.expanded;
+  const start = (showAll || total <= MAX_COLS) ? 0 : total - MAX_COLS;
+  const visLabels = labels.slice(start);
+  const scrollable = showAll && total > 6; // só precisa de scroll se forem muitas
+
+  const tableId = 'meastbl_' + Math.random().toString(36).slice(2,8);
+  let html = `<div class="nutri-card"${scrollable?' style="overflow-x:auto"':''}>
+    <div class="nutri-rules-title" style="padding:0 0 10px">${title}</div>
     <table class="nutri-table"><thead><tr><th></th>`;
-  labels.forEach(l => { html += `<th>${l}</th>`; });
-  html += `</tr></thead><tbody>`;
-  rows.forEach(([name, vals]) => {
+  visLabels.forEach(l => { html += `<th>${l}</th>`; });
+  html += `<th class="meas-delta-h">Δ</th></tr></thead><tbody>`;
+
+  rows.forEach(([k, name, allVals]) => {
+    const vals = allVals.slice(start);
     html += `<tr><td class="nutri-tname">${name}</td>`;
     vals.forEach((v, i) => {
       const isLast = i === vals.length - 1;
       html += `<td class="${isLast?'nutri-last':''}">${v==null?'·':String(v).replace('.',',')}</td>`;
     });
-    html += `</tr>`;
+    // Δ = primeiro valor não-nulo visível → último valor não-nulo visível
+    const nn = vals.filter(v => v != null);
+    let dCell = '<td class="meas-delta flat">·</td>';
+    if (nn.length >= 2) {
+      const d = Math.round((nn[nn.length-1] - nn[0]) * 10) / 10;
+      const lowerBetter = isPregas || MEAS_LOWER_BETTER.has(k);
+      let cls = 'flat';
+      if (d !== 0) cls = (lowerBetter ? (d < 0) : (d > 0)) ? 'good' : 'bad';
+      // sem juízo de cor para medidas ambíguas (braço, coxa, etc.): mantém neutro
+      if (!lowerBetter && !isPregas && k !== 'p_cintura' && k !== 'p_abdominal') cls = 'flat';
+      const txt = (d > 0 ? '+' : '') + String(d).replace('.',',');
+      dCell = `<td class="meas-delta ${cls}">${txt}</td>`;
+    }
+    html += dCell + `</tr>`;
   });
-  html += `</tbody></table></div>`;
+  html += `</tbody></table>`;
+
+  // Botão "ver tudo" só se houver mais avaliações do que as mostradas
+  if (!showAll && total > MAX_COLS) {
+    html += `<button class="meas-showall" onclick="toggleMeasAll(this,'${title.replace(/'/g,"")}')">Ver todas as ${total} avaliações</button>`;
+  } else if (showAll && total > MAX_COLS) {
+    html += `<button class="meas-showall" onclick="toggleMeasAll(this,'${title.replace(/'/g,"")}')">Mostrar só as últimas ${MAX_COLS}</button>`;
+  }
+  html += `</div>`;
   return html;
+}
+
+// Estado de expansão por título de tabela (Perímetros / Pregas)
+let _measExpanded = {};
+function toggleMeasAll(btn, title) {
+  _measExpanded[title] = !_measExpanded[title];
+  renderProgresso();
 }
 
 function ibSparkline(metric, labels) {
@@ -3391,10 +3448,22 @@ function ibSparkline(metric, labels) {
     return [x, y];
   });
   const linePath = pts.map((pt, i) => `${i===0?'M':'L'}${pt[0].toFixed(1)},${pt[1].toFixed(1)}`).join(' ');
-  // tendência primeiro vs último
+  // Variação: última (penúltimo → último ponto) em destaque + total (primeiro → último) ao lado.
   const first = vals[0], last = vals[vals.length-1];
-  const diff = Math.round((last - first) * 10) / 10;
-  const diffTxt = (diff > 0 ? '+' : '') + diff + metric.unit;
+  const prev = vals.length >= 2 ? vals[vals.length-2] : last;
+  const lastDiff = Math.round((last - prev) * 10) / 10;   // variação recente
+  const totalDiff = Math.round((last - first) * 10) / 10; // acumulado do período
+  const fmtDiff = (d) => (d > 0 ? '+' : '') + String(d).replace('.',',') + metric.unit;
+  const lastTxt = fmtDiff(lastDiff);
+  const totalTxt = fmtDiff(totalDiff);
+  // Direção "boa": gordura/massa gorda → descer é bom; peso → neutro; resto → subir é bom.
+  const lowerIsBetter = (metric.key === 'gordura' || metric.key === 'massa_gorda');
+  const neutralMetric = (metric.key === 'peso');
+  let diffCls = 'flat';
+  if (lastDiff !== 0 && !neutralMetric) {
+    const good = lowerIsBetter ? (lastDiff < 0) : (lastDiff > 0);
+    diffCls = good ? 'good' : 'bad';
+  }
 
   let circles = '';
   pts.forEach((pt, i) => {
@@ -3405,7 +3474,7 @@ function ibSparkline(metric, labels) {
   return `<div class="ib-spark">
     <div class="ib-spark-head">
       <span class="ib-spark-name">${metric.name}</span>
-      <span class="ib-spark-now">${String(last).replace('.',',')}${metric.unit} <span class="ib-spark-diff">${diffTxt}</span></span>
+      <span class="ib-spark-now">${String(last).replace('.',',')}${metric.unit} <span class="ib-spark-diff ${diffCls}">${lastTxt}</span><span class="ib-spark-total">${totalTxt} total</span></span>
     </div>
     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="ib-spark-svg">
       <path d="${linePath}" fill="none" stroke="#39FF88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
