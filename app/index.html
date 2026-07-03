@@ -520,7 +520,7 @@ input[type="file"]{display:none;}
 #timer-fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);z-index:500;transition:transform 0.15s;}
 #timer-fab:active{transform:scale(0.92);}
 /* Pill "Finalizar" flutuante — discreto, ao lado do cronómetro (à esquerda dele) */
-#finish-sticky{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px));z-index:495;display:none;align-items:center;justify-content:center;gap:8px;height:54px;border:1.5px solid var(--accent);border-radius:16px;background:#0f1713;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.5);transition:transform 0.15s,opacity 0.2s,bottom 0.2s;}
+#finish-sticky{position:fixed;left:16px;right:88px;bottom:calc(24px + env(safe-area-inset-bottom, 0px));z-index:495;display:none;align-items:center;justify-content:center;gap:8px;height:54px;border:1.5px solid var(--accent);border-radius:16px;background:#0f1713;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.5);transition:transform 0.15s,opacity 0.2s,bottom 0.2s;}
 #finish-sticky.show{display:flex;}
 #finish-sticky:active{transform:scale(0.98);}
 #finish-sticky:disabled{opacity:0.45;cursor:default;box-shadow:none;}
@@ -1305,7 +1305,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.6';
+const APP_VERSION = '1.7';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2049,10 +2049,7 @@ function applyFinishVisibility(floating) {
   if (sticky) sticky.classList.toggle('show', floating);
   // Barra de descanso sobe para ficar ACIMA do Finalizar (Descanso em cima, Finalizar em baixo)
   document.documentElement.style.setProperty('--finish-offset', floating ? '66px' : '0px');
-  // Sem descanso ativo, o FAB do cronómetro esconde-se enquanto o Finalizar flutua (evita colisão no canto)
-  const restActive = document.getElementById('timer-mini')?.classList.contains('show');
-  const fab = document.getElementById('timer-fab');
-  if (fab && !restActive) fab.style.display = floating ? 'none' : '';
+  // O FAB do cronómetro fica sempre visível; a barra Finalizar encolhe à direita para não colidir.
 }
 
 function showFinishBar() {
@@ -4544,8 +4541,7 @@ function hideMiniTimer() {
   const el = document.getElementById('timer-mini');
   if (el) el.classList.remove('show');
   const fab = document.getElementById('timer-fab');
-  // repõe o FAB só se o Finalizar não estiver a flutuar (senão fica escondido para não colidir)
-  if (fab) fab.style.display = _finishFloating ? 'none' : '';
+  if (fab) fab.style.display = '';
 }
 
 function updateMiniTimer() {
