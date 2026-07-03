@@ -519,11 +519,12 @@ input[type="file"]{display:none;}
 /* Timer FAB + Modal */
 #timer-fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);z-index:500;transition:transform 0.15s;}
 #timer-fab:active{transform:scale(0.92);}
-#finish-bar{position:fixed;left:0;right:0;bottom:0;z-index:480;background:linear-gradient(180deg,rgba(10,14,12,0) 0%,var(--bg) 22%);padding:14px 16px calc(env(safe-area-inset-bottom) + 12px);display:none;}
-#finish-bar.show{display:block;}
-#finish-bar-btn{width:100%;padding:17px;padding-right:76px;border:none;border-radius:14px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(57,255,136,0.35);transition:transform 0.12s;}
-#finish-bar-btn:active{transform:scale(0.98);}
-#finish-bar-btn .fb-hint{display:block;font-size:11px;font-weight:600;opacity:0.7;margin-top:2px;font-family:var(--mono)}
+/* Pill "Finalizar" flutuante — discreto, ao lado do cronómetro (à esquerda dele) */
+#finish-fab{position:fixed;bottom:24px;right:88px;z-index:499;display:none;align-items:center;gap:7px;padding:0 20px;height:56px;border:none;border-radius:50px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);transition:transform 0.15s,opacity 0.15s;}
+#finish-fab.show{display:flex;}
+#finish-fab:active{transform:scale(0.94);}
+#finish-fab:disabled{opacity:0.45;cursor:default;box-shadow:none;}
+#finish-fab svg{width:18px;height:18px;}
 .timer-modal{position:fixed;inset:0;background:rgba(10,14,12,0.96);backdrop-filter:blur(12px);z-index:1500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .timer-modal.open{display:flex;}
 .timer-modal.running{background:#0a0e0c;transition:background 0.4s ease;}
@@ -702,7 +703,7 @@ input[type="file"]{display:none;}
 <div id="view-nutricao" class="view"></div>
 <div id="view-dados" class="view"></div>
 </div>
-<div id="finish-bar"><button id="finish-bar-btn" onclick="confirmFinishWorkout()">Finalizar treino<span class="fb-hint" id="fb-hint">preenche uma série para ativar</span></button></div>
+<button id="finish-fab" onclick="confirmFinishWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Finalizar</button>
 <button id="timer-fab" onclick="openTimerModal()" title="Timer">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a0e0c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg>
 </button>
@@ -1304,7 +1305,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.3';
+const APP_VERSION = '1.4';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2033,10 +2034,10 @@ function startWorkout(key) {
 
 
 
-// ===== Barra fixa "Finalizar treino" =====
-// Sempre visível no ecrã de sessão; botão só fica ativo com 1+ série preenchida.
-function showFinishBar() { const b=document.getElementById('finish-bar'); if(b) b.classList.add('show'); updateFinishBar(); }
-function hideFinishBar() { const b=document.getElementById('finish-bar'); if(b) b.classList.remove('show'); }
+// ===== Pill "Finalizar" flutuante (ao lado do cronómetro) =====
+// Sempre visível no ecrã de sessão; fica ativo (opaco) só com 1+ série preenchida.
+function showFinishBar() { const b=document.getElementById('finish-fab'); if(b) b.classList.add('show'); updateFinishBar(); }
+function hideFinishBar() { const b=document.getElementById('finish-fab'); if(b) b.classList.remove('show'); }
 
 function hasAnyFilledSet() {
   const reps = document.querySelectorAll('input[id^="r_"]');
@@ -2045,14 +2046,9 @@ function hasAnyFilledSet() {
 }
 
 function updateFinishBar() {
-  const btn = document.getElementById('finish-bar-btn');
-  const hint = document.getElementById('fb-hint');
+  const btn = document.getElementById('finish-fab');
   if (!btn) return;
-  const ready = hasAnyFilledSet();
-  btn.disabled = !ready;
-  btn.style.opacity = ready ? '1' : '0.5';
-  btn.style.cursor = ready ? 'pointer' : 'default';
-  if (hint) hint.style.display = ready ? 'none' : 'block';
+  btn.disabled = !hasAnyFilledSet();
 }
 
 async function confirmFinishWorkout() {
@@ -2374,8 +2370,9 @@ function renderSession() {
     <div class="ex-name" style="font-size:15px">Notas da sessão <span style="color:var(--text3);font-weight:500;font-size:12px">(opcional)</span></div>
     <textarea id="session-notes" oninput="saveDraft()" placeholder="Ex: ombro chateou no press, pouco sono…" style="width:100%;margin-top:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:var(--font);font-size:14px;min-height:64px;resize:vertical"></textarea>
   </div></div>`;
+  html += `<button class="save-btn" onclick="confirmFinishWorkout()">${SVG.save} Finalizar treino</button>`;
   html += `<button class="discard-btn" onclick="discardWorkout()">Descartar treino</button>`;
-  html += `<div style="height:96px"></div>`; // espaço para a barra fixa não tapar o conteúdo
+  html += `<div style="height:24px"></div>`; // folga para o pill flutuante não colar ao último botão
   container.innerHTML = html;
   loadDraft();
   showFinishBar();
