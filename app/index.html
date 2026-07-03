@@ -490,7 +490,7 @@ input[type="file"]{display:none;}
 .cgrid-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:11px;color:var(--text3);font-family:var(--mono);}
 .cgrid-legend{display:flex;align-items:center;gap:5px;}
 .cgrid-legend .cgrid-cell{width:11px;height:11px;aspect-ratio:auto;display:inline-block;}
-.timer-mini{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px));z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px;background:var(--accent);color:#0a0e0c;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.35);cursor:pointer;animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1);}
+.timer-mini{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px) + var(--finish-offset, 0px));z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px;background:var(--accent);color:#0a0e0c;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.35);cursor:pointer;animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1);}
 .timer-mini.show{display:flex;}
 @keyframes miniUp{from{transform:translateY(120%);}to{transform:translateY(0);}}
 .timer-mini-left{display:flex;align-items:center;gap:8px;min-width:0;}
@@ -520,10 +520,10 @@ input[type="file"]{display:none;}
 #timer-fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);z-index:500;transition:transform 0.15s;}
 #timer-fab:active{transform:scale(0.92);}
 /* Pill "Finalizar" flutuante — discreto, ao lado do cronómetro (à esquerda dele) */
-#finish-sticky{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px) + var(--rest-offset, 0px));z-index:495;display:none;align-items:center;justify-content:center;gap:8px;height:54px;border:none;border-radius:16px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.4);transition:transform 0.15s,opacity 0.2s,bottom 0.2s;}
+#finish-sticky{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px));z-index:495;display:none;align-items:center;justify-content:center;gap:8px;height:54px;border:1.5px solid var(--accent);border-radius:16px;background:#0f1713;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.5);transition:transform 0.15s,opacity 0.2s,bottom 0.2s;}
 #finish-sticky.show{display:flex;}
 #finish-sticky:active{transform:scale(0.98);}
-#finish-sticky:disabled{opacity:0.5;cursor:default;box-shadow:none;}
+#finish-sticky:disabled{opacity:0.45;cursor:default;box-shadow:none;}
 #finish-sticky svg{width:19px;height:19px;}
 .timer-modal{position:fixed;inset:0;background:rgba(10,14,12,0.96);backdrop-filter:blur(12px);z-index:1500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .timer-modal.open{display:flex;}
@@ -1305,7 +1305,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.5';
+const APP_VERSION = '1.6';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2040,8 +2040,22 @@ function startWorkout(key) {
 // assenta no lugar. A barra fixa sobe automaticamente acima do cronómetro de descanso.
 let _finishObserver = null;
 
+// Estado: a barra Finalizar está visível a flutuar (inline fora de vista)?
+let _finishFloating = false;
+
+function applyFinishVisibility(floating) {
+  _finishFloating = floating;
+  const sticky = document.getElementById('finish-sticky');
+  if (sticky) sticky.classList.toggle('show', floating);
+  // Barra de descanso sobe para ficar ACIMA do Finalizar (Descanso em cima, Finalizar em baixo)
+  document.documentElement.style.setProperty('--finish-offset', floating ? '66px' : '0px');
+  // Sem descanso ativo, o FAB do cronómetro esconde-se enquanto o Finalizar flutua (evita colisão no canto)
+  const restActive = document.getElementById('timer-mini')?.classList.contains('show');
+  const fab = document.getElementById('timer-fab');
+  if (fab && !restActive) fab.style.display = floating ? 'none' : '';
+}
+
 function showFinishBar() {
-  // arranca o observer sobre o botão inline (existe após renderSession)
   const inline = document.getElementById('finish-inline');
   const sticky = document.getElementById('finish-sticky');
   if (!inline || !sticky) return;
@@ -2049,16 +2063,14 @@ function showFinishBar() {
   if (_finishObserver) _finishObserver.disconnect();
   _finishObserver = new IntersectionObserver((entries) => {
     const e = entries[0];
-    // botão inline visível → esconde a barra fixa (ele "assentou")
-    if (e.isIntersecting) sticky.classList.remove('show');
-    else sticky.classList.add('show');
+    // botão inline visível → esconde a barra fixa (ele "assentou"); fora de vista → mostra
+    applyFinishVisibility(!e.isIntersecting);
   }, { root: null, threshold: 0.5 });
   _finishObserver.observe(inline);
 }
 
 function hideFinishBar() {
-  const sticky = document.getElementById('finish-sticky');
-  if (sticky) sticky.classList.remove('show');
+  applyFinishVisibility(false);
   if (_finishObserver) { _finishObserver.disconnect(); _finishObserver = null; }
 }
 
@@ -2074,11 +2086,6 @@ function updateFinishBar() {
   const inline = document.getElementById('finish-inline');
   if (sticky) sticky.disabled = !ready;
   if (inline) inline.disabled = !ready;
-}
-
-// Ajusta a posição da barra fixa de Finalizar consoante a barra de descanso esteja ou não visível.
-function setFinishRestOffset(active) {
-  document.documentElement.style.setProperty('--rest-offset', active ? '66px' : '0px');
 }
 
 async function confirmFinishWorkout() {
@@ -4529,16 +4536,16 @@ function hideRestDoneAlert() {
 function showMiniTimer() {
   const el = document.getElementById('timer-mini');
   if (el) el.classList.add('show');
+  // durante o descanso o cronómetro é a barra; o FAB redondo esconde-se sempre
   const fab = document.getElementById('timer-fab');
   if (fab) fab.style.display = 'none';
-  setFinishRestOffset(true); // empurra o Finalizar para cima da barra de descanso
 }
 function hideMiniTimer() {
   const el = document.getElementById('timer-mini');
   if (el) el.classList.remove('show');
   const fab = document.getElementById('timer-fab');
-  if (fab) fab.style.display = '';
-  setFinishRestOffset(false);
+  // repõe o FAB só se o Finalizar não estiver a flutuar (senão fica escondido para não colidir)
+  if (fab) fab.style.display = _finishFloating ? 'none' : '';
 }
 
 function updateMiniTimer() {
