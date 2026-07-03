@@ -520,11 +520,11 @@ input[type="file"]{display:none;}
 #timer-fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);z-index:500;transition:transform 0.15s;}
 #timer-fab:active{transform:scale(0.92);}
 /* Pill "Finalizar" flutuante — discreto, ao lado do cronómetro (à esquerda dele) */
-#finish-fab{position:fixed;bottom:24px;right:88px;z-index:499;display:none;align-items:center;gap:7px;padding:0 20px;height:56px;border:none;border-radius:50px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);transition:transform 0.15s,opacity 0.15s;}
-#finish-fab.show{display:flex;}
-#finish-fab:active{transform:scale(0.94);}
-#finish-fab:disabled{opacity:0.45;cursor:default;box-shadow:none;}
-#finish-fab svg{width:18px;height:18px;}
+#finish-sticky{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px) + var(--rest-offset, 0px));z-index:495;display:none;align-items:center;justify-content:center;gap:8px;height:54px;border:none;border-radius:16px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.4);transition:transform 0.15s,opacity 0.2s,bottom 0.2s;}
+#finish-sticky.show{display:flex;}
+#finish-sticky:active{transform:scale(0.98);}
+#finish-sticky:disabled{opacity:0.5;cursor:default;box-shadow:none;}
+#finish-sticky svg{width:19px;height:19px;}
 .timer-modal{position:fixed;inset:0;background:rgba(10,14,12,0.96);backdrop-filter:blur(12px);z-index:1500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .timer-modal.open{display:flex;}
 .timer-modal.running{background:#0a0e0c;transition:background 0.4s ease;}
@@ -703,7 +703,7 @@ input[type="file"]{display:none;}
 <div id="view-nutricao" class="view"></div>
 <div id="view-dados" class="view"></div>
 </div>
-<button id="finish-fab" onclick="confirmFinishWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Finalizar</button>
+<button id="finish-sticky" onclick="confirmFinishWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Finalizar treino</button>
 <button id="timer-fab" onclick="openTimerModal()" title="Timer">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a0e0c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg>
 </button>
@@ -1305,7 +1305,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.4';
+const APP_VERSION = '1.5';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2034,10 +2034,33 @@ function startWorkout(key) {
 
 
 
-// ===== Pill "Finalizar" flutuante (ao lado do cronómetro) =====
-// Sempre visível no ecrã de sessão; fica ativo (opaco) só com 1+ série preenchida.
-function showFinishBar() { const b=document.getElementById('finish-fab'); if(b) b.classList.add('show'); updateFinishBar(); }
-function hideFinishBar() { const b=document.getElementById('finish-fab'); if(b) b.classList.remove('show'); }
+// ===== Finalizar: botão inline no fim da lista que "assenta" =====
+// Enquanto o botão inline real está fora de vista, mostra-se uma barra fixa idêntica
+// ao fundo do ecrã. Quando fazes scroll até ao botão real, a fixa desaparece e ele
+// assenta no lugar. A barra fixa sobe automaticamente acima do cronómetro de descanso.
+let _finishObserver = null;
+
+function showFinishBar() {
+  // arranca o observer sobre o botão inline (existe após renderSession)
+  const inline = document.getElementById('finish-inline');
+  const sticky = document.getElementById('finish-sticky');
+  if (!inline || !sticky) return;
+  updateFinishBar();
+  if (_finishObserver) _finishObserver.disconnect();
+  _finishObserver = new IntersectionObserver((entries) => {
+    const e = entries[0];
+    // botão inline visível → esconde a barra fixa (ele "assentou")
+    if (e.isIntersecting) sticky.classList.remove('show');
+    else sticky.classList.add('show');
+  }, { root: null, threshold: 0.5 });
+  _finishObserver.observe(inline);
+}
+
+function hideFinishBar() {
+  const sticky = document.getElementById('finish-sticky');
+  if (sticky) sticky.classList.remove('show');
+  if (_finishObserver) { _finishObserver.disconnect(); _finishObserver = null; }
+}
 
 function hasAnyFilledSet() {
   const reps = document.querySelectorAll('input[id^="r_"]');
@@ -2046,9 +2069,16 @@ function hasAnyFilledSet() {
 }
 
 function updateFinishBar() {
-  const btn = document.getElementById('finish-fab');
-  if (!btn) return;
-  btn.disabled = !hasAnyFilledSet();
+  const ready = hasAnyFilledSet();
+  const sticky = document.getElementById('finish-sticky');
+  const inline = document.getElementById('finish-inline');
+  if (sticky) sticky.disabled = !ready;
+  if (inline) inline.disabled = !ready;
+}
+
+// Ajusta a posição da barra fixa de Finalizar consoante a barra de descanso esteja ou não visível.
+function setFinishRestOffset(active) {
+  document.documentElement.style.setProperty('--rest-offset', active ? '66px' : '0px');
 }
 
 async function confirmFinishWorkout() {
@@ -2370,9 +2400,9 @@ function renderSession() {
     <div class="ex-name" style="font-size:15px">Notas da sessão <span style="color:var(--text3);font-weight:500;font-size:12px">(opcional)</span></div>
     <textarea id="session-notes" oninput="saveDraft()" placeholder="Ex: ombro chateou no press, pouco sono…" style="width:100%;margin-top:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:var(--font);font-size:14px;min-height:64px;resize:vertical"></textarea>
   </div></div>`;
-  html += `<button class="save-btn" onclick="confirmFinishWorkout()">${SVG.save} Finalizar treino</button>`;
+  html += `<button id="finish-inline" class="save-btn" onclick="confirmFinishWorkout()">${SVG.save} Finalizar treino</button>`;
   html += `<button class="discard-btn" onclick="discardWorkout()">Descartar treino</button>`;
-  html += `<div style="height:24px"></div>`; // folga para o pill flutuante não colar ao último botão
+  html += `<div style="height:40px"></div>`; // folga no fim do scroll
   container.innerHTML = html;
   loadDraft();
   showFinishBar();
@@ -4501,12 +4531,14 @@ function showMiniTimer() {
   if (el) el.classList.add('show');
   const fab = document.getElementById('timer-fab');
   if (fab) fab.style.display = 'none';
+  setFinishRestOffset(true); // empurra o Finalizar para cima da barra de descanso
 }
 function hideMiniTimer() {
   const el = document.getElementById('timer-mini');
   if (el) el.classList.remove('show');
   const fab = document.getElementById('timer-fab');
   if (fab) fab.style.display = '';
+  setFinishRestOffset(false);
 }
 
 function updateMiniTimer() {
