@@ -531,7 +531,7 @@ input[type="file"]{display:none;}
 /* Barra unificada no fundo: tempo de treino (ou descanso) à esquerda + Finalizar à direita */
 /* Dock colada ao fundo do ecrã, faz o contorno (sem margens laterais/inferiores) */
 /* Dock colada ao fundo, fundo quase preto (funde com o ecrã — lê-se como "chão", não como cartão) */
-#dock-bar{position:fixed;left:0;right:0;bottom:0;z-index:495;display:none;flex-direction:row;gap:14px;align-items:center;background:rgba(6,9,7,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:12px 18px calc(12px + env(safe-area-inset-bottom, 0px));border-top:1px solid rgba(42,52,46,0.5);}
+#dock-bar{position:fixed;left:0;right:0;bottom:0;z-index:495;display:none;flex-direction:row;gap:14px;align-items:center;background:rgba(6,9,7,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:12px 20px calc(12px + env(safe-area-inset-bottom, 0px));border-top:1px solid rgba(42,52,46,0.5);}
 #dock-bar.show{display:flex;}
 /* Zona esquerda: tempo solto (cima) + finalizar (baixo) */
 #dock-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:11px;}
@@ -550,9 +550,9 @@ input[type="file"]{display:none;}
 #dock-finish:disabled{opacity:0.35;cursor:default;}
 #dock-finish svg{width:19px;height:19px;}
 /* Cronómetro — ícone solto, sem caixa */
-#dock-timer-btn{flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:none;border:none;color:var(--accent);cursor:pointer;transition:transform 0.15s,opacity 0.15s;opacity:0.85;}
-#dock-timer-btn:active{transform:scale(0.9);opacity:1;}
-#dock-timer-btn svg{width:27px;height:27px;}
+#dock-timer-btn{flex-shrink:0;align-self:center;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--accent);cursor:pointer;transition:transform 0.15s,background 0.15s;}
+#dock-timer-btn:active{transform:scale(0.92);background:#1c2420;}
+#dock-timer-btn svg{width:24px;height:24px;}
 #dock-finish svg{width:19px;height:19px;}
 #dock-finish svg{width:18px;height:18px;}
 .timer-modal{position:fixed;inset:0;background:rgba(10,14,12,0.96);backdrop-filter:blur(12px);z-index:1500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
@@ -1345,7 +1345,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.4';
+const APP_VERSION = '2.5';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
