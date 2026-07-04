@@ -517,24 +517,27 @@ input[type="file"]{display:none;}
 .timer-lock-ring .ring-fill{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:214;stroke-dashoffset:214;transition:stroke-dashoffset 0.05s linear;}
 .timer-lock-text{font-family:var(--mono);font-size:13px;text-align:center;line-height:1.5;letter-spacing:1px;text-transform:uppercase;}
 /* Timer FAB + Modal */
-#timer-fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);z-index:500;transition:transform 0.15s;}
+#timer-fab{position:fixed;bottom:calc(24px + var(--dock-lift, 0px));right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);z-index:500;transition:transform 0.15s,bottom 0.2s;}
 #timer-fab:active{transform:scale(0.92);}
 /* Pill "Finalizar" flutuante — discreto, ao lado do cronómetro (à esquerda dele) */
 /* Barra unificada no fundo: tempo de treino (ou descanso) à esquerda + Finalizar à direita */
-#dock-bar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom, 0px));z-index:495;display:none;align-items:stretch;gap:8px;}
+#dock-bar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom, 0px));z-index:495;display:none;flex-direction:column;gap:8px;background:rgba(10,14,12,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:8px;border-radius:22px;border:1px solid var(--border);box-shadow:0 8px 30px rgba(0,0,0,0.5);}
 #dock-bar.show{display:flex;}
-#dock-timer{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 16px;height:56px;border-radius:16px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:background 0.2s,border-color 0.2s;}
+/* Linha 1 — estado / cronómetro */
+#dock-timer{display:flex;align-items:center;gap:12px;padding:0 8px 0 14px;height:52px;border-radius:15px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:background 0.2s,border-color 0.2s;}
 #dock-timer.resting{background:var(--accent);border-color:var(--accent);}
-#dock-timer-left{display:flex;align-items:center;gap:9px;min-width:0;}
-#dock-timer-icon{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;color:var(--accent);}
-#dock-timer-icon svg{width:20px;height:20px;}
+#dock-timer-left{display:flex;align-items:center;gap:11px;min-width:0;flex:1;}
+#dock-timer-icon{display:flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;color:var(--accent);}
+#dock-timer-icon svg{width:22px;height:22px;}
 #dock-timer.resting #dock-timer-icon{color:#0a0e0c;}
-#dock-timer-time{font-family:var(--mono);font-size:20px;font-weight:700;letter-spacing:0.5px;color:var(--text);}
+#dock-timer-time{font-family:var(--mono);font-size:21px;font-weight:700;letter-spacing:0.5px;color:var(--text);flex-shrink:0;min-width:66px;}
 #dock-timer.resting #dock-timer-time,#dock-timer.resting #dock-timer-label{color:#0a0e0c;}
-#dock-timer-label{font-size:11px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
-#dock-finish{flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:7px;padding:0 20px;height:56px;border:1.5px solid var(--accent);border-radius:16px;background:#0f1713;color:var(--accent);font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;transition:transform 0.15s,opacity 0.2s;}
-#dock-finish:active{transform:scale(0.96);}
+#dock-timer-label{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;line-height:1.3;text-align:right;flex:1;min-width:0;}
+/* Linha 2 — ação / finalizar */
+#dock-finish{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:50px;border:1.5px solid var(--accent);border-radius:15px;background:#0f1713;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;transition:transform 0.15s,opacity 0.2s;}
+#dock-finish:active{transform:scale(0.985);}
 #dock-finish:disabled{opacity:0.4;cursor:default;}
+#dock-finish svg{width:19px;height:19px;}
 #dock-finish svg{width:18px;height:18px;}
 .timer-modal{position:fixed;inset:0;background:rgba(10,14,12,0.96);backdrop-filter:blur(12px);z-index:1500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .timer-modal.open{display:flex;}
@@ -719,10 +722,10 @@ input[type="file"]{display:none;}
     <div id="dock-timer-left">
       <span id="dock-timer-icon"></span>
       <span id="dock-timer-time">00:00</span>
+      <span id="dock-timer-label">toca para começar</span>
     </div>
-    <span id="dock-timer-label">toca para começar</span>
   </div>
-  <button id="dock-finish" onclick="confirmFinishWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Finalizar</button>
+  <button id="dock-finish" onclick="confirmFinishWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Finalizar treino</button>
 </div>
 <button id="timer-fab" onclick="openTimerModal()" title="Timer">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a0e0c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg>
@@ -1325,7 +1328,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.0';
+const APP_VERSION = '2.1';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1986,7 +1989,7 @@ function syncDock() {
     let lbl, txt;
     if (bt.mode === 'stopwatch') { lbl = 'Cronómetro'; txt = fmtBig(bt.elapsed); }
     else if (bt.mode === 'interval') { lbl = bt.phase === 'prep' ? 'Get Ready' : (bt.phase === 'work' ? `Work ${bt.currentRound}/${bt.rounds}` : `Rest ${bt.currentRound}/${bt.rounds}`); txt = String(bt.remaining); }
-    else { lbl = 'Descanso · toca para abrir'; txt = fmtBig(bt.remaining); }
+    else { lbl = 'Descanso'; txt = fmtBig(bt.remaining); }
     label.textContent = lbl;
     time.textContent = txt;
   } else {
@@ -2085,11 +2088,17 @@ function showFinishBar() {
   if (dock) dock.classList.add('show');
   updateFinishBar();
   syncDock();
+  // Levanta o FAB do cronómetro para cima da dock (mede a altura real após render)
+  requestAnimationFrame(() => {
+    const d = document.getElementById('dock-bar');
+    if (d) document.documentElement.style.setProperty('--dock-lift', (d.offsetHeight + 12) + 'px');
+  });
 }
 
 function hideFinishBar() {
   const dock = document.getElementById('dock-bar');
   if (dock) dock.classList.remove('show');
+  document.documentElement.style.setProperty('--dock-lift', '0px');
 }
 
 function hasAnyFilledSet() {
@@ -4540,16 +4549,12 @@ function hideRestDoneAlert() {
 }
 
 function showMiniTimer() {
-  // A dock unificada mostra o descanso; o mini-timer antigo fica desativado.
-  const fab = document.getElementById('timer-fab');
-  if (fab) fab.style.display = 'none';
+  // A dock mostra o descanso; o FAB do cronómetro mantém-se (acesso aos modos avulsos).
   syncDock();
 }
 function hideMiniTimer() {
   const el = document.getElementById('timer-mini');
   if (el) el.classList.remove('show');
-  const fab = document.getElementById('timer-fab');
-  if (fab) fab.style.display = '';
   syncDock();
 }
 
