@@ -540,6 +540,11 @@ input[type="file"]{display:none;}
 #dock-timer-icon{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;color:var(--accent);}
 #dock-timer-icon svg{width:20px;height:20px;}
 #dock-timer-time{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:0.5px;color:var(--text);flex-shrink:0;min-width:64px;}
+/* Estado inicial "pronto a começar": chamada à ação clara */
+#dock-timer.ready #dock-timer-time{font-family:var(--font);font-size:17px;font-weight:800;color:var(--accent);min-width:0;letter-spacing:0;}
+#dock-timer.ready #dock-timer-icon{color:var(--accent);}
+#dock-timer.ready{animation:dockPulse 2s ease-in-out infinite;}
+@keyframes dockPulse{0%,100%{opacity:1;}50%{opacity:0.62;}}
 #dock-timer-label{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;text-align:right;flex:1;min-width:0;}
 /* Estado de descanso: o tempo fica verde (texto), sem caixa */
 #dock-timer.resting #dock-timer-icon,#dock-timer.resting #dock-timer-time{color:var(--accent);}
@@ -1345,7 +1350,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.6';
+const APP_VERSION = '2.7';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1987,9 +1992,10 @@ function updateTimerDisplay() {
   const txt = formatTimer(total);
   const disp = document.getElementById('timer-display');
   if (disp) disp.textContent = txt;
-  // barra unificada: só mostra o tempo de treino quando NÃO está a descansar
+  // barra unificada: só mostra o tempo quando não está a descansar nem no estado "começar"
   const dt = document.getElementById('dock-timer-time');
-  if (dt && !bt.running) dt.textContent = txt;
+  const dockEl = document.getElementById('dock-timer');
+  if (dt && !bt.running && !(dockEl && dockEl.classList.contains('ready'))) dt.textContent = txt;
 }
 
 // Sincroniza a barra unificada (dock): mostra descanso (verde) quando bt.running, senão o tempo de treino.
@@ -2013,9 +2019,18 @@ function syncDock() {
     // Tempo de treino: play (parado) / pause (a correr)
     dock.classList.remove('resting');
     const isRunning = !!timerStart;
+    const notStarted = !isRunning && timerElapsed === 0;
     if (icon) icon.innerHTML = isRunning ? ICON_PAUSE_SM : ICON_PLAY_SM;
-    label.textContent = isRunning ? 'tempo de treino' : (timerElapsed > 0 ? 'pausado · toca para retomar' : 'toca para começar');
-    updateTimerDisplay();
+    if (notStarted) {
+      // Ainda não começou → chamada à ação clara, sem o 00:00 a distrair
+      dock.classList.add('ready');
+      time.textContent = 'Começar treino';
+      label.textContent = '';
+    } else {
+      dock.classList.remove('ready');
+      label.textContent = isRunning ? 'tempo de treino' : 'pausado · toca para retomar';
+      updateTimerDisplay();
+    }
   }
 }
 
