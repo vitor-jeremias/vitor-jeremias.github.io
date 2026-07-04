@@ -148,14 +148,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .save-btn{width:100%;padding:22px;background:var(--accent);border:none;border-radius:var(--radius);color:#0a0e0c;font-family:var(--font);font-size:20px;font-weight:800;cursor:pointer;margin-top:12px;transition:all 0.2s;}
 .save-btn:active{transform:scale(0.98);opacity:0.9;}
 .discard-btn{width:100%;padding:14px;background:transparent;border:1px solid var(--red);border-radius:var(--radius);color:var(--red);font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;transition:all 0.2s;}
-.session-menu-btn{width:38px;height:38px;border-radius:11px;background:var(--surface);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background 0.15s;}
-.session-menu-btn:active{background:var(--surface2);}
-.session-menu{display:none;position:absolute;right:20px;z-index:120;margin-top:-8px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.55);overflow:hidden;min-width:190px;}
-.session-menu.open{display:block;animation:menuPop 0.14s ease;}
 @keyframes menuPop{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
-.session-menu-item{display:flex;align-items:center;gap:11px;width:100%;padding:14px 16px;background:none;border:none;font-family:var(--font);font-size:15px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;}
-.session-menu-item:active{background:rgba(255,255,255,0.04);}
-.session-menu-item.danger{color:var(--red);}
 .discard-btn:active{transform:scale(0.98);background:rgba(255,94,87,0.08);}
 
 /* Progression summary */
@@ -531,6 +524,33 @@ input[type="file"]{display:none;}
 /* Barra unificada no fundo: tempo de treino (ou descanso) à esquerda + Finalizar à direita */
 /* Dock colada ao fundo do ecrã, faz o contorno (sem margens laterais/inferiores) */
 /* Dock colada ao fundo, fundo quase preto (funde com o ecrã — lê-se como "chão", não como cartão) */
+.finish-sheet{position:fixed;inset:0;z-index:1600;display:none;}
+.finish-sheet.open{display:block;}
+.finish-sheet-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.6);animation:fadeIn 0.2s ease;}
+.finish-sheet-panel{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-top-left-radius:24px;border-top-right-radius:24px;border-top:1px solid var(--border);padding:10px 20px calc(24px + env(safe-area-inset-bottom, 0px));box-shadow:0 -10px 40px rgba(0,0,0,0.55);animation:sheetUp 0.28s cubic-bezier(0.34,1.3,0.64,1);}
+@keyframes sheetUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.finish-sheet-handle{width:40px;height:4px;border-radius:2px;background:var(--border);margin:6px auto 16px;}
+.finish-sheet-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:14px;}
+.complete-summary{display:flex;gap:14px;justify-content:center;margin:0 0 24px;}
+.complete-summary .cs-item{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;max-width:110px;padding:14px 8px;background:var(--surface);border:1px solid var(--border);border-radius:14px;}
+.complete-summary .cs-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--accent);}
+.complete-summary .cs-lbl{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
+.complete-summary .cs-delta{font-size:10px;font-family:var(--mono);font-weight:700;margin-top:3px;}
+.complete-summary .cs-delta.up{color:var(--accent);}
+.complete-summary .cs-delta.down{color:var(--text3);}
+.complete-streakrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;}
+.complete-note{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:22px;font-size:14px;color:var(--text2);line-height:1.5;}
+.complete-note .cn-label{display:block;font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.finish-sheet-label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;}
+.finish-sheet-label span{color:var(--text3);font-weight:500;}
+.finish-sheet-notes{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;color:var(--text);font-family:var(--font);font-size:15px;min-height:80px;resize:none;margin-bottom:18px;}
+.finish-sheet-notes:focus{outline:none;border-color:var(--accent);}
+.finish-sheet-save{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:54px;border:none;border-radius:15px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:17px;font-weight:800;cursor:pointer;transition:transform 0.15s;}
+.finish-sheet-save:active{transform:scale(0.98);}
+.finish-sheet-save svg{width:20px;height:20px;}
+.finish-sheet-discard{width:100%;height:48px;margin-top:10px;background:none;border:none;color:var(--red);font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;}
+.finish-sheet-discard:active{opacity:0.6;}
 #dock-bar{position:fixed;left:0;right:0;bottom:0;z-index:495;display:none;flex-direction:row;gap:14px;align-items:center;background:rgba(6,9,7,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:12px 20px calc(12px + env(safe-area-inset-bottom, 0px));border-top:1px solid rgba(42,52,46,0.5);}
 #dock-bar.show{display:flex;}
 /* Zona esquerda: tempo solto (cima) + finalizar (baixo) */
@@ -737,6 +757,17 @@ input[type="file"]{display:none;}
 </div>
 <div id="view-nutricao" class="view"></div>
 <div id="view-dados" class="view"></div>
+</div>
+<div id="finish-sheet" class="finish-sheet">
+  <div class="finish-sheet-backdrop" onclick="closeFinishSheet()"></div>
+  <div class="finish-sheet-panel">
+    <div class="finish-sheet-handle"></div>
+    <div class="finish-sheet-title">Finalizar treino</div>
+    <label class="finish-sheet-label">Notas da sessão <span>(opcional)</span></label>
+    <textarea id="session-notes" class="finish-sheet-notes" oninput="saveDraft()" placeholder="Ex: ombro chateou no press, pouco sono…"></textarea>
+    <button class="finish-sheet-save" onclick="saveSession()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Guardar treino</button>
+    <button class="finish-sheet-discard" onclick="discardWorkout()">Descartar treino</button>
+  </div>
 </div>
 <div id="dock-bar">
   <div id="dock-left">
@@ -1350,7 +1381,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.8';
+const APP_VERSION = '2.11';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2151,10 +2182,26 @@ function updateFinishBar() {
   if (df) df.disabled = !ready;
 }
 
-async function confirmFinishWorkout() {
+function confirmFinishWorkout() {
   if (!hasAnyFilledSet()) { showToast('Preenche pelo menos uma série'); return; }
-  const go = await confirmModal({ title:'Finalizar treino?', message:'Vais registar este treino com as séries preenchidas. Os exercícios em branco ficam por fazer.', confirmLabel:'Finalizar', cancelLabel:'Continuar treino' });
-  if (go) saveSession();
+  openFinishSheet();
+}
+
+function openFinishSheet() {
+  const sheet = document.getElementById('finish-sheet');
+  if (!sheet) return;
+  // Restaurar nota do rascunho, se houver
+  try {
+    const draft = JSON.parse(localStorage.getItem(draftKey()) || '{}');
+    const nt = document.getElementById('session-notes');
+    if (nt) nt.value = draft['session-notes'] || '';
+  } catch(e) {}
+  sheet.classList.add('open');
+}
+
+function closeFinishSheet() {
+  const sheet = document.getElementById('finish-sheet');
+  if (sheet) sheet.classList.remove('open');
 }
 
 function draftKey() { return 'vt_draft_' + currentWorkout; }
@@ -2373,20 +2420,9 @@ function renderSession() {
   const container = document.getElementById('view-home');
   const last = getLastSession(currentWorkout);
 
-  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-    <button class="back-btn" onclick="renderHome()" style="margin-bottom:0">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Voltar
-    </button>
-    <button class="session-menu-btn" onclick="toggleSessionMenu(event)" aria-label="Mais opções">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
-    </button>
-  </div>
-  <div id="session-menu" class="session-menu">
-    <button class="session-menu-item danger" onclick="discardWorkout()">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-      Descartar treino
-    </button>
-  </div>
+  let html = `<button class="back-btn" onclick="renderHome()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Voltar
+  </button>
   <div class="session-header" id="session-top">
     <div class="session-day" style="color:var(--${w.type})">${w.day} · ${w.name}</div>
     <div class="session-title">${w.sub}</div>
@@ -2467,37 +2503,15 @@ function renderSession() {
     </div></div>`;
   }
 
-  html += `<div class="ex-card" style="margin-top:4px"><div class="ex-header" style="padding-bottom:14px">
-    <div class="ex-name" style="font-size:15px">Notas da sessão <span style="color:var(--text3);font-weight:500;font-size:12px">(opcional)</span></div>
-    <textarea id="session-notes" oninput="saveDraft()" placeholder="Ex: ombro chateou no press, pouco sono…" style="width:100%;margin-top:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:var(--font);font-size:14px;min-height:64px;resize:vertical"></textarea>
-  </div></div>`;
   html += `<div id="dock-spacer" style="height:0"></div>`; // ajustado dinamicamente à altura real da dock
   container.innerHTML = html;
   loadDraft();
   showFinishBar();
 }
 
-function toggleSessionMenu(ev) {
-  if (ev) ev.stopPropagation();
-  const menu = document.getElementById('session-menu');
-  if (!menu) return;
-  const willOpen = !menu.classList.contains('open');
-  menu.classList.toggle('open', willOpen);
-  if (willOpen) {
-    // fecha ao tocar em qualquer sítio fora do menu
-    setTimeout(() => {
-      const close = (e) => {
-        if (!menu.contains(e.target)) { menu.classList.remove('open'); document.removeEventListener('click', close); }
-      };
-      document.addEventListener('click', close);
-    }, 0);
-  }
-}
-
 async function discardWorkout() {
-  const menu = document.getElementById('session-menu');
-  if (menu) menu.classList.remove('open');
   if (!await confirmModal({title:'Descartar treino?', message:'Os dados que registaste não serão guardados.', confirmLabel:'Descartar', danger:true})) return;
+  closeFinishSheet();
   // clear rest/timeout, draft, timer state
   if (_autoRestTimeout) { clearTimeout(_autoRestTimeout); _autoRestTimeout = null; }
   _autoRestFired = {};
@@ -2513,6 +2527,7 @@ async function discardWorkout() {
 }
 
 async function saveSession() {
+  closeFinishSheet();
   const w = WORKOUTS[currentWorkout];
   let anyFilled = false;
   const exData = w.exercises.map(ex => {
@@ -2646,17 +2661,52 @@ function showProgressionSummary(exData, w) {
   const sessions = getSessions();
   const weekStreak = calcStreak(sessions);
   const wp = weekProgressMessage(sessions);
+
+  // Volume desta sessão
+  let vol = 0, sets = 0;
+  exData.forEach(ex => {
+    const def = w.exercises.find(e => e.id === ex.id);
+    ex.sets.forEach(st => {
+      if (st.reps > 0) { sets++; vol += (def && def.bodyweight ? (st.weight + refBodyWeight()) : st.weight) * st.reps; }
+    });
+  });
+  // Volume da última sessão do MESMO treino (comparação só faz sentido Upper1 vs Upper1, etc.)
+  let prevVol = null;
+  const sameWorkout = sessions.filter(s => s.workoutKey === currentWorkout).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if (sameWorkout.length) {
+    let pv = 0;
+    sameWorkout[0].exercises.forEach(ex => {
+      const def = w.exercises.find(e => e.id === ex.id);
+      (ex.sets||[]).forEach(st => { if (st.reps > 0) pv += (def && def.bodyweight ? (st.weight + refBodyWeight()) : st.weight) * st.reps; });
+    });
+    prevVol = pv;
+  }
+  const volTxt = vol >= 1000 ? (Math.round(vol/1000*10)/10) + 'k' : Math.round(vol);
+  let volDelta = '';
+  if (prevVol && prevVol > 0) {
+    const d = Math.round(vol - prevVol);
+    if (d !== 0) volDelta = `<span class="cs-delta ${d>0?'up':'down'}">${d>0?'+':''}${Math.abs(d)>=1000?(Math.round(d/1000*10)/10)+'k':d} vs última</span>`;
+  }
+
+  // Nota (só se preenchida)
+  const noteEl = document.getElementById('session-notes');
+  const noteTxt = noteEl ? noteEl.value.trim() : '';
+
   let html = `<div class="complete-hero">
     <div class="complete-check">✓</div>
     <div class="complete-title">Session complete.</div>
     <div class="complete-sub">${w.name} · ${formatDate(new Date().toISOString())}</div>
-    ${weekStreak > 0 ? `<div class="home-streak" style="margin-top:16px">${SVG.fire} ${weekStreak} semana${weekStreak>1?'s':''} seguida${weekStreak>1?'s':''}</div>` : ''}
-    ${wp ? `<div class="week-progress${wp.complete?' complete':''}">
-      <div class="week-progress-count">${wp.done} de ${wp.total} treinos esta semana</div>
-      <div class="week-progress-msg">${wp.frase}</div>
-    </div>` : ''}
-    <div class="complete-quote">Still becoming<span style="color:var(--accent)">.</span></div>
   </div>
+  <div class="complete-summary">
+    <div class="cs-item"><span class="cs-val">${formatTimer(getTimerSeconds())}</span><span class="cs-lbl">Tempo</span></div>
+    <div class="cs-item"><span class="cs-val">${sets}</span><span class="cs-lbl">Séries</span></div>
+    <div class="cs-item"><span class="cs-val">${volTxt}</span><span class="cs-lbl">Volume kg</span>${volDelta}</div>
+  </div>
+  ${(weekStreak > 0 || wp) ? `<div class="complete-streakrow">
+    ${weekStreak > 0 ? `<div class="home-streak">${SVG.fire} ${weekStreak} semana${weekStreak>1?'s':''} seguida${weekStreak>1?'s':''}</div>` : ''}
+    ${wp ? `<div class="week-progress${wp.complete?' complete':''}" style="margin:0"><div class="week-progress-count">${wp.done} de ${wp.total} treinos esta semana</div></div>` : ''}
+  </div>` : ''}
+  ${noteTxt ? `<div class="complete-note"><span class="cn-label">A tua nota</span>${noteTxt.replace(/</g,'&lt;')}</div>` : ''}
   <p class="section-title">Progressão para a Próxima Sessão</p>
   <div class="prog-summary">
     <div class="prog-summary-title">Recomendações de Carga</div>`;
@@ -2676,6 +2726,7 @@ function showProgressionSummary(exData, w) {
   });
 
   html += `</div>
+    <div class="complete-quote" style="text-align:center;margin:26px 0 18px">Still becoming<span style="color:var(--accent)">.</span></div>
     <button class="save-btn" onclick="showView('home')">Terminar</button>`;
   container.innerHTML = html;
 }
