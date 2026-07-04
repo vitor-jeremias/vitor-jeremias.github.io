@@ -31,7 +31,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .nav-tabs{display:flex;gap:2px;background:var(--surface);border-radius:10px;padding:3px;flex:1;}
 .nav-tab{flex:1;padding:9px 3px;border-radius:7px;font-family:var(--font);font-size:12px;font-weight:600;border:none;background:none;color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap;text-align:center;}
 .nav-tab.active{background:var(--accent);color:#0a0e0c;}
-.view{display:none;padding:20px;padding-bottom:96px;}.view.active{display:block;}
+.view{display:none;padding:20px;padding-bottom:96px;position:relative;}.view.active{display:block;}
 .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
 .home-header{padding:8px 4px 20px;}
 .home-greeting{font-size:15px;color:var(--text3);font-weight:500;}
@@ -148,6 +148,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .save-btn{width:100%;padding:22px;background:var(--accent);border:none;border-radius:var(--radius);color:#0a0e0c;font-family:var(--font);font-size:20px;font-weight:800;cursor:pointer;margin-top:12px;transition:all 0.2s;}
 .save-btn:active{transform:scale(0.98);opacity:0.9;}
 .discard-btn{width:100%;padding:14px;background:transparent;border:1px solid var(--red);border-radius:var(--radius);color:var(--red);font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;transition:all 0.2s;}
+.session-menu-btn{width:38px;height:38px;border-radius:11px;background:var(--surface);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background 0.15s;}
+.session-menu-btn:active{background:var(--surface2);}
+.session-menu{display:none;position:absolute;right:20px;z-index:120;margin-top:-8px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.55);overflow:hidden;min-width:190px;}
+.session-menu.open{display:block;animation:menuPop 0.14s ease;}
+@keyframes menuPop{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.session-menu-item{display:flex;align-items:center;gap:11px;width:100%;padding:14px 16px;background:none;border:none;font-family:var(--font);font-size:15px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;}
+.session-menu-item:active{background:rgba(255,255,255,0.04);}
+.session-menu-item.danger{color:var(--red);}
 .discard-btn:active{transform:scale(0.98);background:rgba(255,94,87,0.08);}
 
 /* Progression summary */
@@ -539,10 +547,9 @@ input[type="file"]{display:none;}
 #dock-finish:disabled{opacity:0.4;cursor:default;}
 #dock-finish svg{width:18px;height:18px;}
 /* Zona direita: botão do cronómetro (abre o mesmo modal de sempre) */
-#dock-timer-btn{flex-shrink:0;width:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:14px;background:var(--accent);border:none;color:#0a0e0c;cursor:pointer;transition:transform 0.15s;}
-#dock-timer-btn:active{transform:scale(0.96);}
+#dock-timer-btn{flex-shrink:0;width:56px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--surface2);border:1px solid var(--border);color:var(--accent);cursor:pointer;transition:transform 0.15s,background 0.15s;}
+#dock-timer-btn:active{transform:scale(0.96);background:#1c2420;}
 #dock-timer-btn svg{width:24px;height:24px;}
-#dock-timer-btn span{font-size:9px;font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:1px;}
 #dock-finish svg{width:19px;height:19px;}
 #dock-finish svg{width:18px;height:18px;}
 .timer-modal{position:fixed;inset:0;background:rgba(10,14,12,0.96);backdrop-filter:blur(12px);z-index:1500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
@@ -732,7 +739,7 @@ input[type="file"]{display:none;}
     </div>
     <button id="dock-finish" onclick="confirmFinishWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Finalizar treino</button>
   </div>
-  <button id="dock-timer-btn" onclick="openTimerModal()" aria-label="Cronómetro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/></svg><span>Timer</span></button>
+  <button id="dock-timer-btn" onclick="openTimerModal()" aria-label="Cronómetro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/></svg></button>
 </div>
 <button id="timer-fab" onclick="openTimerModal()" title="Timer">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a0e0c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg>
@@ -1335,7 +1342,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.2';
+const APP_VERSION = '2.3';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2342,9 +2349,20 @@ function renderSession() {
   const container = document.getElementById('view-home');
   const last = getLastSession(currentWorkout);
 
-  let html = `<button class="back-btn" onclick="renderHome()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Voltar
-  </button>
+  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+    <button class="back-btn" onclick="renderHome()" style="margin-bottom:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Voltar
+    </button>
+    <button class="session-menu-btn" onclick="toggleSessionMenu(event)" aria-label="Mais opções">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+    </button>
+  </div>
+  <div id="session-menu" class="session-menu">
+    <button class="session-menu-item danger" onclick="discardWorkout()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      Descartar treino
+    </button>
+  </div>
   <div class="session-header" id="session-top">
     <div class="session-day" style="color:var(--${w.type})">${w.day} · ${w.name}</div>
     <div class="session-title">${w.sub}</div>
@@ -2429,14 +2447,32 @@ function renderSession() {
     <div class="ex-name" style="font-size:15px">Notas da sessão <span style="color:var(--text3);font-weight:500;font-size:12px">(opcional)</span></div>
     <textarea id="session-notes" oninput="saveDraft()" placeholder="Ex: ombro chateou no press, pouco sono…" style="width:100%;margin-top:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:var(--font);font-size:14px;min-height:64px;resize:vertical"></textarea>
   </div></div>`;
-  html += `<button class="discard-btn" onclick="discardWorkout()">Descartar treino</button>`;
-  html += `<div style="height:150px"></div>`; // folga para a dock (colada ao fundo) não tapar o Descartar
+  html += `<div style="height:130px"></div>`; // folga para a dock (colada ao fundo) não tapar o conteúdo
   container.innerHTML = html;
   loadDraft();
   showFinishBar();
 }
 
+function toggleSessionMenu(ev) {
+  if (ev) ev.stopPropagation();
+  const menu = document.getElementById('session-menu');
+  if (!menu) return;
+  const willOpen = !menu.classList.contains('open');
+  menu.classList.toggle('open', willOpen);
+  if (willOpen) {
+    // fecha ao tocar em qualquer sítio fora do menu
+    setTimeout(() => {
+      const close = (e) => {
+        if (!menu.contains(e.target)) { menu.classList.remove('open'); document.removeEventListener('click', close); }
+      };
+      document.addEventListener('click', close);
+    }, 0);
+  }
+}
+
 async function discardWorkout() {
+  const menu = document.getElementById('session-menu');
+  if (menu) menu.classList.remove('open');
   if (!await confirmModal({title:'Descartar treino?', message:'Os dados que registaste não serão guardados.', confirmLabel:'Descartar', danger:true})) return;
   // clear rest/timeout, draft, timer state
   if (_autoRestTimeout) { clearTimeout(_autoRestTimeout); _autoRestTimeout = null; }
