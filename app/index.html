@@ -1345,7 +1345,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.5';
+const APP_VERSION = '2.6';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2108,6 +2108,12 @@ function showFinishBar() {
   // Durante o treino o cronómetro vive na dock → esconde o FAB flutuante
   const fab = document.getElementById('timer-fab');
   if (fab) fab.style.display = 'none';
+  // Espaçador = altura real da dock + pequena folga (evita vazio a mais e evita tapar conteúdo)
+  requestAnimationFrame(() => {
+    const d = document.getElementById('dock-bar');
+    const sp = document.getElementById('dock-spacer');
+    if (d && sp) sp.style.height = (d.offsetHeight + 16) + 'px';
+  });
 }
 
 function hideFinishBar() {
@@ -2450,7 +2456,7 @@ function renderSession() {
     <div class="ex-name" style="font-size:15px">Notas da sessão <span style="color:var(--text3);font-weight:500;font-size:12px">(opcional)</span></div>
     <textarea id="session-notes" oninput="saveDraft()" placeholder="Ex: ombro chateou no press, pouco sono…" style="width:100%;margin-top:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:var(--font);font-size:14px;min-height:64px;resize:vertical"></textarea>
   </div></div>`;
-  html += `<div style="height:130px"></div>`; // folga para a dock (colada ao fundo) não tapar o conteúdo
+  html += `<div id="dock-spacer" style="height:0"></div>`; // ajustado dinamicamente à altura real da dock
   container.innerHTML = html;
   loadDraft();
   showFinishBar();
