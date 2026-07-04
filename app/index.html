@@ -490,7 +490,7 @@ input[type="file"]{display:none;}
 .cgrid-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:11px;color:var(--text3);font-family:var(--mono);}
 .cgrid-legend{display:flex;align-items:center;gap:5px;}
 .cgrid-legend .cgrid-cell{width:11px;height:11px;aspect-ratio:auto;display:inline-block;}
-.timer-mini{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px) + var(--finish-offset, 0px));z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px;background:var(--accent);color:#0a0e0c;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.35);cursor:pointer;animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1);}
+.timer-mini{position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom, 0px));z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px;background:var(--accent);color:#0a0e0c;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.35);cursor:pointer;animation:miniUp 0.25s cubic-bezier(0.34,1.4,0.64,1);}
 .timer-mini.show{display:flex;}
 @keyframes miniUp{from{transform:translateY(120%);}to{transform:translateY(0);}}
 .timer-mini-left{display:flex;align-items:center;gap:8px;min-width:0;}
@@ -520,11 +520,22 @@ input[type="file"]{display:none;}
 #timer-fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,255,136,0.4);z-index:500;transition:transform 0.15s;}
 #timer-fab:active{transform:scale(0.92);}
 /* Pill "Finalizar" flutuante — discreto, ao lado do cronómetro (à esquerda dele) */
-#finish-sticky{position:fixed;left:16px;right:88px;bottom:calc(24px + env(safe-area-inset-bottom, 0px));z-index:495;display:none;align-items:center;justify-content:center;gap:8px;height:54px;border:1.5px solid var(--accent);border-radius:16px;background:#0f1713;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.5);transition:transform 0.15s,opacity 0.2s,bottom 0.2s;}
-#finish-sticky.show{display:flex;}
-#finish-sticky:active{transform:scale(0.98);}
-#finish-sticky:disabled{opacity:0.45;cursor:default;box-shadow:none;}
-#finish-sticky svg{width:19px;height:19px;}
+/* Barra unificada no fundo: tempo de treino (ou descanso) à esquerda + Finalizar à direita */
+#dock-bar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom, 0px));z-index:495;display:none;align-items:stretch;gap:8px;}
+#dock-bar.show{display:flex;}
+#dock-timer{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 16px;height:56px;border-radius:16px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:background 0.2s,border-color 0.2s;}
+#dock-timer.resting{background:var(--accent);border-color:var(--accent);}
+#dock-timer-left{display:flex;align-items:center;gap:9px;min-width:0;}
+#dock-timer-icon{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;color:var(--accent);}
+#dock-timer-icon svg{width:20px;height:20px;}
+#dock-timer.resting #dock-timer-icon{color:#0a0e0c;}
+#dock-timer-time{font-family:var(--mono);font-size:20px;font-weight:700;letter-spacing:0.5px;color:var(--text);}
+#dock-timer.resting #dock-timer-time,#dock-timer.resting #dock-timer-label{color:#0a0e0c;}
+#dock-timer-label{font-size:11px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
+#dock-finish{flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:7px;padding:0 20px;height:56px;border:1.5px solid var(--accent);border-radius:16px;background:#0f1713;color:var(--accent);font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;transition:transform 0.15s,opacity 0.2s;}
+#dock-finish:active{transform:scale(0.96);}
+#dock-finish:disabled{opacity:0.4;cursor:default;}
+#dock-finish svg{width:18px;height:18px;}
 .timer-modal{position:fixed;inset:0;background:rgba(10,14,12,0.96);backdrop-filter:blur(12px);z-index:1500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .timer-modal.open{display:flex;}
 .timer-modal.running{background:#0a0e0c;transition:background 0.4s ease;}
@@ -703,7 +714,16 @@ input[type="file"]{display:none;}
 <div id="view-nutricao" class="view"></div>
 <div id="view-dados" class="view"></div>
 </div>
-<button id="finish-sticky" onclick="confirmFinishWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Finalizar treino</button>
+<div id="dock-bar">
+  <div id="dock-timer" onclick="onDockTimerTap()">
+    <div id="dock-timer-left">
+      <span id="dock-timer-icon"></span>
+      <span id="dock-timer-time">00:00</span>
+    </div>
+    <span id="dock-timer-label">toca para começar</span>
+  </div>
+  <button id="dock-finish" onclick="confirmFinishWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Finalizar</button>
+</div>
 <button id="timer-fab" onclick="openTimerModal()" title="Timer">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a0e0c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg>
 </button>
@@ -1305,7 +1325,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '1.7';
+const APP_VERSION = '2.0';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1921,23 +1941,15 @@ function restoreTimer() {
   if (!currentWorkout) return;
   try {
     const raw = localStorage.getItem(timerKey());
-    if (!raw) return;
-    const st = JSON.parse(raw);
-    timerElapsed = st.elapsed || 0;
-    timerStart = st.start || null;
-    const btn = document.getElementById('timer-btn');
-    const dot = document.getElementById('timer-dot');
-    const disp = document.getElementById('timer-display');
-    if (timerStart) {
-      // was running — resume ticking
-      timerInterval = setInterval(updateTimerDisplay, 1000);
-      if (btn) { btn.innerHTML = ICON_PAUSE_SM + '<span>Pausar</span>'; btn.className = 'timer-mini-btn running'; }
-      if (dot) dot.className = 'timer-dot running';
-      if (disp) disp.style.color = 'var(--accent)';
-    } else if (timerElapsed > 0) {
-      if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.className = 'timer-start-btn'; }
+    if (raw) {
+      const st = JSON.parse(raw);
+      timerElapsed = st.elapsed || 0;
+      timerStart = st.start || null;
     }
+    // Se já estava a correr (restaurado), continua a contar; senão fica parado à espera do toque.
+    if (timerStart && !timerInterval) timerInterval = setInterval(updateTimerDisplay, 1000);
     updateTimerDisplay();
+    syncDock();
   } catch(e) {}
 }
 
@@ -1950,11 +1962,47 @@ function formatTimer(sec) {
 }
 
 function updateTimerDisplay() {
-  const disp = document.getElementById('timer-display');
-  if (!disp) return;
   let total = timerElapsed;
   if (timerStart) total += Math.floor((Date.now()-timerStart)/1000);
-  disp.textContent = formatTimer(total);
+  const txt = formatTimer(total);
+  const disp = document.getElementById('timer-display');
+  if (disp) disp.textContent = txt;
+  // barra unificada: só mostra o tempo de treino quando NÃO está a descansar
+  const dt = document.getElementById('dock-timer-time');
+  if (dt && !bt.running) dt.textContent = txt;
+}
+
+// Sincroniza a barra unificada (dock): mostra descanso (verde) quando bt.running, senão o tempo de treino.
+function syncDock() {
+  const dock = document.getElementById('dock-timer');
+  const time = document.getElementById('dock-timer-time');
+  const label = document.getElementById('dock-timer-label');
+  const icon = document.getElementById('dock-timer-icon');
+  if (!dock || !time || !label) return;
+  if (bt.running) {
+    // A descansar → barra verde com o countdown
+    dock.classList.add('resting');
+    if (icon) icon.innerHTML = SVG.timer || '';
+    let lbl, txt;
+    if (bt.mode === 'stopwatch') { lbl = 'Cronómetro'; txt = fmtBig(bt.elapsed); }
+    else if (bt.mode === 'interval') { lbl = bt.phase === 'prep' ? 'Get Ready' : (bt.phase === 'work' ? `Work ${bt.currentRound}/${bt.rounds}` : `Rest ${bt.currentRound}/${bt.rounds}`); txt = String(bt.remaining); }
+    else { lbl = 'Descanso · toca para abrir'; txt = fmtBig(bt.remaining); }
+    label.textContent = lbl;
+    time.textContent = txt;
+  } else {
+    // Tempo de treino: play (parado) / pause (a correr)
+    dock.classList.remove('resting');
+    const isRunning = !!timerStart;
+    if (icon) icon.innerHTML = isRunning ? ICON_PAUSE_SM : ICON_PLAY_SM;
+    label.textContent = isRunning ? 'tempo de treino' : (timerElapsed > 0 ? 'pausado · toca para retomar' : 'toca para começar');
+    updateTimerDisplay();
+  }
+}
+
+// Toque na zona do cronómetro da dock: se a descansar abre o timer de descanso; senão pausa/retoma o tempo.
+function onDockTimerTap() {
+  if (bt.running) { reopenTimer(); }
+  else { toggleTimer(); }
 }
 
 function scrollToSessionTop() {
@@ -1982,26 +2030,18 @@ function scrollToFirstIncomplete() {
 }
 
 function toggleTimer() {
-  const btn = document.getElementById('timer-btn');
-  const dot = document.getElementById('timer-dot');
-  const disp = document.getElementById('timer-display');
   if (timerStart) {
     // pause
     timerElapsed += Math.floor((Date.now()-timerStart)/1000);
     timerStart = null;
     clearInterval(timerInterval); timerInterval = null;
-    if (btn) { btn.innerHTML = ICON_PLAY_SM + '<span>Retomar</span>'; btn.className = 'timer-start-btn'; }
-    if (dot) dot.className = 'timer-dot';
-    if (disp) disp.style.color = 'var(--text2)';
   } else {
     // start/resume
     timerStart = Date.now();
     timerInterval = setInterval(updateTimerDisplay, 1000);
-    if (btn) { btn.innerHTML = ICON_PAUSE_SM + '<span>Pausar</span>'; btn.className = 'timer-mini-btn running'; }
-    if (dot) dot.className = 'timer-dot running';
-    if (disp) disp.style.color = 'var(--accent)';
-    updateTimerDisplay();
   }
+  updateTimerDisplay();
+  syncDock();
   saveTimerState();
 }
 
@@ -2038,37 +2078,18 @@ function startWorkout(key) {
 // Enquanto o botão inline real está fora de vista, mostra-se uma barra fixa idêntica
 // ao fundo do ecrã. Quando fazes scroll até ao botão real, a fixa desaparece e ele
 // assenta no lugar. A barra fixa sobe automaticamente acima do cronómetro de descanso.
-let _finishObserver = null;
-
-// Estado: a barra Finalizar está visível a flutuar (inline fora de vista)?
-let _finishFloating = false;
-
-function applyFinishVisibility(floating) {
-  _finishFloating = floating;
-  const sticky = document.getElementById('finish-sticky');
-  if (sticky) sticky.classList.toggle('show', floating);
-  // Barra de descanso sobe para ficar ACIMA do Finalizar (Descanso em cima, Finalizar em baixo)
-  document.documentElement.style.setProperty('--finish-offset', floating ? '66px' : '0px');
-  // O FAB do cronómetro fica sempre visível; a barra Finalizar encolhe à direita para não colidir.
-}
+let _finishObserver = null; // (mantido por compat; já não usado)
 
 function showFinishBar() {
-  const inline = document.getElementById('finish-inline');
-  const sticky = document.getElementById('finish-sticky');
-  if (!inline || !sticky) return;
+  const dock = document.getElementById('dock-bar');
+  if (dock) dock.classList.add('show');
   updateFinishBar();
-  if (_finishObserver) _finishObserver.disconnect();
-  _finishObserver = new IntersectionObserver((entries) => {
-    const e = entries[0];
-    // botão inline visível → esconde a barra fixa (ele "assentou"); fora de vista → mostra
-    applyFinishVisibility(!e.isIntersecting);
-  }, { root: null, threshold: 0.5 });
-  _finishObserver.observe(inline);
+  syncDock();
 }
 
 function hideFinishBar() {
-  applyFinishVisibility(false);
-  if (_finishObserver) { _finishObserver.disconnect(); _finishObserver = null; }
+  const dock = document.getElementById('dock-bar');
+  if (dock) dock.classList.remove('show');
 }
 
 function hasAnyFilledSet() {
@@ -2079,10 +2100,8 @@ function hasAnyFilledSet() {
 
 function updateFinishBar() {
   const ready = hasAnyFilledSet();
-  const sticky = document.getElementById('finish-sticky');
-  const inline = document.getElementById('finish-inline');
-  if (sticky) sticky.disabled = !ready;
-  if (inline) inline.disabled = !ready;
+  const df = document.getElementById('dock-finish');
+  if (df) df.disabled = !ready;
 }
 
 async function confirmFinishWorkout() {
@@ -2314,16 +2333,6 @@ function renderSession() {
     <div class="session-day" style="color:var(--${w.type})">${w.day} · ${w.name}</div>
     <div class="session-title">${w.sub}</div>
   </div>
-  <div id="timer-bar" class="last-bar session-timer-bar" onclick="scrollToSessionTop()" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;cursor:pointer">
-    <div style="display:flex;align-items:center;gap:10px">
-      <span id="timer-dot" class="timer-dot"></span>
-      <div id="timer-display" style="font-family:var(--mono);font-size:19px;font-weight:700;color:var(--text2);letter-spacing:0.5px">00:00</div>
-    </div>
-    <span id="timer-hint" style="font-size:11px;color:var(--text3);font-family:var(--mono)">tempo de treino</span>
-  </div>
-  <div id="timer-control" style="display:flex;justify-content:flex-end;margin-bottom:16px">
-    <button id="timer-btn" onclick="toggleTimer()" class="timer-start-btn">${ICON_PLAY_SM}<span>Iniciar</span></button>
-  </div>
   <div class="day-card ${w.type}" onclick="showWarmup('${w.warmupType||w.type}', '${currentWorkout}')" style="margin-bottom:16px">
     <div class="day-label">Antes de começar</div>
     <div class="day-name">Ver aquecimento</div>
@@ -2404,9 +2413,8 @@ function renderSession() {
     <div class="ex-name" style="font-size:15px">Notas da sessão <span style="color:var(--text3);font-weight:500;font-size:12px">(opcional)</span></div>
     <textarea id="session-notes" oninput="saveDraft()" placeholder="Ex: ombro chateou no press, pouco sono…" style="width:100%;margin-top:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:var(--font);font-size:14px;min-height:64px;resize:vertical"></textarea>
   </div></div>`;
-  html += `<button id="finish-inline" class="save-btn" onclick="confirmFinishWorkout()">${SVG.save} Finalizar treino</button>`;
   html += `<button class="discard-btn" onclick="discardWorkout()">Descartar treino</button>`;
-  html += `<div style="height:40px"></div>`; // folga no fim do scroll
+  html += `<div style="height:90px"></div>`; // folga para a barra dock não tapar o Descartar
   container.innerHTML = html;
   loadDraft();
   showFinishBar();
@@ -3805,7 +3813,7 @@ function renderDados() {
         <span class="tool-row-chev">›</span>
       </button>
       <button class="tool-row" onclick="showChangePassword()">
-        <span class="tool-row-icon">${SVG.lock || '🔒'}</span>
+        <span class="tool-row-icon">${SVG.lock}</span>
         <span class="tool-row-text"><span class="tool-row-name">Alterar senha</span><span class="tool-row-desc">Define uma senha só tua</span></span>
         <span class="tool-row-chev">›</span>
       </button>
@@ -3856,7 +3864,7 @@ function profileSectionHTML() {
         ${p.foto_url
           ? `<div class="profile-avatar has-photo" style="background-image:url('${p.foto_url}')"></div>`
           : `<div class="profile-avatar">${inicial}</div>`}
-        <div class="profile-avatar-cam">${SVG.camera || '📷'}</div>
+        <div class="profile-avatar-cam">${SVG.camera}</div>
         ${p.foto_url ? `<button class="profile-avatar-del" onclick="event.stopPropagation();removeAvatar()" aria-label="Remover foto">✕</button>` : ''}
       </div>
       <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="uploadAvatar(event)">
@@ -4407,6 +4415,7 @@ function startRest(seconds) {
   bt.remaining = seconds;
   renderBigTimer();
   startBigTimer();
+  syncDock();
 }
 function closeTimerModal() {
   // If a timer is actively running, don't kill it — minimize to a floating bar
@@ -4531,17 +4540,17 @@ function hideRestDoneAlert() {
 }
 
 function showMiniTimer() {
-  const el = document.getElementById('timer-mini');
-  if (el) el.classList.add('show');
-  // durante o descanso o cronómetro é a barra; o FAB redondo esconde-se sempre
+  // A dock unificada mostra o descanso; o mini-timer antigo fica desativado.
   const fab = document.getElementById('timer-fab');
   if (fab) fab.style.display = 'none';
+  syncDock();
 }
 function hideMiniTimer() {
   const el = document.getElementById('timer-mini');
   if (el) el.classList.remove('show');
   const fab = document.getElementById('timer-fab');
   if (fab) fab.style.display = '';
+  syncDock();
 }
 
 function updateMiniTimer() {
@@ -4882,6 +4891,7 @@ function tickBigTimer() {
   }
   renderBigTimer();
   updateMiniTimer();
+  syncDock();
 }
 
 function advanceBigTimerPhase(dir) {
