@@ -553,6 +553,9 @@ input[type="file"]{display:none;}
 .finish-sheet-discard:active{opacity:0.6;}
 #dock-bar{position:fixed;left:0;right:0;bottom:0;z-index:495;display:none;flex-direction:row;gap:14px;align-items:center;background:rgba(6,9,7,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:12px 20px calc(12px + env(safe-area-inset-bottom, 0px));border-top:1px solid rgba(42,52,46,0.5);}
 #dock-bar::before{content:"";position:absolute;left:0;right:0;top:-28px;height:28px;background:linear-gradient(to top, rgba(6,9,7,0.96), rgba(6,9,7,0));pointer-events:none;}
+/* Rebordo de progresso do descanso — a "pista a fechar" (toque de marca UNFYN) */
+#dock-rest-edge{position:absolute;left:0;top:0;height:2.5px;width:0%;background:var(--accent);border-radius:0 2px 2px 0;opacity:0;transition:width 0.95s linear, opacity 0.3s;box-shadow:0 0 8px rgba(57,255,136,0.6);pointer-events:none;}
+#dock-bar.resting-edge #dock-rest-edge{opacity:1;}
 #dock-bar.show{display:flex;}
 /* Zona esquerda: tempo solto (cima) + finalizar (baixo) */
 #dock-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:11px;}
@@ -771,6 +774,7 @@ input[type="file"]{display:none;}
   </div>
 </div>
 <div id="dock-bar">
+  <div id="dock-rest-edge"></div>
   <div id="dock-left">
     <div id="dock-timer" onclick="onDockTimerTap()">
       <span id="dock-timer-icon"></span>
@@ -1382,7 +1386,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.13';
+const APP_VERSION = '2.14';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2036,6 +2040,8 @@ function syncDock() {
   const time = document.getElementById('dock-timer-time');
   const label = document.getElementById('dock-timer-label');
   const icon = document.getElementById('dock-timer-icon');
+  const bar = document.getElementById('dock-bar');
+  const edge = document.getElementById('dock-rest-edge');
   if (!dock || !time || !label) return;
   if (bt.running) {
     // A descansar → barra verde com o countdown
@@ -2047,9 +2053,18 @@ function syncDock() {
     else { lbl = 'Descanso'; txt = fmtBig(bt.remaining); }
     label.textContent = lbl;
     time.textContent = txt;
+    // Rebordo de progresso — só no descanso simples (temos total conhecido)
+    if (bar && edge && bt.mode === 'simple' && bt.simpleTime > 0) {
+      bar.classList.add('resting-edge');
+      const frac = Math.max(0, Math.min(1, bt.remaining / bt.simpleTime));
+      edge.style.width = (frac * 100) + '%';
+    } else if (bar) {
+      bar.classList.remove('resting-edge');
+    }
   } else {
     // Tempo de treino: play (parado) / pause (a correr)
     dock.classList.remove('resting');
+    if (bar) bar.classList.remove('resting-edge');
     const isRunning = !!timerStart;
     const notStarted = !isRunning && timerElapsed === 0;
     if (icon) icon.innerHTML = isRunning ? ICON_PAUSE_SM : ICON_PLAY_SM;
