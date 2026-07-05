@@ -557,27 +557,31 @@ input[type="file"]{display:none;}
 #dock-rest-edge{position:absolute;left:0;top:0;height:2.5px;width:0%;background:var(--accent);border-radius:0 2px 2px 0;opacity:0;transition:width 0.95s linear, opacity 0.3s;box-shadow:0 0 8px rgba(57,255,136,0.6);pointer-events:none;}
 #dock-bar.resting-edge #dock-rest-edge{opacity:1;}
 #dock-bar.show{display:flex;}
-/* Zona esquerda: tempo solto (cima) + finalizar (baixo) */
-#dock-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:11px;}
-/* Tempo — sem caixa, texto solto */
-#dock-timer{display:flex;align-items:center;gap:11px;cursor:pointer;padding:2px 2px;}
-#dock-timer-icon{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;color:var(--accent);}
-#dock-timer-icon svg{width:20px;height:20px;}
-#dock-timer-time{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:0.5px;color:var(--text);flex-shrink:0;min-width:64px;}
-/* Estado inicial "pronto a começar": chamada à ação clara */
-#dock-timer.ready #dock-timer-time{font-family:var(--font);font-size:17px;font-weight:800;color:var(--accent);min-width:0;letter-spacing:0;}
-#dock-timer.ready #dock-timer-icon{color:var(--accent);}
-#dock-timer.ready{animation:dockPulse 2s ease-in-out infinite;}
-@keyframes dockPulse{0%,100%{opacity:1;}50%{opacity:0.62;}}
-#dock-timer-label{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;text-align:right;flex:1;min-width:0;}
-/* Estado de descanso: o tempo fica verde (texto), sem caixa */
-#dock-timer.resting #dock-timer-icon,#dock-timer.resting #dock-timer-time{color:var(--accent);}
-#dock-timer.resting #dock-timer-label{color:var(--accent);opacity:0.8;}
-/* Finalizar — o único elemento com forma */
-#dock-finish{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;border:1.5px solid var(--accent);border-radius:14px;background:#0f1713;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;transition:transform 0.15s,opacity 0.2s;}
-#dock-finish:active{transform:scale(0.985);}
-#dock-finish:disabled{opacity:0.35;cursor:default;}
-#dock-finish svg{width:19px;height:19px;}
+/* Zona esquerda: botão único de controlo (muda de estado) */
+#dock-control{flex:1;min-width:0;display:flex;gap:10px;}
+/* Botão principal (Iniciar / Pausa) — ocupa a largura */
+.dock-btn-main{flex:1;min-width:0;display:flex;align-items:center;gap:11px;height:52px;padding:0 18px;border:1.5px solid var(--accent);border-radius:14px;background:#0f1713;color:var(--accent);font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;transition:transform 0.15s;}
+.dock-btn-main:active{transform:scale(0.98);}
+.dock-btn-main svg{width:20px;height:20px;flex-shrink:0;}
+.dock-btn-main.running{gap:12px;}
+.dock-btn-main.running .dc-time{font-family:var(--mono);font-size:21px;font-weight:700;color:var(--text);}
+.dock-btn-main.running .dc-label{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-left:auto;}
+.dock-start{animation:dockPulse 2s ease-in-out infinite;}
+@keyframes dockPulse{0%,100%{opacity:1;}50%{opacity:0.66;}}
+/* Estado desdobrado: Continuar | Finalizar */
+#dock-control.dock-split{gap:10px;}
+.dock-btn-resume,.dock-btn-finish{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:52px;border-radius:14px;font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;transition:transform 0.15s,opacity 0.2s;}
+.dock-btn-resume{border:1px solid var(--border);background:var(--surface2);color:var(--text);}
+.dock-btn-finish{border:1.5px solid var(--accent);background:var(--accent);color:#0a0e0c;}
+.dock-btn-resume:active,.dock-btn-finish:active{transform:scale(0.97);}
+.dock-btn-finish:disabled{opacity:0.35;background:#0f1713;color:var(--accent);cursor:default;}
+.dock-btn-resume svg,.dock-btn-finish svg{width:18px;height:18px;flex-shrink:0;}
+/* Estado de descanso: countdown na dock */
+#dock-control.dock-resting{display:flex;align-items:center;gap:11px;padding:0 4px;}
+.dock-resting .dc-icon{display:flex;align-items:center;justify-content:center;width:20px;height:20px;color:var(--accent);flex-shrink:0;}
+.dock-resting .dc-icon svg{width:20px;height:20px;}
+.dock-resting .dc-time{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);}
+.dock-resting .dc-label{font-size:10px;font-family:var(--mono);color:var(--accent);opacity:0.8;text-transform:uppercase;letter-spacing:1.5px;margin-left:auto;}
 /* Cronómetro — ícone solto, sem caixa */
 #dock-timer-btn{flex-shrink:0;align-self:center;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--accent);cursor:pointer;transition:transform 0.15s,background 0.15s;}
 #dock-timer-btn:active{transform:scale(0.92);background:#1c2420;}
@@ -775,14 +779,7 @@ input[type="file"]{display:none;}
 </div>
 <div id="dock-bar">
   <div id="dock-rest-edge"></div>
-  <div id="dock-left">
-    <div id="dock-timer" onclick="onDockTimerTap()">
-      <span id="dock-timer-icon"></span>
-      <span id="dock-timer-time">00:00</span>
-      <span id="dock-timer-label">toca para começar</span>
-    </div>
-    <button id="dock-finish" onclick="confirmFinishWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Finalizar treino</button>
-  </div>
+  <div id="dock-control"></div>
   <button id="dock-timer-btn" onclick="openTimerModal()" aria-label="Cronómetro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/></svg></button>
 </div>
 <button id="timer-fab" onclick="openTimerModal()" title="Timer">
@@ -1386,7 +1383,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.14';
+const APP_VERSION = '2.15';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2028,64 +2025,68 @@ function updateTimerDisplay() {
   const txt = formatTimer(total);
   const disp = document.getElementById('timer-display');
   if (disp) disp.textContent = txt;
-  // barra unificada: só mostra o tempo quando não está a descansar nem no estado "começar"
+  // barra unificada: atualiza o tempo só quando o elemento existe (estado "a correr")
   const dt = document.getElementById('dock-timer-time');
-  const dockEl = document.getElementById('dock-timer');
-  if (dt && !bt.running && !(dockEl && dockEl.classList.contains('ready'))) dt.textContent = txt;
+  if (dt && !bt.running) dt.textContent = txt;
 }
 
 // Sincroniza a barra unificada (dock): mostra descanso (verde) quando bt.running, senão o tempo de treino.
+let _dockPaused = false; // quando pausado, o botão desdobra em Continuar | Finalizar
+
 function syncDock() {
-  const dock = document.getElementById('dock-timer');
-  const time = document.getElementById('dock-timer-time');
-  const label = document.getElementById('dock-timer-label');
-  const icon = document.getElementById('dock-timer-icon');
+  const ctrl = document.getElementById('dock-control');
   const bar = document.getElementById('dock-bar');
   const edge = document.getElementById('dock-rest-edge');
-  if (!dock || !time || !label) return;
+  if (!ctrl) return;
+
+  // ---- Estado 1: a descansar → a dock vira o countdown ----
   if (bt.running) {
-    // A descansar → barra verde com o countdown
-    dock.classList.add('resting');
-    if (icon) icon.innerHTML = SVG.timer || '';
     let lbl, txt;
     if (bt.mode === 'stopwatch') { lbl = 'Cronómetro'; txt = fmtBig(bt.elapsed); }
     else if (bt.mode === 'interval') { lbl = bt.phase === 'prep' ? 'Get Ready' : (bt.phase === 'work' ? `Work ${bt.currentRound}/${bt.rounds}` : `Rest ${bt.currentRound}/${bt.rounds}`); txt = String(bt.remaining); }
     else { lbl = 'Descanso'; txt = fmtBig(bt.remaining); }
-    label.textContent = lbl;
-    time.textContent = txt;
-    // Rebordo de progresso — só no descanso simples (temos total conhecido)
+    ctrl.className = 'dock-resting';
+    ctrl.innerHTML = `<span class="dc-icon">${SVG.timer||''}</span><span class="dc-time">${txt}</span><span class="dc-label">${lbl}</span>`;
     if (bar && edge && bt.mode === 'simple' && bt.simpleTime > 0) {
       bar.classList.add('resting-edge');
-      const frac = Math.max(0, Math.min(1, bt.remaining / bt.simpleTime));
-      edge.style.width = (frac * 100) + '%';
-    } else if (bar) {
-      bar.classList.remove('resting-edge');
-    }
-  } else {
-    // Tempo de treino: play (parado) / pause (a correr)
-    dock.classList.remove('resting');
-    if (bar) bar.classList.remove('resting-edge');
-    const isRunning = !!timerStart;
-    const notStarted = !isRunning && timerElapsed === 0;
-    if (icon) icon.innerHTML = isRunning ? ICON_PAUSE_SM : ICON_PLAY_SM;
-    if (notStarted) {
-      // Ainda não começou → chamada à ação clara, sem o 00:00 a distrair
-      dock.classList.add('ready');
-      time.textContent = 'Começar';
-      label.textContent = '';
-    } else {
-      dock.classList.remove('ready');
-      label.textContent = isRunning ? 'tempo de treino' : 'pausado · toca para retomar';
-      updateTimerDisplay();
-    }
+      edge.style.width = (Math.max(0, Math.min(1, bt.remaining / bt.simpleTime)) * 100) + '%';
+    } else if (bar) { bar.classList.remove('resting-edge'); }
+    return;
   }
+  if (bar) bar.classList.remove('resting-edge');
+
+  const isRunning = !!timerStart;
+  const notStarted = !isRunning && timerElapsed === 0;
+
+  // ---- Estado 2: ainda não começou → botão único "Iniciar treino" ----
+  if (notStarted) {
+    _dockPaused = false;
+    ctrl.className = 'dock-start';
+    ctrl.innerHTML = `<button class="dock-btn-main" onclick="dockStart()">${ICON_PLAY_SM}<span>Iniciar treino</span></button>`;
+    return;
+  }
+
+  // ---- Estado 4: pausado e desdobrado → Continuar | Finalizar ----
+  if (!isRunning && _dockPaused) {
+    const canFinish = hasAnyFilledSet();
+    ctrl.className = 'dock-split';
+    ctrl.innerHTML =
+      `<button class="dock-btn-resume" onclick="dockResume()">${ICON_PLAY_SM}<span>Continuar</span></button>` +
+      `<button class="dock-btn-finish" onclick="confirmFinishWorkout()" ${canFinish?'':'disabled'}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg><span>Finalizar</span></button>`;
+    return;
+  }
+
+  // ---- Estado 3: a correr → botão único "Pausa" com o tempo ----
+  ctrl.className = 'dock-running';
+  ctrl.innerHTML = `<button class="dock-btn-main running" onclick="dockPause()">${ICON_PAUSE_SM}<span class="dc-time" id="dock-timer-time">${formatTimer(getTimerSeconds())}</span><span class="dc-label">tempo de treino</span></button>`;
 }
 
+// Ações do botão único
+function dockStart() { toggleTimer(); _dockPaused = false; syncDock(); }
+function dockPause() { toggleTimer(); _dockPaused = true; syncDock(); }
+function dockResume() { toggleTimer(); _dockPaused = false; syncDock(); }
+
 // Toque na zona do cronómetro da dock: se a descansar abre o timer de descanso; senão pausa/retoma o tempo.
-function onDockTimerTap() {
-  if (bt.running) { reopenTimer(); }
-  else { toggleTimer(); }
-}
 
 function scrollToSessionTop() {
   const el = document.getElementById('session-top');
