@@ -330,7 +330,7 @@ input[type="file"]{display:none;}
 .ib-card-unit{font-size:11px;color:var(--text3);font-weight:600;margin-left:1px;}
 .ib-card-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-family:var(--mono);margin-top:6px;}
 .ib-section-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);margin:22px 0 12px;}
-.ib-spark{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;}
+.ib-spark{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;}
 .ib-spark-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
 .ib-spark-name{font-size:14px;font-weight:600;color:var(--text);}
 .ib-spark-now{font-size:15px;font-weight:700;color:var(--text);font-family:var(--mono);}
@@ -1387,7 +1387,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.19';
+const APP_VERSION = '2.20';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2272,8 +2272,10 @@ function onSetInput(exId, setNum) {
   const isBodyweight = exDef && exDef.bodyweight;  // peso corporal: lastro pode ser 0
   const isRepsOnly = exDef && exDef.repsOnly;      // só reps: não há campo de peso a validar
   const weightOk = isRepsOnly ? true : (isBodyweight ? (wEl && wEl.value !== '') : (isFinite(wv) && wv > 0));
+  const wasDone = row.classList.contains('done');
   const filled = weightOk && isFinite(rv) && rv > 0;
   row.classList.toggle('done', filled);
+  if (filled && !wasDone) vibrate(30); // háptico curto ao completar série (ativa em app nativa)
   updateExerciseDone(exId);
 
   // Se a série deixou de estar completa (apagaste um campo), limpa a marca de descanso
@@ -2703,6 +2705,7 @@ function weekProgressMessage(sessions) {
 
 function showProgressionSummary(exData, w) {
   hideFinishBar();
+  vibrate([40, 60, 120]); // háptico de conclusão (ativa em app nativa)
   const container = document.getElementById('view-home');
   const sessions = getSessions();
   const weekStreak = calcStreak(sessions);
