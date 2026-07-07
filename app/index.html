@@ -1416,7 +1416,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.30';
+const APP_VERSION = '2.31';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2798,7 +2798,6 @@ function showProgressionSummary(exData, w) {
   vibrate([40, 60, 120]); // háptico de conclusão (ativa em app nativa)
   const container = document.getElementById('view-home');
   const sessions = getSessions();
-  const weekStreak = calcStreak(sessions);
   const wp = weekProgressMessage(sessions);
 
   // Volume desta sessão
@@ -2843,9 +2842,8 @@ function showProgressionSummary(exData, w) {
     <div class="cs-item"><span class="cs-val">${sets}</span><span class="cs-lbl">Séries</span></div>
     <div class="cs-item"><span class="cs-val">${volTxt}</span><span class="cs-lbl">Volume kg</span>${volDelta}</div>
   </div>
-  ${(weekStreak > 0 || wp) ? `<div class="complete-streakrow">
-    ${weekStreak > 0 ? `<div class="home-streak">${SVG.fire} ${weekStreak} semana${weekStreak>1?'s':''} seguida${weekStreak>1?'s':''}</div>` : ''}
-    ${wp ? `<div class="week-progress${wp.complete?' complete':''}" style="margin:0"><div class="week-progress-count">${wp.done} de ${wp.total} treinos esta semana</div></div>` : ''}
+  ${wp ? `<div class="complete-streakrow">
+    <div class="week-progress${wp.complete?' complete':''}" style="margin:0"><div class="week-progress-count">${wp.done} de ${wp.total} treinos esta semana</div></div>
   </div>` : ''}
   ${noteTxt ? `<div class="complete-note"><span class="cn-label">A tua nota</span>${noteTxt.replace(/</g,'&lt;')}</div>` : ''}
   <p class="section-title">Progressão para a Próxima Sessão</p>
