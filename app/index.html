@@ -1416,7 +1416,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.29';
+const APP_VERSION = '2.30';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2868,8 +2868,7 @@ function showProgressionSummary(exData, w) {
   });
 
   html += `</div>
-    <div class="complete-quote" style="text-align:center;margin:16px 0 12px">Still becoming<span style="color:var(--accent)">.</span></div>
-    <div style="height:68px"></div>
+    <div class="complete-quote" style="text-align:center;margin:18px 0 0">Still becoming<span style="color:var(--accent)">.</span></div>
   </div>
   <div class="complete-footer"><button class="save-btn" onclick="showView('home')" style="margin:0;padding:12px;font-size:15px">Terminar</button></div>`;
   container.innerHTML = html;
