@@ -37,6 +37,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .home-greeting{font-size:15px;color:var(--text3);font-weight:500;}
 .home-quote{font-size:28px;font-weight:800;color:var(--text);letter-spacing:-0.5px;margin-top:2px;line-height:1.1;}
 .home-streak{display:inline-block;margin-top:12px;font-size:13px;font-weight:700;color:var(--accent);background:rgba(57,255,136,0.12);padding:6px 12px;border-radius:50px;font-family:var(--mono);}
+.resume-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin-bottom:18px;background:linear-gradient(135deg, rgba(57,255,136,0.12), rgba(57,255,136,0.05));border:1px solid var(--accent);border-radius:16px;cursor:pointer;transition:transform 0.15s;}
+.resume-banner:active{transform:scale(0.99);}
+.resume-banner-left{display:flex;align-items:center;gap:12px;min-width:0;}
+.resume-banner-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:dockPulse 1.6s ease-in-out infinite;box-shadow:0 0 8px var(--accent);}
+.resume-banner-title{font-size:15px;font-weight:800;color:var(--accent);}
+.resume-banner-sub{font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:1px;}
+.resume-banner svg{color:var(--accent);flex-shrink:0;}
 .hero-card{background:linear-gradient(145deg,#1a2420,#141a17);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:28px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
 .hero-card:active{transform:scale(0.98);}
 .hero-card::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(57,255,136,0.15),transparent 70%);}
@@ -527,7 +534,7 @@ input[type="file"]{display:none;}
 .finish-sheet{position:fixed;inset:0;z-index:1600;display:none;}
 .finish-sheet.open{display:block;}
 .finish-sheet-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.6);animation:fadeIn 0.2s ease;}
-.finish-sheet-panel{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-top-left-radius:24px;border-top-right-radius:24px;border-top:1px solid var(--border);padding:10px 20px calc(24px + env(safe-area-inset-bottom, 0px));box-shadow:0 -10px 40px rgba(0,0,0,0.55);animation:sheetUp 0.28s cubic-bezier(0.34,1.3,0.64,1);}
+.finish-sheet-panel{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow-y:auto;background:var(--surface);border-top-left-radius:24px;border-top-right-radius:24px;border-top:1px solid var(--border);padding:10px 20px calc(24px + env(safe-area-inset-bottom, 0px));box-shadow:0 -10px 40px rgba(0,0,0,0.55);animation:sheetUp 0.28s cubic-bezier(0.34,1.3,0.64,1);}
 @keyframes sheetUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 .finish-sheet-handle{width:40px;height:4px;border-radius:2px;background:var(--border);margin:6px auto 16px;}
@@ -544,7 +551,7 @@ input[type="file"]{display:none;}
 .complete-note .cn-label{display:block;font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
 .finish-sheet-label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;}
 .finish-sheet-label span{color:var(--text3);font-weight:500;}
-.finish-sheet-notes{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;color:var(--text);font-family:var(--font);font-size:15px;min-height:80px;resize:none;margin-bottom:18px;}
+.finish-sheet-notes{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;color:var(--text);font-family:var(--font);font-size:15px;min-height:60px;resize:none;margin-bottom:16px;}
 .finish-sheet-notes:focus{outline:none;border-color:var(--accent);}
 .finish-sheet-save{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:54px;border:none;border-radius:15px;background:var(--accent);color:#0a0e0c;font-family:var(--font);font-size:17px;font-weight:800;cursor:pointer;transition:transform 0.15s;}
 .finish-sheet-save:active{transform:scale(0.98);}
@@ -1387,7 +1394,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.20';
+const APP_VERSION = '2.22';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1891,6 +1898,17 @@ function renderHome() {
   hideFinishBar();
   // returning to home means we're no longer in a session
   if (!bt.running) { releaseWakeLock(); }
+  // Treino "vivo": existe algum rascunho por guardar? Oferece retomar.
+  let liveWorkout = null;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('vt_draft_')) {
+        const wk = k.replace('vt_draft_', '');
+        if (WORKOUTS[wk]) { liveWorkout = wk; break; }
+      }
+    }
+  } catch(e) {}
   currentWorkout = null;
   const container = document.getElementById('view-home');
   const sessions = getSessions();
@@ -1915,6 +1933,21 @@ function renderHome() {
     <div class="home-quote">${quote}</div>
     ${weekStreak > 0 ? `<div class="home-streak">${SVG.fire} ${weekStreak} semana${weekStreak>1?'s':''} seguida${weekStreak>1?'s':''}</div>` : ''}
   </div>`;
+
+  // Banner: treino em curso (rascunho por guardar) — retomar onde ficaste
+  if (liveWorkout) {
+    const lw = WORKOUTS[liveWorkout];
+    html += `<div class="resume-banner" onclick="startWorkout('${liveWorkout}')">
+      <div class="resume-banner-left">
+        <div class="resume-banner-dot"></div>
+        <div>
+          <div class="resume-banner-title">Treino em curso</div>
+          <div class="resume-banner-sub">${lw ? lw.name : ''} · toca para retomar</div>
+        </div>
+      </div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`;
+  }
 
   // Hero card — today's session
   if (todayWorkout) {
@@ -2275,7 +2308,11 @@ function onSetInput(exId, setNum) {
   const wasDone = row.classList.contains('done');
   const filled = weightOk && isFinite(rv) && rv > 0;
   row.classList.toggle('done', filled);
-  if (filled && !wasDone) vibrate(30); // háptico curto ao completar série (ativa em app nativa)
+  if (filled && !wasDone) {
+    vibrate(30); // háptico curto ao completar série (ativa em app nativa)
+    // Se o treino já começou mas está pausado, retoma sozinho — esqueceste de recomeçar
+    if (!timerStart && timerElapsed > 0) { toggleTimer(); showToast('Cronómetro retomado'); }
+  }
   updateExerciseDone(exId);
 
   // Se a série deixou de estar completa (apagaste um campo), limpa a marca de descanso
@@ -2539,21 +2576,21 @@ function renderSession() {
 // Sair da sessão pelo "Voltar": se não há nada registado, sai limpo (o cronómetro a correr
 // não conta como treino). Se já há séries preenchidas, pergunta para não perder dados.
 async function exitSession() {
-  if (hasAnyFilledSet()) {
-    const go = await confirmModal({ title:'Sair do treino?', message:'Tens séries registadas que ainda não guardaste. Se saíres agora, perdes esse registo.', confirmLabel:'Sair sem guardar', cancelLabel:'Continuar treino', danger:true });
-    if (!go) return;
+  // Com séries registadas → o treino continua vivo (rascunho + cronómetro persistem;
+  // renderSession restaura ao voltar). Sem nada registado → sai limpo, sem deixar
+  // sessão-fantasma pendurada.
+  if (!hasAnyFilledSet()) {
+    if (_autoRestTimeout) { clearTimeout(_autoRestTimeout); _autoRestTimeout = null; }
+    _autoRestFired = {};
+    clearDraft();
+    resetTimer();
+    clearTimerState();
+    stopBigTimer();
+    hideMiniTimer();
+    closeFinishSheet();
+    currentWorkout = null;
+    releaseWakeLock();
   }
-  // saída limpa: descarta rascunho e cronómetro (sem guardar nada)
-  if (_autoRestTimeout) { clearTimeout(_autoRestTimeout); _autoRestTimeout = null; }
-  _autoRestFired = {};
-  clearDraft();
-  resetTimer();
-  clearTimerState();
-  stopBigTimer();
-  hideMiniTimer();
-  closeFinishSheet();
-  currentWorkout = null;
-  releaseWakeLock();
   renderHome();
 }
 
@@ -4699,8 +4736,11 @@ function dismissRestDone() {
   m.classList.remove('rest-done-active');
   // Fecha o cronómetro e volta ao treino (como o auto-descanso fazia antes)
   m.classList.remove('open','running');
+  // Só repor o FAB se NÃO estiver em sessão de treino (na sessão o cronómetro vive na dock)
+  const dock = document.getElementById('dock-bar');
+  const inSession = dock && dock.classList.contains('show');
   const fab = document.getElementById('timer-fab');
-  if (fab) fab.style.display = '';
+  if (fab && !inSession) fab.style.display = '';
 }
 function clearRestDoneState() {
   if (_restDoneTimeout) { clearTimeout(_restDoneTimeout); _restDoneTimeout = null; }
