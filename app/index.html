@@ -63,10 +63,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .hero-card.cardio{background:linear-gradient(145deg,#1a2420,#141a17);}
 .hero-card.rest{background:var(--surface);cursor:default;box-shadow:none;}
 .hero-card.rest::before{display:none;}
-.complete-hero{text-align:center;padding:32px 16px 28px;}
-.complete-check{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;background:var(--accent);color:#0a0e0c;font-size:32px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(57,255,136,0.3);}
-.complete-title{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-0.5px;}
-.complete-sub{font-size:13px;color:var(--text2);margin-top:6px;font-family:var(--mono);}
+.complete-hero{display:flex;align-items:center;gap:14px;padding:20px 4px 22px;}
+.complete-check{width:44px;height:44px;flex-shrink:0;border-radius:50%;background:var(--accent);color:#0a0e0c;font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(57,255,136,0.28);}
+.complete-title{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.1;}
+.complete-sub{font-size:12px;color:var(--text2);margin-top:3px;font-family:var(--mono);}
 .complete-quote{font-size:18px;font-weight:700;color:var(--text2);margin-top:20px;}
 .week-progress{margin-top:18px;padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);}
 .week-progress.complete{background:rgba(57,255,136,0.08);border-color:rgba(57,255,136,0.3);}
@@ -1010,8 +1010,8 @@ const PLANS = {
     {id:"mcf", name:"Machine Chest Fly",             sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["peito"],inc:"machine",rest:"90 seg"},
     {id:"clr", name:"Lateral Raise",    sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros"],inc:"machine",rest:"90 seg"},
     {id:"skc", name:"Skull Crusher",                 sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"dumbbell",rest:"90 seg"},
-    {id:"ctp", name:"Cable Triceps Pushdown",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
     {id:"bc",  name:"Bayesian Curl",                 sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["biceps"],inc:"cable",rest:"90 seg",pulley:"Polia baixa (canela)"},
+    {id:"ctp", name:"Cable Triceps Pushdown",        sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["triceps"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
     {id:"rpd1",name:"Face Pull",                     sets:3,reps:"15–20",repsMin:15,repsMax:20,muscles:["ombros","costas"],inc:"cable",rest:"90 seg",pulley:"Polia alta"},
     {id:"pal1",name:"Pallof Press",          sets:3,reps:"10–15",repsMin:10,repsMax:15,muscles:["abdomen"],inc:"cable",rest:"60 seg",pulley:"Polia média (peito)"},
   ],coreRef:["Side Plank — 3×20–30seg/lado"]},
@@ -1416,7 +1416,7 @@ const NUTRITION_PLAN = {
 };
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.24';
+const APP_VERSION = '2.27';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1920,15 +1920,15 @@ function renderHome() {
   hideFinishBar();
   // returning to home means we're no longer in a session
   if (!bt.running) { releaseWakeLock(); }
-  // Treino "vivo": existe algum rascunho por guardar? Oferece retomar.
+  // Treino "vivo": há rascunho por guardar OU o cronómetro foi iniciado. Oferece retomar.
   let liveWorkout = null;
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k && k.startsWith('vt_draft_')) {
-        const wk = k.replace('vt_draft_', '');
-        if (WORKOUTS[wk]) { liveWorkout = wk; break; }
-      }
+      let wk = null;
+      if (k && k.startsWith('vt_draft_')) wk = k.replace('vt_draft_', '');
+      else if (k && k.startsWith('vt_timer_')) wk = k.replace('vt_timer_', '');
+      if (wk && WORKOUTS[wk]) { liveWorkout = wk; break; }
     }
   } catch(e) {}
   currentWorkout = null;
@@ -2794,6 +2794,7 @@ function weekProgressMessage(sessions) {
 
 function showProgressionSummary(exData, w) {
   hideFinishBar();
+  const _fab = document.getElementById('timer-fab'); if (_fab) _fab.style.display = 'none';
   vibrate([40, 60, 120]); // háptico de conclusão (ativa em app nativa)
   const container = document.getElementById('view-home');
   const sessions = getSessions();
@@ -2832,8 +2833,10 @@ function showProgressionSummary(exData, w) {
 
   let html = `<div class="complete-hero">
     <div class="complete-check">✓</div>
-    <div class="complete-title">Session complete.</div>
-    <div class="complete-sub">${w.name} · ${formatDate(new Date().toISOString())}</div>
+    <div>
+      <div class="complete-title">Session complete.</div>
+      <div class="complete-sub">${w.name} · ${formatDate(new Date().toISOString())}</div>
+    </div>
   </div>
   <div class="complete-summary">
     <div class="cs-item"><span class="cs-val">${formatTimer(getTimerSeconds())}</span><span class="cs-lbl">Tempo</span></div>
