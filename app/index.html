@@ -32,7 +32,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .nav-tabs{display:flex;gap:2px;background:var(--surface);border-radius:10px;padding:3px;flex:1;}
 .nav-tab{flex:1;padding:9px 3px;border-radius:7px;font-family:var(--font);font-size:12px;font-weight:600;border:none;background:none;color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap;text-align:center;}
 .nav-tab.active{background:var(--accent);color:#0a0e0c;}
-.view{display:none;padding:20px;padding-bottom:96px;position:relative;}.view.active{display:block;}
+.view{display:none;padding:20px;padding-bottom:96px;position:relative;}.view.active{display:block;animation:viewIn 0.18s ease;}
+@keyframes viewIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+@media (prefers-reduced-motion: reduce){.view.active{animation:none;}}
 .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
 .home-header{padding:8px 4px 20px;}
 .home-greeting{font-size:15px;color:var(--text3);font-weight:500;}
@@ -184,20 +186,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .prog-row.max .prog-row-arrow,.prog-row.max .prog-row-tag{color:#8fb0ff;}
 /* Rodapé fixo do ecrã final: Terminar sempre visível, sem scroll */
 .complete-footer{position:fixed;left:0;right:0;bottom:0;z-index:400;padding:12px 20px calc(12px + env(safe-area-inset-bottom, 0px));background:linear-gradient(to top, var(--bg) 60%, transparent);}
-.prog-item{padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
-.prog-item:last-child{border-bottom:none;}
-.prog-item-name{font-size:13px;font-weight:600;flex:1;}
-.prog-item-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);font-weight:700;padding:4px 10px 4px 6px;border-radius:50px;}
-.prog-badge-icon{flex-shrink:0;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.prog-badge-icon svg{width:10px;height:10px;}
-.prog-item-badge.up .prog-badge-icon{background:var(--accent);color:#0a0e0c;}
-.prog-item-badge.keep .prog-badge-icon{background:var(--yellow);color:#0a0e0c;}
-.prog-item-badge.down .prog-badge-icon{background:var(--red);color:#0a0e0c;}
-.prog-item-badge.max .prog-badge-icon{background:#8fb0ff;color:#0a0e0c;}
-.prog-item-badge.up{background:rgba(57,255,136,0.12);color:var(--accent);}
-.prog-item-badge.keep{background:rgba(243,156,18,0.1);color:var(--yellow);}
-.prog-item-badge.down{background:rgba(231,76,60,0.1);color:var(--red);}
-.prog-item-badge.max{background:rgba(120,160,255,0.12);color:#8fb0ff;}
 
 /* History */
 .session-log{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
@@ -479,7 +467,6 @@ input[type="file"]{display:none;}
 .measure-modal-inner{max-width:520px;margin:0 auto;}
 .measure-modal-head{display:flex;align-items:center;gap:12px;position:sticky;top:calc(env(safe-area-inset-top,0px));background:rgba(10,14,12,0.96);padding:8px 0 14px;z-index:2;}
 .measure-modal-head .timer-close{position:static;width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.measure-modal-head{display:flex;align-items:center;gap:12px;position:sticky;top:0;background:rgba(10,14,12,0.96);padding:8px 0 14px;z-index:2;}
 .measure-modal-title{font-size:20px;font-weight:800;color:var(--text);}
 .measure-form-body{}
 .meas-form-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 16px;margin-bottom:14px;}
@@ -512,6 +499,10 @@ input[type="file"]{display:none;}
 .hist-filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .hist-filters::-webkit-scrollbar{display:none;}
 .hist-chip{flex-shrink:0;padding:11px 16px;border-radius:50px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.hist-week-sep{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:20px 2px 10px;}
+.hist-week-sep:first-of-type{margin-top:6px;}
+.hist-week-label{font-size:13px;font-weight:800;color:var(--text);letter-spacing:0.2px;}
+.hist-week-sum{font-size:11px;font-family:var(--mono);color:var(--text3);}
 .hist-chip.active{background:var(--accent);color:#0a0e0c;border-color:var(--accent);}
 .cgrid-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:24px;}
 .cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
@@ -915,7 +906,27 @@ input[type="file"]{display:none;}
 </div>
 
 <script>
-// ======================== WORKOUT DATA ========================
+// ╔══════════════════════════════════════════════════════════════════════╗
+// ║  ZONA DE PLANOS — tudo o que se edita para mudar treinos está AQUI    ║
+// ║  (até ao marcador "FIM DA ZONA DE PLANOS", antes do Supabase)         ║
+// ╠══════════════════════════════════════════════════════════════════════╣
+// ║  ORDEM (não alterar — há dependências de carregamento):               ║
+// ║   1. INCREMENTS / CABLE_FLY_STACK  → incrementos de carga             ║
+// ║   2. EX_NOTES                      → notas de técnica (botão ⓘ)       ║
+// ║   3. PLANS                         → OS TREINOS (Vítor + Tiago)       ║
+// ║   4. MUSCLES / PLAN_WARMUPS        → músculos e aquecimentos          ║
+// ║   5. PROG_ICON / SVG               → ícones (usados pelo cardio)      ║
+// ║   6. PLAN_CARDIO / NUTRITION_PLAN  → cardio e nutrição                ║
+// ╠══════════════════════════════════════════════════════════════════════╣
+// ║  CAMPOS DE UM EXERCÍCIO:                                              ║
+// ║   id       → ÚNICO e PERMANENTE. Mudar o id = perder a ligação ao     ║
+// ║              histórico no Supabase (progressão recomeça do zero).     ║
+// ║   inc      → tipo de incremento: machine(+5) dumbbell(+2.5)           ║
+// ║              barbell_10(+10) cable(+5) cable_fly(stack) bodyweight    ║
+// ║   warmup   → true = calcula aquecimento 50%/75% automático            ║
+// ║   bodyweight → true = regista lastro (0 = só peso corporal)           ║
+// ║   pulley   → texto da altura da polia (mostrado no cartão)            ║
+// ╚══════════════════════════════════════════════════════════════════════╝
 const INCREMENTS = {
   machine: 5,
   dumbbell: 2.5,
@@ -1416,8 +1427,12 @@ const NUTRITION_PLAN = {
   }
 };
 
+// ╔══════════════════════════════════════════════════════════════════════╗
+// ║  FIM DA ZONA DE PLANOS — daqui para baixo é lógica da app             ║
+// ╚══════════════════════════════════════════════════════════════════════╝
+
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '2.34';
+const APP_VERSION = '2.39';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1489,9 +1504,9 @@ function authHeaders() {
 // Altera a password do utilizador autenticado (Supabase: PUT /auth/v1/user).
 async function changePassword(newPassword) {
   try {
-    const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    const res = await sbFetch('/auth/v1/user', {
       method: 'PUT',
-      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      headers: JSON_H,
       body: JSON.stringify({ password: newPassword })
     });
     const data = await res.json();
@@ -1502,44 +1517,34 @@ async function changePassword(newPassword) {
   }
 }
 
+// Fetch central ao Supabase (REST/Storage): junta auth, e num 401 renova o token e repete uma vez.
+async function sbFetch(path, opts = {}) {
+  const doFetch = () => fetch(`${SUPABASE_URL}${path}`, { ...opts, headers: { ...authHeaders(), ...(opts.headers || {}) } });
+  let res = await doFetch();
+  if (res.status === 401) {
+    if (await refreshToken()) res = await doFetch();
+    if (res.status === 401) handleAuthExpired();
+  }
+  return res;
+}
+
+const JSON_H = { 'Content-Type': 'application/json' };
+
 const sb = {
   async getSessions() {
+    // Devolve null em falha de rede (≠ [] que significa "sem sessões de facto")
     try {
-      let res = await fetch(`${SUPABASE_URL}/rest/v1/sessions?order=date.asc`, {
-        headers: authHeaders()
-      });
-      if (res.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) {
-          res = await fetch(`${SUPABASE_URL}/rest/v1/sessions?order=date.asc`, { headers: authHeaders() });
-        }
-        if (res.status === 401) { handleAuthExpired(); return []; }
-      }
+      const res = await sbFetch('/rest/v1/sessions?order=date.asc');
+      if (!res.ok) return null;
       const data = await res.json();
       return data.map(s => ({ id: s.id, workoutKey: s.workout_key, date: s.date, exercises: s.exercises, duration: s.duration || 0, notes: s.notes || '' }));
-    } catch(e) { return []; }
+    } catch(e) { return null; }
   },
   async saveSession(session) {
     const payload = { id: session.id, workout_key: session.workoutKey, date: session.date, exercises: session.exercises, duration: session.duration || 0, user_id: authUserId };
     if (session.notes) payload.notes = session.notes;
     try {
-      let res = await fetch(`${SUPABASE_URL}/rest/v1/sessions`, {
-        method: 'POST',
-        headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify(payload)
-      });
-      // If unauthorized, try to refresh the token once and retry
-      if (res.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) {
-          payload.user_id = authUserId;
-          res = await fetch(`${SUPABASE_URL}/rest/v1/sessions`, {
-            method: 'POST',
-            headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-            body: JSON.stringify(payload)
-          });
-        }
-      }
+      const res = await sbFetch('/rest/v1/sessions', { method: 'POST', headers: { ...JSON_H, 'Prefer': 'return=minimal' }, body: JSON.stringify(payload) });
       return res.ok;
     } catch(e) { return false; }
   },
@@ -1547,70 +1552,34 @@ const sb = {
     const payload = { workout_key: session.workoutKey, date: session.date, exercises: session.exercises, duration: session.duration || 0 };
     if (session.notes !== undefined && session.notes !== '') payload.notes = session.notes;
     try {
-      let res = await fetch(`${SUPABASE_URL}/rest/v1/sessions?id=eq.${session.id}`, {
-        method: 'PATCH',
-        headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify(payload)
-      });
-      if (res.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) {
-          res = await fetch(`${SUPABASE_URL}/rest/v1/sessions?id=eq.${session.id}`, {
-            method: 'PATCH',
-            headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-            body: JSON.stringify(payload)
-          });
-        }
-      }
+      const res = await sbFetch(`/rest/v1/sessions?id=eq.${session.id}`, { method: 'PATCH', headers: { ...JSON_H, 'Prefer': 'return=minimal' }, body: JSON.stringify(payload) });
       return res.ok;
     } catch(e) { return false; }
   },
   async deleteSession(id) {
     try {
-      let res = await fetch(`${SUPABASE_URL}/rest/v1/sessions?id=eq.${id}`, {
-        method: 'DELETE',
-        headers: authHeaders()
-      });
-      if (res.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) {
-          res = await fetch(`${SUPABASE_URL}/rest/v1/sessions?id=eq.${id}`, {
-            method: 'DELETE',
-            headers: authHeaders()
-          });
-        }
-      }
+      const res = await sbFetch(`/rest/v1/sessions?id=eq.${id}`, { method: 'DELETE' });
       return res.ok;
     } catch(e) { return false; }
   },
   async getProfile() {
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/profile?user_id=eq.${authUserId}&select=*`, { headers: authHeaders() });
-      if (res.status === 401) { handleAuthExpired(); return null; }
+      const res = await sbFetch(`/rest/v1/profile?user_id=eq.${authUserId}&select=*`);
+      if (!res.ok) return null;
       const data = await res.json();
       return Array.isArray(data) && data.length ? data[0] : null;
     } catch(e) { return null; }
   },
   async saveProfile(p) {
-    const body = JSON.stringify({ user_id: authUserId, nome: p.nome, data_nascimento: p.data_nascimento, altura: p.altura, peso: p.peso, updated_at: new Date().toISOString() });
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/profile?on_conflict=user_id`, {
-        method: 'POST',
-        headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-        body
-      });
+      const res = await sbFetch('/rest/v1/profile?on_conflict=user_id', { method: 'POST', headers: { ...JSON_H, 'Prefer': 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ user_id: authUserId, nome: p.nome, data_nascimento: p.data_nascimento, altura: p.altura, peso: p.peso, updated_at: new Date().toISOString() }) });
       return res.ok;
     } catch(e) { return false; }
   },
   // Guarda apenas o foto_url no perfil (sem tocar nos outros campos).
   async saveAvatarUrl(url) {
-    const body = JSON.stringify({ foto_url: url, updated_at: new Date().toISOString() });
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/profile?user_id=eq.${authUserId}`, {
-        method: 'PATCH',
-        headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body
-      });
+      const res = await sbFetch(`/rest/v1/profile?user_id=eq.${authUserId}`, { method: 'PATCH', headers: { ...JSON_H, 'Prefer': 'return=minimal' }, body: JSON.stringify({ foto_url: url, updated_at: new Date().toISOString() }) });
       return res.ok;
     } catch(e) { return false; }
   },
@@ -1618,11 +1587,7 @@ const sb = {
   async uploadAvatar(blob) {
     const path = `${authUserId}/avatar.jpg`;
     try {
-      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/avatars/${path}`, {
-        method: 'POST',
-        headers: { ...authHeaders(), 'Content-Type': 'image/jpeg', 'x-upsert': 'true' },
-        body: blob
-      });
+      const res = await sbFetch(`/storage/v1/object/avatars/${path}`, { method: 'POST', headers: { 'Content-Type': 'image/jpeg', 'x-upsert': 'true' }, body: blob });
       if (!res.ok) return null;
       // URL público + cache-buster para forçar refresh após nova foto
       return `${SUPABASE_URL}/storage/v1/object/public/avatars/${path}?t=${Date.now()}`;
@@ -1630,31 +1595,22 @@ const sb = {
   },
   async getMeasurements() {
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/measurements?user_id=eq.${authUserId}&order=data.asc`, { headers: authHeaders() });
-      if (res.status === 401) { handleAuthExpired(); return []; }
+      const res = await sbFetch(`/rest/v1/measurements?user_id=eq.${authUserId}&order=data.asc`);
+      if (!res.ok) return [];
       const data = await res.json();
       return Array.isArray(data) ? data : [];
     } catch(e) { return []; }
   },
   async saveMeasurement(m) {
-    const doPost = () => fetch(`${SUPABASE_URL}/rest/v1/measurements?on_conflict=id`, {
-      method: 'POST',
-      headers: { ...authHeaders(), 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-      body: JSON.stringify({ ...m, user_id: authUserId })
-    });
     try {
-      let res = await doPost();
-      if (res.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) res = await doPost();
-      }
+      const res = await sbFetch('/rest/v1/measurements?on_conflict=id', { method: 'POST', headers: { ...JSON_H, 'Prefer': 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ ...m, user_id: authUserId }) });
       return res.ok;
     } catch(e) { return false; }
   },
   async deleteMeasurement(id) {
     try {
-      await fetch(`${SUPABASE_URL}/rest/v1/measurements?id=eq.${id}`, { method: 'DELETE', headers: authHeaders() });
-      return true;
+      const res = await sbFetch(`/rest/v1/measurements?id=eq.${id}`, { method: 'DELETE' });
+      return res.ok;
     } catch(e) { return false; }
   }
 };
@@ -1668,7 +1624,16 @@ function handleAuthExpired() {
 let _sessions = null;
 
 async function loadSessions() {
-  _sessions = await sb.getSessions();
+  const fresh = await sb.getSessions();
+  if (fresh !== null) {
+    // Rede OK → atualiza memória e a cópia local (rede de segurança offline)
+    _sessions = fresh;
+    try { localStorage.setItem('vt_sessions', JSON.stringify(fresh)); } catch(e) {}
+  } else if (_sessions === null) {
+    // Sem rede e sem dados em memória → usa a última cópia conhecida
+    try { const raw = localStorage.getItem('vt_sessions'); _sessions = raw ? JSON.parse(raw) : []; } catch(e) { _sessions = []; }
+  }
+  // (se a rede falhou mas já havia dados em memória, mantêm-se)
   return _sessions;
 }
 
@@ -1684,7 +1649,7 @@ function getSessions() {
 async function removeSession(id) {
   removePending(id);
   const ok = await sb.deleteSession(id);
-  _sessions = await sb.getSessions();
+  await loadSessions();
   return ok;
 }
 
@@ -1693,6 +1658,14 @@ let _profile = null;
 
 async function loadProfile() {
   _profile = await sb.getProfile();
+  if (_profile) {
+    // Guarda o último perfil conhecido — é a rede de segurança para abrir offline
+    try { localStorage.setItem('vt_profile', JSON.stringify(_profile)); } catch(e) {}
+  } else {
+    // Sem resposta (offline ou erro de rede) ≠ "perfil não existe":
+    // usa o último perfil conhecido para não atirar o utilizador para o setup
+    try { const raw = localStorage.getItem('vt_profile'); if (raw) _profile = JSON.parse(raw); } catch(e) {}
+  }
   // Define o plano do utilizador (campo plan_id no perfil). Sem plan_id → plano por defeito (treinador).
   setActivePlan(_profile && _profile.plan_id ? _profile.plan_id : DEFAULT_PLAN);
   return _profile;
@@ -2700,7 +2673,7 @@ async function saveSession() {
   if (ok) {
     // saved to cloud — remove from pending and refresh
     removePending(session.id);
-    _sessions = await sb.getSessions();
+    await loadSessions();
     resetTimer();
     clearDraft();
     clearTimerState();
@@ -2742,7 +2715,7 @@ async function syncPending() {
     const ok = await sb.saveSession(session);
     if (ok) { removePending(session.id); synced++; }
   }
-  if (synced > 0) { showToast(`${synced} treino(s) sincronizado(s) ✓`); _sessions = await sb.getSessions(); }
+  if (synced > 0) { showToast(`${synced} treino(s) sincronizado(s) ✓`); await loadSessions(); }
 }
 
 // Conta treinos de musculação na semana atual (Seg-Dom) e devolve {done, frase}
@@ -2898,7 +2871,32 @@ function renderHistorico() {
   html += `</div>`;
   if (!sessions.length) { html += `<div class="history-empty"><p>Sem sessões deste treino.</p></div>`; container.innerHTML = html; return; }
   html += `<p class="section-title">${sessions.length} ${sessions.length!==1?'sessões registadas':'sessão registada'}</p>`;
+
+  // Agrupar por semana (Seg–Dom) com separadores e mini-resumo
+  const now = new Date();
+  const thisWeek = weekMonday(now).getTime();
+  const lastWeek = thisWeek - 7*24*60*60*1000;
+  const fmtRange = (mon) => {
+    const sun = new Date(mon); sun.setDate(sun.getDate()+6);
+    const f = (d) => d.toLocaleDateString('pt-PT', {day:'numeric', month:'short'});
+    return `${f(mon)} – ${f(sun)}`;
+  };
+  const fmtVol = (v) => v >= 1000 ? `${Math.round(v/1000*10)/10}k` : `${Math.round(v)}`;
+
+  let currentWeek = null;
   sessions.forEach(s => {
+    const mon = weekMonday(new Date(s.date));
+    const wk = mon.getTime();
+    if (wk !== currentWeek) {
+      currentWeek = wk;
+      const weekSessions = sessions.filter(x => weekMonday(new Date(x.date)).getTime() === wk);
+      const weekVol = weekSessions.reduce((a,x)=>a+calcVolume(x),0);
+      const label = wk === thisWeek ? 'Esta semana' : wk === lastWeek ? 'Semana passada' : fmtRange(mon);
+      html += `<div class="hist-week-sep">
+        <span class="hist-week-label">${label}</span>
+        <span class="hist-week-sum">${weekSessions.length} treino${weekSessions.length!==1?'s':''} · ${fmtVol(weekVol)} kg</span>
+      </div>`;
+    }
     const w = WORKOUTS[s.workoutKey];
     const vol = calcVolume(s);
     const totalSets = s.exercises.reduce((a,e)=>a+e.sets.filter(st=>st.weight>0||st.reps>0).length,0);
@@ -2988,7 +2986,7 @@ async function saveEditedSession(id) {
   showToast('A guardar...');
   const ok = await sb.updateSession(updated);
   if (ok) {
-    _sessions = await sb.getSessions();
+    await loadSessions();
     renderHistorico();
     showToast('Sessão atualizada ✓');
   } else {
@@ -3157,10 +3155,10 @@ function statsResumoHTML(sessions) {
   const weekly = calcWeeklyVolume(sessions);
   if (weekly.length >= 2) {
     const volData = weekly.slice(-8).map(wk => ({ value: wk.vol, top: wk.vol>=1000?`${Math.round(wk.vol/1000*10)/10}k`:`${Math.round(wk.vol)}`, label: wk.label }));
-    html += `<p class="section-title">Volume Semanal (kg)</p><div class="chart-wrap">${svgLine(volData)}</div>`;
+    html += `<p class="section-title">Volume Semanal (kg)</p><div class="chart-wrap" role="img" aria-label="Gráfico do volume semanal em kg nas últimas ${volData.length} semanas; mais recente: ${volData[volData.length-1]?.top ?? '—'} kg">${svgLine(volData)}</div>`;
 
     const freqData = weekly.slice(-8).map(wk => ({ value: wk.count, top: `${wk.count}`, label: wk.label }));
-    html += `<p class="section-title">Frequência (sessões/semana)</p><div class="chart-wrap">${svgLine(freqData)}</div>`;
+    html += `<p class="section-title">Frequência (sessões/semana)</p><div class="chart-wrap" role="img" aria-label="Gráfico da frequência de sessões por semana nas últimas ${freqData.length} semanas; mais recente: ${freqData[freqData.length-1]?.top ?? '—'} sessões">${svgLine(freqData)}</div>`;
   } else {
     html += `<div class="stat-card" style="margin-bottom:24px;text-align:center;color:var(--text3);font-size:13px;padding:24px">Treina mais uma semana para veres os gráficos de tendência.</div>`;
   }
@@ -3177,7 +3175,7 @@ function statsProgHTML(sessions) {
   </div>
   <select class="ex-select" id="ex-select" onchange="updateChart()">`;
   allEx.forEach(ex => { html += `<option value="${ex.id}">${ex.name}</option>`; });
-  html += `</select><div class="chart-wrap" id="chart-wrap"></div>`;
+  html += `</select><div class="chart-wrap" id="chart-wrap" role="img" aria-label="Gráfico de progressão de carga do exercício selecionado"></div>`;
 
   // PRs agrupados por grupo muscular
   html += `<p class="section-title">Recordes Pessoais</p><div class="stat-card" style="margin-bottom:24px">`;
@@ -4213,6 +4211,7 @@ async function saveProfileForm() {
   const ok = await sb.saveProfile(p);
   if (ok) {
     _profile = { ...(_profile||{}), ...p };
+    try { localStorage.setItem('vt_profile', JSON.stringify(_profile)); } catch(e) {}
     _profileEditing = false;
     showToast('Perfil guardado ✓');
     renderDados();
@@ -4268,7 +4267,7 @@ function importData(event) {
       }
       let n = 0;
       for (const s of toImport) { await sb.saveSession(s); n++; }
-      _sessions = await sb.getSessions();
+      await loadSessions();
       showToast(`${n} sessões importadas ✓`);
       setTimeout(()=>renderDados(), 500);
     } catch(err) { showToast('Ficheiro inválido'); }
@@ -4464,6 +4463,8 @@ async function logout() {
   if (!await confirmModal({title:'Terminar sessão?', message:'Vais voltar ao ecrã de entrada.', confirmLabel:'Terminar sessão'})) return;
   clearAuth();
   _sessions = null;
+  _profile = null;
+  try { localStorage.removeItem('vt_profile'); localStorage.removeItem('vt_sessions'); } catch(e) {}
   showLogin();
 }
 
@@ -4568,6 +4569,7 @@ async function finishOnboarding() {
     return;
   }
   _profile = { ...(_profile||{}), ...p };
+  try { localStorage.setItem('vt_profile', JSON.stringify(_profile)); } catch(e) {}
   // Se escolheu foto, envia-a agora (não bloqueia a entrada se falhar).
   if (_onboardingAvatarBlob) {
     const url = await sb.uploadAvatar(_onboardingAvatarBlob);
