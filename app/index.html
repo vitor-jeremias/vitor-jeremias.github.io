@@ -961,7 +961,7 @@ const EX_NOTES = {
   fb_incpress: "Peito superior e ombro. Os dois braços ao mesmo tempo. Empurra na diagonal, pausa breve no fundo, controla a volta.",
   fb_isorow:   "Costas e bíceps. Os dois braços ao mesmo tempo. Puxa até apertar as omoplatas, estica os braços por completo no fundo.",
   fb_calf2:    "Gémeos (gastrocnémio — de pé). Sobe nas pontas dos pés o máximo possível, pausa em cima, desce devagar até ao alongamento total. Amplitude completa.",
-  fb_abd2:     "Glúteo médio. Abre as pernas contra a resistência, controla a volta. Inclina ligeiramente o tronco à frente para focar mais o glúteo médio.",
+  fb_add2:     "Adutores (parte interna da coxa). Fecha as pernas contra a resistência, aperta no fecho, abre devagar. Ajusta a abertura inicial a um alongamento confortável — sem dor — e começa leve.",
   fb_rpd:      "Deltóide posterior e trapézio médio. Abre os braços para trás apertando as omoplatas, controla a volta. Sem usar impulso.",
   fb_fly:      "Peito (porção média). Abre o máximo possível na fase negativa para alongar o peito, junta à frente com controlo. Sem trancar os cotovelos.",
   fb_legcurl:  "Femoral (flexão do joelho). Puxa os calcanhares em direção aos glúteos o máximo possível, controla a descida até esticar. Não levantar a anca do banco.",
@@ -977,7 +977,6 @@ const EX_NOTES = {
   bc:    "Bíceps. Braço atrás do corpo para alongamento máximo, flexiona com controlo. Sem balanço do tronco. Polia baixa (canela).",
   rpd1:  "Deltóide posterior e trapézio médio. Puxa à altura da cara com os cotovelos altos, controla a volta. Essencial para a saúde do ombro direito. Polia alta.",
   bs:    "Quadríceps e glúteo. Desce abaixo do paralelo, sobe com força. Joelhos apontam para os pés, peito alto e core firme.",
-  bss:   "Quadríceps e glúteo. Desce até o joelho traseiro quase tocar o chão, sobe com controlo. Tronco ligeiramente à frente. Começa pelo lado direito.",
   bss_smith: "Quadríceps e glúteo. Na Smith: barra apoiada nas costas, pé da frente bem posicionado. Desce até o joelho traseiro quase tocar o chão, sobe com controlo. Começa pelo lado direito. Regista o total na barra (barra vazia = 40kg).",
   slle1: "Quadríceps. Estende por completo no topo e segura 1 seg, desce devagar (2–3 seg). Uma perna de cada vez. Começa pelo lado direito.",
   slc1:  "Femoral. Estica totalmente antes de cada repetição, flexiona até à contração e pausa 1 seg. Sem levantar a anca do banco.",
@@ -998,7 +997,7 @@ const EX_NOTES = {
   lp:    "Quadríceps. Desce o máximo sem tirar a lombar do banco, empurra sem bloquear os joelhos. Joelhos alinhados com os pés — reintroduz a anca com cuidado.",
   slle2: "Quadríceps. Estende por completo no topo, desce devagar (2–3 seg). Bilateral, sem balanço.",
   slc2:  "Femoral. Estica totalmente antes de cada repetição, flexiona até à contração e pausa 1 seg. Sem levantar a anca do banco.",
-  abd2:  "Glúteo médio. Abre com controlo, segura na abertura máxima, fecha devagar. Tronco ligeiramente à frente.",
+  add2:  "Adutores (coxa interna). Fecha as pernas com controlo, aperta 1 seg no fecho, abre devagar. Começa com amplitude moderada — não forces o alongamento a frio — e aumenta gradualmente com o aquecimento.",
   cr:    "Gémeos (gastrocnémio). Desce até ao máximo alongamento e pausa 2 seg, sobe até à ponta. Joelho esticado, amplitude completa na Smith.",
   cc2:   "Abdómen (flexão). Enrola a coluna trazendo o tronco aos joelhos, expira na contração. Sem usar momentum. Polia alta.",
   hlr:   "Abdómen inferior. Sobe as pernas com controlo, desce devagar sem balanço. Progride: joelhos fletidos → pernas esticadas → com peso.",
@@ -1432,7 +1431,7 @@ const NUTRITION_PLAN = {
 // ╚══════════════════════════════════════════════════════════════════════╝
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '3.0';
+const APP_VERSION = '3.6';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1544,7 +1543,7 @@ const sb = {
     const payload = { id: session.id, workout_key: session.workoutKey, date: session.date, exercises: session.exercises, duration: session.duration || 0, user_id: authUserId };
     if (session.notes) payload.notes = session.notes;
     try {
-      const res = await sbFetch('/rest/v1/sessions', { method: 'POST', headers: { ...JSON_H, 'Prefer': 'return=minimal' }, body: JSON.stringify(payload) });
+      const res = await sbFetch('/rest/v1/sessions?on_conflict=id', { method: 'POST', headers: { ...JSON_H, 'Prefer': 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(payload) });
       return res.ok;
     } catch(e) { return false; }
   },
@@ -2064,8 +2063,6 @@ function updateTimerDisplay() {
 }
 
 // Sincroniza a barra unificada (dock): mostra descanso (verde) quando bt.running, senão o tempo de treino.
-let _dockPaused = false; // quando pausado, o botão desdobra em Continuar | Finalizar
-
 function syncDock() {
   const ctrl = document.getElementById('dock-control');
   const bar = document.getElementById('dock-bar');
@@ -2094,14 +2091,14 @@ function syncDock() {
 
   // ---- Estado 2: ainda não começou → botão único "Iniciar treino" ----
   if (notStarted) {
-    _dockPaused = false;
     ctrl.className = 'dock-start';
     ctrl.innerHTML = `<button class="dock-btn-main" onclick="dockStart()">${ICON_PLAY_SM}<span>Iniciar treino</span></button>`;
     return;
   }
 
-  // ---- Estado 4: pausado e desdobrado → Continuar | Finalizar ----
-  if (!isRunning && _dockPaused) {
+  // ---- Estado 4: pausado → Continuar | Finalizar (derivado do próprio timer,
+  // sobrevive a fechar/reabrir a app) ----
+  if (!isRunning) {
     const canFinish = hasAnyFilledSet();
     ctrl.className = 'dock-split';
     ctrl.innerHTML =
@@ -2116,9 +2113,9 @@ function syncDock() {
 }
 
 // Ações do botão único
-function dockStart() { toggleTimer(); _dockPaused = false; syncDock(); }
-function dockPause() { toggleTimer(); _dockPaused = true; syncDock(); }
-function dockResume() { toggleTimer(); _dockPaused = false; syncDock(); }
+function dockStart() { toggleTimer(); syncDock(); }
+function dockPause() { toggleTimer(); syncDock(); }
+function dockResume() { toggleTimer(); syncDock(); }
 
 // Finalizar a meio do descanso (ex: imprevisto no ginásio) — salta o descanso e abre a folha
 function finishFromRest() {
@@ -2677,7 +2674,7 @@ async function saveSession() {
     resetTimer();
     clearDraft();
     clearTimerState();
-    showProgressionSummary(exData, w);
+    showProgressionSummary(exData, w, session.id, session.duration);
   } else {
     // cloud save failed — keep it local, don't lose anything
     resetTimer();
@@ -2685,8 +2682,9 @@ async function saveSession() {
     clearTimerState();
     // add to in-memory list so it shows immediately
     _sessions = [...(_sessions||[]), session].sort((a,b)=>new Date(a.date)-new Date(b.date));
+    try { localStorage.setItem('vt_sessions', JSON.stringify(_sessions)); } catch(e) {}
     showToast('Guardado no telemóvel (sincroniza depois)');
-    showProgressionSummary(exData, w);
+    showProgressionSummary(exData, w, session.id, session.duration);
   }
 }
 
@@ -2766,7 +2764,7 @@ function weekProgressMessage(sessions) {
   return { done, total, frase, complete };
 }
 
-function showProgressionSummary(exData, w) {
+function showProgressionSummary(exData, w, savedId, savedDuration) {
   hideFinishBar();
   const _fab = document.getElementById('timer-fab'); if (_fab) _fab.style.display = 'none';
   vibrate([40, 60, 120]); // háptico de conclusão (ativa em app nativa)
@@ -2784,7 +2782,7 @@ function showProgressionSummary(exData, w) {
   });
   // Volume da última sessão do MESMO treino (comparação só faz sentido Upper1 vs Upper1, etc.)
   let prevVol = null;
-  const sameWorkout = sessions.filter(s => s.workoutKey === currentWorkout).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const sameWorkout = sessions.filter(s => s.workoutKey === currentWorkout && s.id !== savedId).sort((a,b)=>new Date(b.date)-new Date(a.date));
   if (sameWorkout.length) {
     let pv = 0;
     sameWorkout[0].exercises.forEach(ex => {
@@ -2812,7 +2810,7 @@ function showProgressionSummary(exData, w) {
     </div>
   </div>
   <div class="complete-summary">
-    <div class="cs-item"><span class="cs-val">${formatTimer(getTimerSeconds())}</span><span class="cs-lbl">Tempo</span></div>
+    <div class="cs-item"><span class="cs-val">${formatTimer(savedDuration || 0)}</span><span class="cs-lbl">Tempo</span></div>
     <div class="cs-item"><span class="cs-val">${sets}</span><span class="cs-lbl">Séries</span></div>
     <div class="cs-item"><span class="cs-val">${volTxt}</span><span class="cs-lbl">Volume kg</span>${volDelta}</div>
   </div>
@@ -3003,16 +3001,15 @@ async function deleteSession(id) {
 
 // ======================== STATS ========================
 function calcWeekComparison(sessions) {
-  const now = new Date();
-  const dayMs = 24*60*60*1000;
-  const thisWeekStart = new Date(now - 7*dayMs);
-  const lastWeekStart = new Date(now - 14*dayMs);
+  // Semanas ISO Seg–Dom (consistente com o resto da app), não janelas rolantes de 7 dias
+  const thisMon = weekMonday(new Date()).getTime();
+  const lastMon = thisMon - 7*24*60*60*1000;
   let thisVol=0, lastVol=0, thisCount=0, lastCount=0;
   sessions.forEach(s => {
-    const d = new Date(s.date);
+    const wk = weekMonday(new Date(s.date)).getTime();
     const v = calcVolume(s);
-    if (d >= thisWeekStart) { thisVol+=v; thisCount++; }
-    else if (d >= lastWeekStart) { lastVol+=v; lastCount++; }
+    if (wk === thisMon) { thisVol+=v; thisCount++; }
+    else if (wk === lastMon) { lastVol+=v; lastCount++; }
   });
   return { thisVol, lastVol, thisCount, lastCount };
 }
@@ -3216,8 +3213,13 @@ function statsProgHTML(sessions) {
 }
 
 function statsMusculosHTML(sessions) {
+  // Janela: últimas 4 semanas ISO (Seg–Dom) — reflete o plano ATUAL, não o histórico todo
+  const cutoff = weekMonday(new Date());
+  cutoff.setDate(cutoff.getDate() - 21); // segunda de há 3 semanas → 4 semanas incl. a atual
+  const recent = sessions.filter(s => new Date(s.date) >= cutoff);
+
   const muscleSets = {};
-  sessions.forEach(s => {
+  recent.forEach(s => {
     const w = WORKOUTS[s.workoutKey]; if(!w) return;
     s.exercises.forEach(se => {
       const def = w.exercises.find(e=>e.id===se.id); if(!def) return;
@@ -3231,12 +3233,8 @@ function statsMusculosHTML(sessions) {
     });
   });
 
-  // nº de semanas distintas com treino
-  const weekSet = new Set(sessions.map(s => {
-    const d = new Date(s.date);
-    const soy = new Date(d.getFullYear(), 0, 1);
-    return d.getFullYear()+'-'+Math.floor((d - soy)/(7*24*60*60*1000));
-  }));
+  // nº de semanas ISO distintas com treino dentro da janela
+  const weekSet = new Set(recent.map(s => weekKey(new Date(s.date))));
   const numWeeks = Math.max(weekSet.size, 1);
 
   // séries/semana por músculo
@@ -3247,7 +3245,7 @@ function statsMusculosHTML(sessions) {
   // ----- Mapa muscular (boneco) -----
   let html = `<p class="section-title">Mapa Muscular</p>
     <div class="stat-card" style="margin-bottom:16px">
-      <div class="nutri-card-intro" style="margin-bottom:14px">Intensidade de treino por grupo (séries/semana). Quanto mais verde, mais volume. Ajuda a ver o que andas a negligenciar.</div>
+      <div class="nutri-card-intro" style="margin-bottom:14px">Intensidade de treino por grupo (séries/semana, últimas 4 semanas). Quanto mais verde, mais volume. Ajuda a ver o que andas a negligenciar.</div>
       ${muscleMapSVG(setsWk, maxSW)}
       <div class="cgrid-foot" style="justify-content:center;gap:8px;margin-top:14px"><span class="cgrid-legend"><span style="font-size:10px">menos</span><span class="mm-legend-grad"></span><span style="font-size:10px">mais</span></span></div>
     </div>`;
@@ -3255,7 +3253,7 @@ function statsMusculosHTML(sessions) {
   // ----- Séries por músculo por semana (lista, rigorosa) -----
   const SCALE = 24; // escala fixa: 0 a 24 séries (zona ideal 10-20 fica visível)
   html += `<p class="section-title">Séries por Músculo / Semana</p>
-    <div class="stat-card" style="margin-bottom:24px"><div class="nutri-card-intro" style="margin-bottom:14px">Para hipertrofia, a zona habitual é 10–20 séries por semana por grupo.</div>`;
+    <div class="stat-card" style="margin-bottom:24px"><div class="nutri-card-intro" style="margin-bottom:14px">Média das últimas 4 semanas. Para hipertrofia, a zona habitual é 10–20 séries por semana por grupo.</div>`;
   Object.entries(MUSCLES)
     .map(([key,label])=>({key,label,sw:setsWk[key]||0}))
     .sort((a,b)=>b.sw-a.sw)
