@@ -503,6 +503,9 @@ input[type="file"]{display:none;}
 .hist-week-sep:first-of-type{margin-top:6px;}
 .hist-week-label{font-size:13px;font-weight:800;color:var(--text);letter-spacing:0.2px;}
 .hist-week-sum{font-size:11px;font-family:var(--mono);color:var(--text3);}
+.wo-row{display:flex;align-items:center;gap:12px;padding:7px 0;}
+.wo-day{width:40px;flex-shrink:0;font-size:13px;font-weight:700;font-family:var(--mono);color:var(--text2);}
+.wo-select{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600;-webkit-appearance:none;}
 .hist-chip.active{background:var(--accent);color:#0a0e0c;border-color:var(--accent);}
 .cgrid-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:24px;}
 .cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
@@ -1119,6 +1122,11 @@ let WORKOUTS = PLANS[DEFAULT_PLAN].workouts;
 let DAYS = PLANS[DEFAULT_PLAN].days;
 
 // Define o plano ativo (chamado após carregar o perfil do utilizador).
+// Token de um dia do plano: chave do treino, ou nome normalizado (natacao/corrida/descanso)
+function dayToken(d) {
+  return d.key || d.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 function setActivePlan(planId) {
   const id = (planId && PLANS[planId]) ? planId : DEFAULT_PLAN;
   activePlanId = id;
@@ -1126,6 +1134,25 @@ function setActivePlan(planId) {
   DAYS = PLANS[id].days;
   WARMUPS = PLAN_WARMUPS[id] || PLAN_WARMUPS[DEFAULT_PLAN];
   CARDIO_PLANS = PLAN_CARDIO[id] || PLAN_CARDIO[DEFAULT_PLAN];
+  // Ordem da semana personalizada (definida pelo utilizador em Conta)
+  try {
+    const raw = localStorage.getItem('vt_week_' + id);
+    if (raw) {
+      const tokens = JSON.parse(raw);
+      if (Array.isArray(tokens) && tokens.length === 7) {
+        const labels = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+        // templates: primeiro dia do plano original com cada token
+        const tpl = {};
+        PLANS[id].days.forEach(d => { const t = dayToken(d); if (!tpl[t]) tpl[t] = d; });
+        const custom = tokens.map((t, i) => {
+          const base = tpl[t];
+          if (!base) return null;
+          return { ...base, label: labels[i] };
+        });
+        if (custom.every(Boolean)) DAYS = custom;
+      }
+    }
+  } catch(e) {}
 }
 
 const MUSCLES={peito:"Peito",costas:"Costas",ombros:"Ombros",biceps:"Bíceps",triceps:"Tríceps",quad:"Quad",femoral:"Femoral",gluteo:"Glúteo",gemeos:"Gémeos",abdomen:"Abdómen"};
@@ -1431,7 +1458,7 @@ const NUTRITION_PLAN = {
 // ╚══════════════════════════════════════════════════════════════════════╝
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '3.6';
+const APP_VERSION = '3.7';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -1592,6 +1619,13 @@ const sb = {
       return `${SUPABASE_URL}/storage/v1/object/public/avatars/${path}?t=${Date.now()}`;
     } catch(e) { return null; }
   },
+  // Guarda a ordem da semana no perfil (defensivo: se a coluna não existir, fica só local)
+  async saveWeekOrder(tokens) {
+    try {
+      const res = await sbFetch(`/rest/v1/profile?user_id=eq.${authUserId}`, { method: 'PATCH', headers: { ...JSON_H, 'Prefer': 'return=minimal' }, body: JSON.stringify({ week_order: tokens, updated_at: new Date().toISOString() }) });
+      return res.ok;
+    } catch(e) { return false; }
+  },
   async getMeasurements() {
     try {
       const res = await sbFetch(`/rest/v1/measurements?user_id=eq.${authUserId}&order=data.asc`);
@@ -1665,6 +1699,12 @@ async function loadProfile() {
     // usa o último perfil conhecido para não atirar o utilizador para o setup
     try { const raw = localStorage.getItem('vt_profile'); if (raw) _profile = JSON.parse(raw); } catch(e) {}
   }
+  // Ordem da semana do perfil (sincroniza entre dispositivos) → cópia local antes de ativar o plano
+  try {
+    if (_profile && Array.isArray(_profile.week_order) && _profile.week_order.length === 7) {
+      localStorage.setItem('vt_week_' + (_profile.plan_id || DEFAULT_PLAN), JSON.stringify(_profile.week_order));
+    }
+  } catch(e) {}
   // Define o plano do utilizador (campo plan_id no perfil). Sem plan_id → plano por defeito (treinador).
   setActivePlan(_profile && _profile.plan_id ? _profile.plan_id : DEFAULT_PLAN);
   return _profile;
@@ -4055,6 +4095,64 @@ async function deleteMeasure(id) {
 }
 
 // ======================== DADOS ========================
+// ===== Ordem da semana (editável pelo utilizador) =====
+function weekOrderSectionHTML() {
+  const labels = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  // Opções disponíveis: os dias únicos do plano original (treinos + cardio + descanso)
+  const tpl = {};
+  PLANS[activePlanId].days.forEach(d => { const t = dayToken(d); if (!tpl[t]) tpl[t] = d; });
+  const options = Object.keys(tpl).map(t => ({ token: t, name: tpl[t].key ? WORKOUTS[tpl[t].key].name : tpl[t].name }));
+  // Ordem atual (a que está em DAYS neste momento)
+  const current = DAYS.map(d => dayToken(d));
+
+  let rows = '';
+  labels.forEach((lb, i) => {
+    rows += `<div class="wo-row">
+      <span class="wo-day">${lb}</span>
+      <select class="wo-select" id="wo_${i}">
+        ${options.map(o => `<option value="${o.token}" ${current[i]===o.token?'selected':''}>${o.name}</option>`).join('')}
+      </select>
+    </div>`;
+  });
+
+  return `<div class="dados-card" style="margin-top:16px">
+    <div class="dados-title">Ordem da semana</div>
+    <div class="dados-desc">Define que treino fazes em cada dia. A home e a semana seguem esta ordem.</div>
+    ${rows}
+    <button class="profile-save" style="margin-top:12px" onclick="saveWeekOrder()">Guardar ordem</button>
+    <button class="dados-btn" style="background:none;border:none;color:var(--text3);font-size:12px;margin-top:6px" onclick="resetWeekOrder()">Repor ordem padrão do plano</button>
+  </div>`;
+}
+
+async function saveWeekOrder() {
+  const tokens = [];
+  for (let i = 0; i < 7; i++) {
+    const el = document.getElementById('wo_' + i);
+    if (!el) return;
+    tokens.push(el.value);
+  }
+  // Aviso suave se algum treino do plano ficou fora da semana
+  const liftTokens = PLANS[activePlanId].days.filter(d => d.key).map(d => d.key);
+  const missing = [...new Set(liftTokens)].filter(k => !tokens.includes(k));
+  if (missing.length) {
+    const names = missing.map(k => WORKOUTS[k] ? WORKOUTS[k].name : k).join(', ');
+    if (!await confirmModal({ title:'Treinos fora da semana', message:`Esta ordem deixa de fora: ${names}. Guardar mesmo assim?`, confirmLabel:'Guardar' })) return;
+  }
+  try { localStorage.setItem('vt_week_' + activePlanId, JSON.stringify(tokens)); } catch(e) {}
+  sb.saveWeekOrder(tokens); // sincroniza com o perfil (não bloqueia; se a coluna faltar fica local)
+  setActivePlan(activePlanId);
+  showToast('Ordem da semana guardada ✓');
+  renderDados();
+}
+
+async function resetWeekOrder() {
+  try { localStorage.removeItem('vt_week_' + activePlanId); } catch(e) {}
+  sb.saveWeekOrder(null);
+  setActivePlan(activePlanId);
+  showToast('Ordem padrão reposta');
+  renderDados();
+}
+
 function renderDados() {
   const container = document.getElementById('view-dados');
   const sessions = getSessions();
@@ -4062,6 +4160,8 @@ function renderDados() {
 
   container.innerHTML = `
     ${profileSectionHTML()}
+
+    ${weekOrderSectionHTML()}
 
     <p class="tools-title">Ferramentas</p>
     <div class="dados-tip">
