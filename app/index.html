@@ -506,6 +506,12 @@ input[type="file"]{display:none;}
 .wo-row{display:flex;align-items:center;gap:12px;padding:7px 0;}
 .wo-day{width:40px;flex-shrink:0;font-size:13px;font-weight:700;font-family:var(--mono);color:var(--text2);}
 .wo-select{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600;-webkit-appearance:none;}
+.week-edit-link{font-size:11px;font-family:var(--mono);color:var(--text3);text-transform:none;letter-spacing:0.5px;cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+.wo-head{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;padding:2px 0;}
+.wo-chevron{color:var(--text3);transition:transform 0.2s;flex-shrink:0;}
+.wo-chevron.open{transform:rotate(180deg);}
+.wo-body{display:none;margin-top:12px;}
+.wo-body.open{display:block;}
 .hist-chip.active{background:var(--accent);color:#0a0e0c;border-color:var(--accent);}
 .cgrid-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:24px;}
 .cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
@@ -1458,7 +1464,7 @@ const NUTRITION_PLAN = {
 // ╚══════════════════════════════════════════════════════════════════════╝
 
 // ======================== SUPABASE CONFIG ========================
-const APP_VERSION = '3.7';
+const APP_VERSION = '3.8';
 const SUPABASE_URL = 'https://rkwqijvwowkcmxxtxgky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrd3FpanZ3b3drY214eHR4Z2t5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY3MjAsImV4cCI6MjA5NTcxMjcyMH0.0tRUVjYFZbdkJqkek5cTFDV7q-HaYCkN5FG24dzZCaI';
 
@@ -2018,7 +2024,7 @@ function renderHome() {
   }
 
   // Week overview
-  html += `<p class="section-title">Semana</p><div class="day-grid">`;
+  html += `<p class="section-title" style="display:flex;align-items:baseline;justify-content:space-between">Semana <span class="week-edit-link" onclick="gotoWeekOrder()">editar</span></p><div class="day-grid">`;
   DAYS.forEach((d,i) => {
     const w = d.key ? WORKOUTS[d.key] : null;
     const type = w ? w.type : (d.type||'rest');
@@ -4096,6 +4102,23 @@ async function deleteMeasure(id) {
 
 // ======================== DADOS ========================
 // ===== Ordem da semana (editável pelo utilizador) =====
+let _woOpen = false;
+function toggleWeekOrder() {
+  _woOpen = !_woOpen;
+  const card = document.getElementById('week-order-card');
+  if (!card) return;
+  card.querySelector('.wo-body').classList.toggle('open', _woOpen);
+  card.querySelector('.wo-chevron').classList.toggle('open', _woOpen);
+}
+// Atalho da home: abre a Conta já com a secção expandida e visível
+function gotoWeekOrder() {
+  _woOpen = true;
+  showView('dados');
+  setTimeout(() => {
+    const card = document.getElementById('week-order-card');
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 350);
+}
 function weekOrderSectionHTML() {
   const labels = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
   // Opções disponíveis: os dias únicos do plano original (treinos + cardio + descanso)
@@ -4115,12 +4138,19 @@ function weekOrderSectionHTML() {
     </div>`;
   });
 
-  return `<div class="dados-card" style="margin-top:16px">
-    <div class="dados-title">Ordem da semana</div>
-    <div class="dados-desc">Define que treino fazes em cada dia. A home e a semana seguem esta ordem.</div>
+  return `<div class="dados-card" style="margin-top:16px" id="week-order-card">
+    <div class="wo-head" onclick="toggleWeekOrder()">
+      <div>
+        <div class="dados-title" style="margin:0">Ordem da semana</div>
+        <div class="dados-desc" style="margin:2px 0 0">Que treino fazes em cada dia</div>
+      </div>
+      <svg class="wo-chevron ${_woOpen?'open':''}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="wo-body ${_woOpen?'open':''}">
     ${rows}
     <button class="profile-save" style="margin-top:12px" onclick="saveWeekOrder()">Guardar ordem</button>
     <button class="dados-btn" style="background:none;border:none;color:var(--text3);font-size:12px;margin-top:6px" onclick="resetWeekOrder()">Repor ordem padrão do plano</button>
+    </div>
   </div>`;
 }
 
